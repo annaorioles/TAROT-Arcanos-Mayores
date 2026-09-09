@@ -1,0 +1,1 @@
+import './globals.css'; import type { Metadata } from 'next'; export const metadata:Metadata={title:'CARTAS · Tirada profesional',description:'Experiencia de lectura simbólica con los 22 Arcanos Mayores diseñados por ti'}; export default function Layout({children}:{children:React.ReactNode}){return <>{children}</>}
