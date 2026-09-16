@@ -296,3 +296,96 @@ footer{padding:32px 0 0;color:var(--muted);font-size:11px;text-align:center}
   .spreadGroup .threeVariants{display:flex;}
   .spreadGroup .threeVariant{min-height:44px;}
 }
+
+
+/* V17 — las 3 opciones de "3 cartas" van en horizontal debajo del botón */
+.spreadGroup{display:contents;}
+.spreadGroup .threeVariants{
+  grid-column:3 / span 3;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+}
+.spreadGroup .threeVariant{
+  min-height:58px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--paper2);
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-align:left;
+}
+.spreadGroup .threeVariant b{
+  font-size:12px;
+  line-height:1.25;
+  text-transform:lowercase;
+}
+.spreadGroup .threeVariant span{
+  flex:0 0 24px;
+  width:24px;height:24px;
+  margin:0;
+}
+@media(max-width:1180px){
+  .spreadGroup .threeVariants{grid-column:1 / -1;}
+}
+@media(max-width:680px){
+  .spreadGroup .threeVariants{
+    grid-column:1 / -1;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:6px;
+  }
+  .spreadGroup .threeVariant{
+    min-height:64px;
+    padding:9px 8px;
+    gap:5px;
+  }
+  .spreadGroup .threeVariant span{flex-basis:20px;width:20px;height:20px;font-size:9px;}
+  .spreadGroup .threeVariant b{font-size:10px;}
+}
+
+/* V18 — preguntas sin espacio en blanco y en horizontal */
+.questionPanel{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;
+  padding:27px;
+}
+.questionPanel > .label{
+  grid-column:1 / -1;
+  margin-bottom:14px;
+}
+.questionList{
+  grid-column:1 / -1;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.qoption{
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  text-align:left;
+}
+.customQuestion{
+  grid-column:1 / -1;
+  border-left:0;
+  border-top:1px solid var(--line);
+  padding:22px 0 0;
+  margin-top:22px;
+}
+.customQuestion textarea{min-height:100px}
+@media(max-width:820px){
+  .questionList{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:560px){
+  .questionPanel{padding:18px}
+  .questionList{grid-template-columns:1fr;gap:8px}
+  .qoption{min-height:56px}
+  .customQuestion{margin-top:18px;padding-top:18px}
+}
