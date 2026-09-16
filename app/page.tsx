@@ -174,19 +174,19 @@ const modes = [
 ];
 
 function narrative(selected:Card[], spread:Spread, q:string){
-  const names = selected.map(c=>c.name).join(" → ");
-  if(spread.id===3 && selected.length===3 && spread.positions.join("|")==="yo|el otro|el vínculo")
+  const names = selectedCards.map(c=>c.name).join(" → ");
+  if(spread.id===3 && selectedCards.length===3 && spread.positions.join("|")==="yo|el otro|el vínculo")
     return `La secuencia ${names} se lee como una dinámica de tres planos: yo, el otro y el vínculo. La primera carta muestra tu posición ante la pregunta; la segunda representa una dinámica que puede observarse en la otra persona sin convertir el símbolo en una afirmación literal sobre su mente; la tercera muestra la cualidad que toma el vínculo entre ambos. Para profundizar en «${q}», observa especialmente dónde se complementan, se tensan o se transforman las tres cartas.`;
-  if(spread.id===3 && selected.length===3 && spread.positions.join("|")==="qué siente|qué piensa|qué intenciones")
+  if(spread.id===3 && selectedCards.length===3 && spread.positions.join("|")==="qué siente|qué piensa|qué intenciones")
     return `La secuencia ${names} organiza la lectura en tres planos: qué siente, qué piensa y qué intenciones muestra la dinámica. Las cartas se interpretan como lenguaje simbólico de la relación, no como acceso literal a la mente de otra persona. Observa qué coincide, qué se contradice y qué necesita expresarse con mayor claridad ante «${q}».`;
-  if(selected.length===1)
-    return `${selected[0].name} concentra la lectura. Ante «${q}», no anuncia un hecho: pone el foco en ${selected[0].essence}. Su luz es ${selected[0].light}; su sombra, ${selected[0].shadow}. La pregunta que queda abierta es qué cambia cuando observas tu situación desde este símbolo.`;
-  if(selected.length===2)
-    return `La secuencia ${names} funciona como diálogo. ${selected[0].name} describe el terreno —${selected[0].essence}— y ${selected[1].name} modifica la respuesta desde ${selected[1].essence}. La lectura invita a pasar de comprender lo que ocurre a decidir cómo quieres relacionarte con ello.`;
-  if(selected.length===3)
+  if(selectedCards.length===1)
+    return `${selectedCards[0].name} concentra la lectura. Ante «${q}», no anuncia un hecho: pone el foco en ${selectedCards[0].essence}. Su luz es ${selected[0].light}; su sombra, ${selected[0].shadow}. La pregunta que queda abierta es qué cambia cuando observas tu situación desde este símbolo.`;
+  if(selectedCards.length===2)
+    return `La secuencia ${names} funciona como diálogo. ${selectedCards[0].name} describe el terreno —${selectedCards[0].essence}— y ${selectedCards[1].name} modifica la respuesta desde ${selectedCards[1].essence}. La lectura invita a pasar de comprender lo que ocurre a decidir cómo quieres relacionarte con ello.`;
+  if(selectedCards.length===3)
     return `La secuencia ${names} forma una lectura de tres planos. Cada posición cambia el sentido de la carta y el conjunto se interpreta desde la pregunta. La lectura observa qué se refuerza, qué entra en tensión y qué movimiento propone la relación entre las tres cartas.`;
-  if(selected.length===5)
-    return `La secuencia ${names} tiene una arquitectura clara. ${selected[0].name} abre la dinámica; ${selected[1].name} muestra qué está realmente en juego; ${selected[2].name} introduce la zona que todavía no está completamente visible; ${selected[3].name} responde con una dirección posible; y ${selected[4].name} integra el sentido de la tirada. No son cinco definiciones: cada carta modifica la anterior.`;
+  if(selectedCards.length===5)
+    return `La secuencia ${names} tiene una arquitectura clara. ${selectedCards[0].name} abre la dinámica; ${selectedCards[1].name} muestra qué está realmente en juego; ${selectedCards[2].name} introduce la zona que todavía no está completamente visible; ${selectedCards[3].name} responde con una dirección posible; y ${selectedCards[4].name} integra el sentido de la tirada. No son cinco definiciones: cada carta modifica la anterior.`;
   return `La secuencia ${names} funciona como un proceso completo. Contexto y tensión muestran el escenario; deseo y miedo revelan fuerzas que pueden tirar en sentidos opuestos; el camino transforma esa tensión en posibilidad de acción; la clave condensa el aprendizaje y la síntesis devuelve una visión más amplia. La última carta no borra las anteriores: las reinterpreta.`;
 }
 
@@ -204,7 +204,7 @@ export default function Home(){
   const [customQuestion, setCustomQuestion] = useState("");
   const [spread, setSpread] = useState(3);
   const [threeCardVariant, setThreeCardVariant] = useState(1);
-  const [slotCards, setSlotCards] = useState<(Card | null)[]>(Array(3).fill(null));
+  // Guardamos la posición real dentro de deckOrder. Así la carta pulsada y la carta mostrada arriba son exactamente la misma.\n  const [slotIndexes, setSlotIndexes] = useState<(number | null)[]>(Array(3).fill(null));
   const [reading, setReading] = useState(false);
   const [mode, setMode] = useState(0);
   const [deckOrder, setDeckOrder] = useState<string[]>(shuffleIds);
@@ -223,14 +223,20 @@ export default function Home(){
     normalizedQuestion.includes("intenciones") ? 2 :
     cat === 0 ? 1 : 0;
 
-  const selected = useMemo(() => slotCards.filter((card): card is Card => Boolean(card)), [slotCards]);
-  const pickedIds = useMemo(() => slotCards.filter((card): card is Card => Boolean(card)).map(card => card.id), [slotCards]);
-  const picked = pickedIds;
+  const selected = useMemo(
+    () => slotIndexes.map(index => index === null ? null : cardById.get(deckOrder[index]) ?? null),
+    [slotIndexes, deckOrder]
+  );
+  const selectedCards = useMemo(
+    () => selected.filter((card): card is Card => Boolean(card)),
+    [selected]
+  );
+  const picked = slotIndexes.filter((index): index is number => index !== null);
   const [zoomCard, setZoomCard] = useState<Card | null>(null);
 
   function resetDeck(){
     setDeckOrder(shuffleIds());
-    setSlotCards(Array(count).fill(null));
+    setSlotIndexes(Array(count).fill(null));
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -243,27 +249,24 @@ export default function Home(){
     setSpread(categories[i].recommended);
     setThreeCardVariant(i === 0 ? 1 : 0);
     setDeckOrder(shuffleIds());
-    setSlotCards(Array(categories[i].recommended).fill(null));
+    setSlotIndexes(Array(categories[i].recommended).fill(null));
     setReading(false);
     setMode(0);
   }
 
-  function choose(card:Card){
+  function choose(deckIndex:number){
     if(reading) return;
-    setSlotCards(slots => {
-      const existing = slots.findIndex(item => item?.id === card.id);
+    setSlotIndexes(slots => {
+      const existing = slots.findIndex(index => index === deckIndex);
       if (existing !== -1) {
         const next = [...slots];
         next[existing] = null;
         return next;
       }
-      const empty = slots.findIndex(item => item === null);
+      const empty = slots.findIndex(index => index === null);
       if (empty === -1) return slots;
       const next = [...slots];
-      // Store the exact Card object that was clicked. The same object is
-      // rendered above and in the deck, so the selected image can never
-      // diverge from the card shown in the reading.
-      next[empty] = card;
+      next[empty] = deckIndex;
       return next;
     });
   }
@@ -271,7 +274,7 @@ export default function Home(){
   function random(){
     const order = shuffleIds();
     setDeckOrder(order);
-    setSlotCards(order.slice(0, count).map(id => cardById.get(id) ?? null));
+    setSlotIndexes(order.slice(0, count).map((_, index) => index));
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -295,7 +298,7 @@ export default function Home(){
 
   function contextualReading(c:Card, i:number){
     const position = current.positions[i];
-    const neighbours = [selected[i-1], selected[i+1]].filter(Boolean);
+    const neighbours = [selected[i-1], selected[i+1]].filter((card): card is Card => Boolean(card));
     const neighbourText = neighbours.length
       ? ` Al dialogar con ${neighbours.map(n => n.name).join(" y ")}, esta cualidad adquiere un matiz que conviene observar dentro del conjunto.`
       : " Aquí la carta funciona como núcleo de la lectura, por lo que su posición tiene un peso especial.";
@@ -313,10 +316,10 @@ export default function Home(){
   }
 
   function synthesis(){
-    const majorsCount = selected.filter(c => Number(c.id) < 22).length;
-    const areas = selected.map(cardArea);
+    const majorsCount = selectedCards.filter(c => Number(c.id) < 22).length;
+    const areas = selectedCards.map(cardArea);
     const repeated = areas.find(a => areas.filter(x => x === a).length > 1);
-    const sequence = selected.map(c => c.name).join(" → ");
+    const sequence = selectedCards.map(c => c.name).join(" → ");
     let focus = repeated
       ? `Hay una concentración clara en ${repeated.toLowerCase()}, por lo que ese territorio merece una atención especial.`
       : "La tirada reparte la energía entre varios territorios, lo que sugiere una lectura que necesita integrar perspectivas distintas.";
@@ -325,8 +328,8 @@ export default function Home(){
   }
 
   function narrative(){
-    const names = selected.map(c => c.name).join(" → ");
-      if(spread === 1) return `${selected[0].name} concentra el mensaje de la tirada. La pregunta «${effectiveQuestion}» funciona como lente: el mismo arcano puede hablar de algo distinto según aquello que quieres comprender. La lectura invita a observar el símbolo en tu realidad y decidir qué significado tiene para ti.`;
+    const names = selectedCards.map(c => c.name).join(" → ");
+      if(spread === 1) return `${selectedCards[0].name} concentra el mensaje de la tirada. La pregunta «${effectiveQuestion}» funciona como lente: el mismo arcano puede hablar de algo distinto según aquello que quieres comprender. La lectura invita a observar el símbolo en tu realidad y decidir qué significado tiene para ti.`;
     if(spread === 2) return `${names} construyen un diálogo. La primera carta establece el terreno y la segunda responde, corrige o reorienta ese terreno. La lectura gana profundidad cuando buscas la relación entre ambas en lugar de interpretar cada una por separado.`;
     if(spread === 3) return `${names} forman una trayectoria. El origen explica una raíz activa, el presente muestra dónde está concentrada la experiencia y la tendencia abre una posibilidad de desarrollo. La tendencia no se presenta como destino: cambia cuando cambia la manera de actuar, percibir o relacionarte con la situación.`;
     if(spread === 5) return `${names} forman una arquitectura de cinco movimientos. La dinámica abre la escena, lo que está en juego concentra el conflicto o deseo, lo no dicho introduce la zona menos visible, la dirección muestra hacia dónde puede organizarse la energía y la clave integra el aprendizaje. Cada carta modifica el significado de las demás.`;
@@ -370,12 +373,12 @@ export default function Home(){
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
     setSpread(3);
     setThreeCardVariant(2);
-    setSlotCards(Array(count).fill(null));
+    setSlotIndexes(Array(count).fill(null));
     setReading(false);
   } else if (cat === 0) {
     setSpread(3);
     setThreeCardVariant(1);
-    setSlotCards(Array(count).fill(null));
+    setSlotIndexes(Array(count).fill(null));
     setReading(false);
   }
 }} key={q}>{q}</button>)}
@@ -396,7 +399,7 @@ export default function Home(){
           <div className="spreadGroup" key={s.id}>
             <button
               className={spread===3 ? "spread active" : "spread"}
-              onClick={()=>{setSpread(3);setSlotCards(Array(3).fill(null));setReading(false);}}
+              onClick={()=>{setSpread(3);setSlotIndexes(Array(3).fill(null));setReading(false);}}
               type="button"
             >
               <strong>3 cartas</strong>
@@ -409,7 +412,7 @@ export default function Home(){
                     type="button"
                     key={v.id}
                     className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-                    onClick={()=>{setThreeCardVariant(v.id);setSlotCards(Array(3).fill(null));setReading(false);}}
+                    onClick={()=>{setThreeCardVariant(v.id);setSlotIndexes(Array(3).fill(null));setReading(false);}}
                   >
                     <span>{v.id+1}</span>
                     <b>{v.label}</b>
@@ -419,7 +422,7 @@ export default function Home(){
             )}
           </div>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setSlotCards(Array(s.positions.length).fill(null));setReading(false);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setSlotIndexes(Array(s.positions.length).fill(null));setReading(false);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -437,7 +440,7 @@ export default function Home(){
 
       <div className="selectedSpread" aria-label="Tu tirada">
         {current.positions.map((position,i) => {
-          const card = slotCards[i] ?? undefined;
+          const card = selected[i] ?? undefined;
           return <div className={card ? "drawSlot filled" : "drawSlot"} key={position}>
             <div className="drawTop"><span>{String(i+1).padStart(2,"0")}</span><b>{position}</b></div>
             <button
@@ -458,7 +461,7 @@ export default function Home(){
             </button>
             <div className="drawName">
               {card ? card.name : "Elige una carta"}
-              {card && <button className="changeCard" type="button" onClick={() => choose(card)}>Cambiar</button>}
+              {card && <button className="changeCard" type="button" onClick={() => { const idx = slotIndexes[i]; if (idx !== null) choose(idx); }}>Cambiar</button>}
             </div>
           </div>;
         })}
@@ -466,16 +469,16 @@ export default function Home(){
 
       <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
-        {deckOrder.map(id => {
+        {deckOrder.map((id, deckIndex) => {
           const c = cardById.get(id)!;
-          const pickNumber = slotCards.findIndex(card => card?.id === c.id);
+          const pickNumber = slotIndexes.findIndex(index => index === deckIndex);
           const isPicked = pickNumber !== -1;
           return (
             <button
               className={isPicked ? "tarot picked" : "tarot"}
-              key={c.id}
+              key={`${id}-${deckIndex}`}
               type="button"
-              onClick={() => choose(c)}
+              onClick={() => choose(deckIndex)}
               aria-label={isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
               title={isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
             >
@@ -525,7 +528,7 @@ export default function Home(){
 
       <div className="positionReadings">
         <div className="readingLabel">Lectura carta a carta</div>
-        {selected.map((c,i)=><article className="positionReading" key={c.id}>
+        {selectedCards.map((c,i)=><article className="positionReading" key={c.id}>
           <div className="positionNumber">{String(i+1).padStart(2,"0")}</div>
           <button className="readingCardThumb" type="button" onClick={() => setZoomCard(c)} aria-label={`Ampliar ${c.name}`}>
             <CardImage key={c.id} card={c} alt={c.name}/>
