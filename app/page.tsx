@@ -85,6 +85,7 @@ const minors: Card[] = suitData.flatMap(suit =>
 );
 
 const cards: Card[] = [...majors,...minors];
+const cardById = new Map(cards.map(card => [card.id, card]));
 
 const spreads: Spread[] = [
   {id:1,name:"1 carta",subtitle:"Mensaje",positions:["Lo esencial ahora"]},
@@ -166,17 +167,16 @@ export default function Home(){
   const [reading, setReading] = useState(false);
   const [mode, setMode] = useState(0);
   const [deckOrder, setDeckOrder] = useState<string[]>(shuffleIds);
-  const [zoomCard, setZoomCard] = useState<Card | null>(null);
 
   const current = spreads.find(s => s.id === spread)!;
   const count = current.positions.length;
   const effectiveQuestion = customQuestion.trim() || question;
 
-  const cardById = useMemo(() => new Map(cards.map(card => [card.id, card])), []);
   const selected = useMemo(
     () => picked.map(id => cardById.get(id)).filter(Boolean) as Card[],
-    [picked, cardById]
+    [picked]
   );
+  const [zoomCard, setZoomCard] = useState<Card | null>(null);
 
   function resetDeck(){
     setDeckOrder(shuffleIds());
@@ -195,7 +195,6 @@ export default function Home(){
     setPicked([]);
     setReading(false);
     setMode(0);
-    setZoomCard(null);
   }
 
   function choose(id:string){
@@ -212,15 +211,8 @@ export default function Home(){
     setDeckOrder(order);
     setPicked(order.slice(0, count));
     setReading(false);
+    setMode(0);
     setZoomCard(null);
-  }
-
-  function shuffleTable(){
-    setDeckOrder(shuffleIds());
-    setPicked([]);
-    setReading(false);
-    setZoomCard(null);
-    requestAnimationFrame(() => document.getElementById("mesa")?.scrollIntoView({behavior:"smooth", block:"start"}));
   }
 
   function interpret(){
@@ -287,9 +279,14 @@ export default function Home(){
     </header>
 
     <section className="hero sectionBlock">
-      <div className="eyebrow">01 · La pregunta</div>
-      <h1>Empieza por lo que<br/><span>quieres comprender.</span></h1>
-      <p className="heroIntro">Elige un tema, formula tu propia pregunta y deja que la tirada organice aquello que quieres mirar.</p>
+      <div className="heroCopy">
+        <div className="eyebrow">01 · La pregunta</div>
+        <h1>Empieza por lo que<br/><span>quieres comprender.</span></h1>
+        <p className="heroIntro">Elige un tema, formula tu propia pregunta y deja que la tirada organice aquello que quieres mirar.</p>
+      </div>
+      <div className="heroArtwork" aria-hidden="true">
+        <img src="/cartas-hero.png" alt="" />
+      </div>
 
       <div className="categories" role="tablist" aria-label="Temas">
         {categories.map((c,i) => <button className={cat===i ? "category active" : "category"} onClick={()=>selectCat(i)} key={c.name}>{c.name}</button>)}
@@ -330,53 +327,61 @@ export default function Home(){
           return <div className={card ? "drawSlot filled" : "drawSlot"} key={position}>
             <div className="drawTop"><span>{String(i+1).padStart(2,"0")}</span><b>{position}</b></div>
             <button
-              type="button"
               className="drawCard"
-              onClick={() => card && setZoomCard(card)}
+              type="button"
               disabled={!card}
-              aria-label={card ? `${card.name}, posición ${i+1}. Pulsa para retirar` : `Posición ${position}`}
+              onClick={() => card && setZoomCard(card)}
+              aria-label={card ? `Ampliar ${card.name}` : "Elige una carta"}
             >
-              {card ? <img
-                src={`/cards/${card.file}`}
-                alt={card.name}
-                onError={(event) => {
-                  const image = event.currentTarget;
-                  image.style.display = "none";
-                  image.parentElement?.classList.add("imageMissing");
-                }}
-              /> : <div className="emptyBack"><span>Selecciona una carta</span><i>✦</i></div>}
-              {card && <span className="zoomHint" aria-hidden="true">⌕</span>}
+              {card ? (
+                <>
+                  <img src={`/cards/${card.file}`} alt={card.name}/>
+                  <span className="zoomHint" aria-hidden="true">⌕</span>
+                </>
+              ) : (
+                <div className="emptyBack"><span>Elige una carta</span><i>✦</i></div>
+              )}
             </button>
-            <div className="drawName">{card ? card.name : "Elige una carta"}</div>
+            <div className="drawName">
+              {card ? card.name : "Elige una carta"}
+              {card && <button className="changeCard" type="button" onClick={() => choose(card.id)}>Cambiar</button>}
+            </div>
           </div>;
         })}
       </div>
 
-      <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><button className="shuffleButton" onClick={shuffleTable}>Mezclar</button><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
+      <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
         {deckOrder.map(id => {
           const c = cardById.get(id)!;
           const isPicked = picked.includes(c.id);
-          return <button
-            className={isPicked ? "tarot tarotBack deckPicked" : "tarot tarotBack"}
-            key={c.id}
-            onClick={()=>choose(c.id)}
-            aria-label={isPicked ? `${c.name}, seleccionada` : `Elegir ${c.name}`}
-            title={isPicked ? "Carta seleccionada · pulsa para retirarla" : "Toca para seleccionar esta carta"}
-          >
-            <span className="backInner" aria-hidden="true">
-              <span className="backVine"></span>
-              <span className="backLeaf leaf1"></span>
-              <span className="backLeaf leaf2"></span>
-              <span className="backLeaf leaf3"></span>
-              <span className="backLeaf leaf4"></span>
-              <span className="backOrnament"></span>
-            </span>
-          </button>;
+          const pickNumber = picked.indexOf(c.id);
+          return (
+            <button
+              className={isPicked ? "tarot picked" : "tarot"}
+              key={c.id}
+              type="button"
+              onClick={() => choose(c.id)}
+              aria-label={isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
+              title={isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
+            >
+              <span className="cardBack">
+                <span className="backFrame backFrameOuter"></span>
+                <span className="backFrame backFrameInner"></span>
+                <span className="backGarland backGarlandLeft"></span>
+                <span className="backGarland backGarlandRight"></span>
+                <span className="backMedallion">
+                  <span className="backStar">✦</span>
+                </span>
+              </span>
+              {isPicked && <span className="pickedMark">{pickNumber + 1}</span>}
+            </button>
+          );
         })}
       </div>
 
       <div className="actions">
+        <button className="secondary shuffleButton" onClick={resetDeck}>Mezclar</button>
         <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
         <button className="secondary" onClick={random}>Dejar que CARTAS elija</button>
         <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
@@ -403,23 +408,33 @@ export default function Home(){
         <div className="readingLabel">Lectura carta a carta</div>
         {selected.map((c,i)=><article className="positionReading" key={c.id}>
           <div className="positionNumber">{String(i+1).padStart(2,"0")}</div>
-          <div className="positionCardImage"><button type="button" onClick={()=>setZoomCard(c)} aria-label={`Ampliar ${c.name}`}><img src={`/cards/${c.file}`} alt={c.name}/><span>⌕</span></button></div>
+          <button className="readingCardThumb" type="button" onClick={() => setZoomCard(c)} aria-label={`Ampliar ${c.name}`}>
+            <img src={`/cards/${c.file}`} alt={c.name}/>
+            <span className="zoomHint" aria-hidden="true">⌕</span>
+          </button>
           <div className="positionInfo"><span>{current.positions[i]}</span><h3>{c.name}</h3><small>{cardArea(c)}</small></div>
           <div className="positionText"><p>{contextualReading(c,i)}</p><div className="lightShadow"><span><b>Luz</b> {c.light}</span><span><b>Sombra</b> {c.shadow}</span></div></div>
         </article>)}
       </div>
 
+      <div className="jointReading">
+        <div className="label">La narración conjunta</div>
+        <h3>Cómo hablan las cartas entre sí</h3>
+        <p>{narrative()}</p>
+      </div>
       <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
       <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
     </section>}
 
-    {zoomCard && <div className="cardZoomOverlay" role="dialog" aria-modal="true" aria-label={`Carta ampliada: ${zoomCard.name}`} onClick={()=>setZoomCard(null)}>
-      <div className="cardZoomPanel" onClick={e=>e.stopPropagation()}>
-        <button className="cardZoomClose" onClick={()=>setZoomCard(null)} aria-label="Cerrar ampliación">×</button>
-        <img src={`/cards/${zoomCard.file}`} alt={zoomCard.name}/>
-        <div className="zoomCardName">{zoomCard.name}</div>
+    {zoomCard && (
+      <div className="cardZoomOverlay" role="dialog" aria-modal="true" aria-label={`Carta ${zoomCard.name}`} onClick={() => setZoomCard(null)}>
+        <div className="cardZoomPanel" onClick={e => e.stopPropagation()}>
+          <button className="cardZoomClose" type="button" onClick={() => setZoomCard(null)} aria-label="Cerrar">×</button>
+          <img src={`/cards/${zoomCard.file}`} alt={zoomCard.name}/>
+          <div className="zoomCaption">{zoomCard.name}</div>
+        </div>
       </div>
-    </div>}
+    )}
 
     <footer>El tarot se presenta aquí como lenguaje simbólico de reflexión. La lectura abre perspectivas; tus decisiones siguen siendo tuyas.</footer>
   </main>;
