@@ -290,15 +290,15 @@ export default function Home(){
       ? ` Al dialogar con ${neighbours.map(n => n.name).join(" y ")}, esta cualidad adquiere un matiz que conviene observar dentro del conjunto.`
       : " Aquí la carta funciona como núcleo de la lectura, por lo que su posición tiene un peso especial.";
 
-    if(spread === 31){
-      if(i === 0) return `En YO, ${c.name} habla de tu lugar dentro de la situación: ${c.essence}. La luz que puede abrirse aquí es ${c.light}. La sombra a vigilar es ${c.shadow}. La carta no te pide adivinar al otro; te devuelve a aquello que sí puedes observar, elegir y transformar.${neighbourText}`;
-      if(i === 1) return `En EL OTRO, ${c.name} representa simbólicamente la dinámica que estás percibiendo en la otra parte del vínculo. Señala ${c.essence}. La lectura sirve para contrastar esa percepción con hechos y conversaciones, no para convertir el símbolo en una certeza sobre su mundo interior. Su luz es ${c.light}; su sombra, ${c.shadow}.${neighbourText}`;
-      return `En EL VÍNCULO, ${c.name} muestra la cualidad que toma el espacio entre ambos: ${c.essence}. Aquí importa especialmente qué se activa cuando las dos posiciones anteriores entran en relación. La luz disponible es ${c.light}; la tensión posible aparece como ${c.shadow}.${neighbourText}`;
-    }
-
     if(spread === 1) return `${c.name} ocupa la posición «${position}». El símbolo concentra la lectura en ${c.essence}. Su expresión luminosa es ${c.light}; cuando se bloquea puede aparecer como ${c.shadow}. La clave está en llevar esta imagen a tu situación concreta y observar qué encaja y qué necesita contraste.`;
     if(spread === 2) return `En «${position}», ${c.name} responde desde ${c.essence}. No es una definición aislada: esta posición le da dirección a la carta. Su recurso es ${c.light}; su tensión, ${c.shadow}.${neighbourText}`;
-    if(spread === 3) return `En «${position}», ${c.name} aporta ${c.essence}. Como parte de una secuencia, interesa ver qué recibe de la carta anterior y qué prepara para la siguiente. La expresión disponible es ${c.light}; el punto de atención es ${c.shadow}.${neighbourText}`;
+    if(spread === 3) {
+      if(threeCardVariant === 1 && i === 0) return `En «yo», ${c.name} devuelve la mirada a tu lugar dentro del vínculo: ${c.essence}. La carta señala qué puedes observar, expresar y elegir desde tu propia posición. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
+      if(threeCardVariant === 1 && i === 1) return `En «el otro», ${c.name} representa simbólicamente la dinámica que percibes en la otra parte del vínculo: ${c.essence}. Se lee como una hipótesis simbólica que conviene contrastar con hechos, gestos y conversaciones, no como acceso literal a su mundo interior. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
+      if(threeCardVariant === 1 && i === 2) return `En «el vínculo», ${c.name} muestra la cualidad que toma el espacio entre ambos: ${c.essence}. Aquí importa observar qué se activa cuando tu posición y la dinámica del otro entran en relación. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
+      if(threeCardVariant === 2) return `En «${position}», ${c.name} aporta ${c.essence}. Esta variante organiza la lectura en tres planos simbólicos —qué siente, qué piensa y qué intenciones muestra la dinámica—. La carta no afirma literalmente el mundo interior de otra persona: invita a contrastar la percepción con hechos y conversaciones. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
+      return `En «${position}», ${c.name} aporta ${c.essence}. Como parte de una secuencia, interesa ver qué recibe de la carta anterior y qué prepara para la siguiente. La expresión disponible es ${c.light}; el punto de atención es ${c.shadow}.${neighbourText}`;
+    }
     return `En «${position}», ${c.name} introduce ${c.essence}. La carta funciona como una pieza dentro de una arquitectura mayor: ${c.light} muestra el recurso disponible y ${c.shadow} señala dónde puede perderse la claridad.${neighbourText}`;
   }
 
@@ -382,26 +382,39 @@ export default function Home(){
       <div className="eyebrow">02 · La tirada</div>
       <div className="sectionHeading"><div><h2>Elige la forma de mirar.</h2><p>La propuesta se adapta a tu pregunta, pero tú decides.</p></div></div>
       <div className="spreads">
-        {spreads.map(s => <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setPicked([]);setReading(false);}} key={s.id}>
-          <strong>{s.name}</strong>
-          {s.id !== 3 && <span>{s.subtitle}</span>}
-        </button>)}
-      </div>
-      {spread === 3 && (
-        <div className="threeVariants" aria-label="Versiones de la tirada de 3 cartas">
-          {threeCardVariants.map(v => (
+        {spreads.map(s => s.id === 3 ? (
+          <div className={spread===3 ? "spreadGroup active" : "spreadGroup"} key={s.id}>
             <button
+              className={spread===3 ? "spread active" : "spread"}
+              onClick={()=>{setSpread(3);setPicked([]);setReading(false);}}
               type="button"
-              key={v.id}
-              className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-              onClick={()=>{setThreeCardVariant(v.id);setPicked([]);setReading(false);}}
             >
-              <span>{v.id+1}</span>
-              <b>{v.label}</b>
+              <strong>3 cartas</strong>
+              <span>elige una de las tres formas de mirar</span>
             </button>
-          ))}
-        </div>
-      )}
+            {spread === 3 && (
+              <div className="threeVariants" aria-label="Opciones de la tirada de 3 cartas">
+                {threeCardVariants.map(v => (
+                  <button
+                    type="button"
+                    key={v.id}
+                    className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
+                    onClick={()=>{setThreeCardVariant(v.id);setPicked([]);setReading(false);}}
+                  >
+                    <span>{v.id+1}</span>
+                    <b>{v.label}</b>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setPicked([]);setReading(false);}} key={s.id} type="button">
+            <strong>{s.name}</strong>
+            <span>{s.subtitle}</span>
+          </button>
+        ))}
+      </div>
       <div className="recommend">Para esta pregunta, la lectura propuesta es <b>{spreads.find(s=>s.id===suggestedSpreadId)?.name}</b>{suggestedSpreadId === 3 ? ` · ${threeCardVariants[suggestedThreeVariant].label}` : ` · ${spreads.find(s=>s.id===suggestedSpreadId)?.subtitle}`}.</div>
     </section>
 
@@ -456,13 +469,18 @@ export default function Home(){
               aria-label={isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
               title={isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
             >
-              <span className="cardBack">
-                <span className="backFrame backFrameOuter"></span>
-                <span className="backFrame backFrameInner"></span>
-                <span className="backGarland backGarlandLeft"></span>
-                <span className="backGarland backGarlandRight"></span>
-                <span className="backMedallion">
-                  <span className="backStar">✦</span>
+              <span className="tarotFlip">
+                <span className="cardFace cardFaceBack">
+                  <span className="backFrame backFrameOuter"></span>
+                  <span className="backFrame backFrameInner"></span>
+                  <span className="backGarland backGarlandLeft"></span>
+                  <span className="backGarland backGarlandRight"></span>
+                  <span className="backMedallion">
+                    <span className="backStar">✦</span>
+                  </span>
+                </span>
+                <span className="cardFace cardFaceFront">
+                  <CardImage card={c} alt={c.name}/>
                 </span>
               </span>
               {isPicked && <span className="pickedMark">{pickNumber + 1}</span>}
