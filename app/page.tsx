@@ -147,12 +147,14 @@ El movimiento profundo es percibir → elegir → atravesar la incertidumbre →
 }
 
 export default function Home(){
- const [cat,setCat]=useState(0),[question,setQuestion]=useState(categories[0].questions[0]),[spread,setSpread]=useState(31),[picked,setPicked]=useState<string[]>([]),[reading,setReading]=useState(false),[mode,setMode]=useState(0);
+ const shuffleIds=()=>[...cards].sort(()=>Math.random()-.5).map(c=>c.id);
+ const [cat,setCat]=useState(0),[question,setQuestion]=useState(categories[0].questions[0]),[spread,setSpread]=useState(31),[picked,setPicked]=useState<string[]>([]),[reading,setReading]=useState(false),[mode,setMode]=useState(0),[deckOrder,setDeckOrder]=useState<string[]>(shuffleIds);
  const current=spreads.find(s=>s.id===spread)!;
  const selected=useMemo(()=>picked.map(id=>cards.find(c=>c.id===id)!).filter(Boolean),[picked]);
- function selectCat(i:number){setCat(i);setQuestion(categories[i].questions[0]);setSpread(categories[i].recommended);setPicked([]);setReading(false)}
+ function resetDeck(){setDeckOrder(shuffleIds());setPicked([]);setReading(false)}
+ function selectCat(i:number){setCat(i);setQuestion(categories[i].questions[0]);setSpread(categories[i].recommended);resetDeck()}
  function choose(id:string){if(reading)return;setPicked(p=>p.includes(id)?p.filter(x=>x!==id):p.length<spread?[...p,id]:p)}
- function random(){setPicked([...cards].sort(()=>Math.random()-.5).slice(0,spread).map(c=>c.id));setReading(false)}
+ function random(){const order=shuffleIds();setDeckOrder(order);setPicked(order.slice(0,spread));setReading(false)}
  function interpret(){if(picked.length===spread)setReading(true)}
  return <main>
  <header><div className="logo">CARTAS</div><div className="headerMeta">LECTURA SIMBÓLICA · 78 CARTAS</div></header>
@@ -160,9 +162,9 @@ export default function Home(){
  <div className="categories">{categories.map((c,i)=><button className={cat===i?"category active":"category"} onClick={()=>selectCat(i)} key={c.name}>{c.name}</button>)}</div>
  <div className="question"><div className="label">Pregunta</div><div className="questionList">{categories[cat].questions.map(q=><button className={question===q?"qoption active":"qoption"} onClick={()=>setQuestion(q)} key={q}>{q}</button>)}</div><textarea value={question} onChange={e=>setQuestion(e.target.value)}/></div></section>
  <section><div className="eyebrow">02 · Profundidad</div><h2>Elige cómo quieres leer.</h2><div className="spreads">{spreads.map(s=><button className={spread===s.id?"spread active":"spread"} onClick={()=>{setSpread(s.id);setPicked([]);setReading(false)}} key={s.id}><strong>{s.name}</strong><span>{s.subtitle}</span></button>)}</div><div className="recommend">Para esta pregunta, recomendamos <b>{spreads.find(s=>s.id===categories[cat].recommended)?.name}</b> · {spreads.find(s=>s.id===categories[cat].recommended)?.subtitle}</div></section>
- <section><div className="eyebrow">03 · La elección</div><div className="pickTitle"><h2>Elige tus {spread===1?"carta":"cartas"}</h2><span>{picked.length} / {spread}</span></div><p className="hint">El orden de elección crea la secuencia de la lectura. También puedes dejar que CARTAS las elija por ti.</p>
- <div className="deck">{cards.map(c=><button className={picked.includes(c.id)?"tarot picked":"tarot"} key={c.id} onClick={()=>choose(c.id)}><img src={`/cards/${c.file}`} alt={c.name}/><span>{c.name}</span>{picked.includes(c.id)&&<i>{picked.indexOf(c.id)+1}</i>}</button>)}</div>
- <div className="actions"><button className="primary" disabled={picked.length!==spread} onClick={interpret}>Revelar interpretación</button><button className="secondary" onClick={random}>Elegir por azar</button><button className="secondary" onClick={()=>{setPicked([]);setReading(false)}}>Empezar de nuevo</button></div></section>
+ <section><div className="eyebrow">03 · La elección</div><div className="pickTitle"><h2>Elige tus {spread===1?"carta":"cartas"}</h2><span>{picked.length} / {spread}</span></div><p className="hint">La baraja se mezcla automáticamente. Todas las cartas empiezan del revés. Elige una carta y se revela para ocupar su posición en la tirada.</p>
+ <div className="deck">{deckOrder.map(id=>{const c=cards.find(card=>card.id===id)!;const isPicked=picked.includes(c.id);return <button className={isPicked?"tarot picked":"tarot"} key={c.id} onClick={()=>choose(c.id)} aria-label={isPicked?c.name:"Carta boca abajo"}>{isPicked?<img src={`/cards/${c.file}`} alt={c.name}/>:<span className="cardBack" aria-hidden="true"><span>CARTAS</span><b>✦</b></span>}{isPicked&&<span className="cardName">{c.name}</span>}{isPicked&&<i>{picked.indexOf(c.id)+1}</i>}</button>})}</div>
+ <div className="actions"><button className="primary" disabled={picked.length!==spread} onClick={interpret}>Revelar interpretación</button><button className="secondary" onClick={random}>Elegir por azar</button><button className="secondary" onClick={resetDeck}>Empezar de nuevo</button></div></section>
  {reading&&<section className="result"><div className="eyebrow">04 · La lectura</div><h2>Lo que cuenta tu tirada</h2><div className="echo">«{question}»</div>
  <div className="readingModes">{modes.map((m,i)=><button className={mode===i?"mode active":"mode"} onClick={()=>setMode(i)} key={m[0]}><b>{m[0]}</b><span>{m[1]}</span></button>)}</div>
  <div className="resultCards">{selected.map((c,i)=><article key={c.id}><div className="resultImg"><img src={`/cards/${c.file}`} alt={c.name}/></div><div className="position">{String(i+1).padStart(2,"0")} · {current.positions[i]}</div><h3>{c.name}</h3><p>{c.essence}</p><details><summary>Profundizar</summary><p><b>Luz:</b> {c.light}. <b>Sombra:</b> {c.shadow}. En esta posición, pregunta qué aporta este arcano a «{question}» y qué cambia al leerlo junto a las cartas vecinas.</p></details></article>)}</div>
