@@ -204,7 +204,7 @@ export default function Home(){
   const [customQuestion, setCustomQuestion] = useState("");
   const [spread, setSpread] = useState(3);
   const [threeCardVariant, setThreeCardVariant] = useState(1);
-  const [picked, setPicked] = useState<string[]>([]);
+  const [slotIds, setSlotIds] = useState<(string | null)[]>(Array(3).fill(null));
   const [reading, setReading] = useState(false);
   const [mode, setMode] = useState(0);
   const [deckOrder, setDeckOrder] = useState<string[]>(shuffleIds);
@@ -223,15 +223,16 @@ export default function Home(){
     normalizedQuestion.includes("intenciones") ? 2 :
     cat === 0 ? 1 : 0;
 
+  const picked = useMemo(() => slotIds.filter((id): id is string => Boolean(id)), [slotIds]);
   const selected = useMemo(
-    () => picked.map(id => cardById.get(id)).filter(Boolean) as Card[],
-    [picked]
+    () => slotIds.map(id => id ? cardById.get(id) : undefined).filter(Boolean) as Card[],
+    [slotIds]
   );
   const [zoomCard, setZoomCard] = useState<Card | null>(null);
 
   function resetDeck(){
     setDeckOrder(shuffleIds());
-    setPicked([]);
+    setSlotIds(Array(count).fill(null));
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -244,24 +245,32 @@ export default function Home(){
     setSpread(categories[i].recommended);
     setThreeCardVariant(i === 0 ? 1 : 0);
     setDeckOrder(shuffleIds());
-    setPicked([]);
+    setSlotIds(Array(categories[i].recommended).fill(null));
     setReading(false);
     setMode(0);
   }
 
   function choose(id:string){
     if(reading) return;
-    setPicked(p => {
-      if (p.includes(id)) return p.filter(x => x !== id);
-      if (p.length >= count) return p;
-      return [...p, id];
+    setSlotIds(slots => {
+      const existing = slots.indexOf(id);
+      if (existing !== -1) {
+        const next = [...slots];
+        next[existing] = null;
+        return next;
+      }
+      const empty = slots.indexOf(null);
+      if (empty === -1) return slots;
+      const next = [...slots];
+      next[empty] = id;
+      return next;
     });
   }
 
   function random(){
     const order = shuffleIds();
     setDeckOrder(order);
-    setPicked(order.slice(0, count));
+    setSlotIds(order.slice(0, count));
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -360,12 +369,12 @@ export default function Home(){
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
     setSpread(3);
     setThreeCardVariant(2);
-    setPicked([]);
+    setSlotIds(Array(count).fill(null));
     setReading(false);
   } else if (cat === 0) {
     setSpread(3);
     setThreeCardVariant(1);
-    setPicked([]);
+    setSlotIds(Array(count).fill(null));
     setReading(false);
   }
 }} key={q}>{q}</button>)}
@@ -386,7 +395,7 @@ export default function Home(){
           <div className="spreadGroup" key={s.id}>
             <button
               className={spread===3 ? "spread active" : "spread"}
-              onClick={()=>{setSpread(3);setPicked([]);setReading(false);}}
+              onClick={()=>{setSpread(3);setSlotIds(Array(3).fill(null));setReading(false);}}
               type="button"
             >
               <strong>3 cartas</strong>
@@ -399,7 +408,7 @@ export default function Home(){
                     type="button"
                     key={v.id}
                     className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-                    onClick={()=>{setThreeCardVariant(v.id);setPicked([]);setReading(false);}}
+                    onClick={()=>{setThreeCardVariant(v.id);setSlotIds(Array(3).fill(null));setReading(false);}}
                   >
                     <span>{v.id+1}</span>
                     <b>{v.label}</b>
@@ -409,7 +418,7 @@ export default function Home(){
             )}
           </div>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setPicked([]);setReading(false);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setSlotIds(Array(s.positions.length).fill(null));setReading(false);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -427,7 +436,7 @@ export default function Home(){
 
       <div className="selectedSpread" aria-label="Tu tirada">
         {current.positions.map((position,i) => {
-          const card = selected[i];
+          const card = slotIds[i] ? cardById.get(slotIds[i]!) : undefined;
           return <div className={card ? "drawSlot filled" : "drawSlot"} key={position}>
             <div className="drawTop"><span>{String(i+1).padStart(2,"0")}</span><b>{position}</b></div>
             <button
@@ -439,7 +448,7 @@ export default function Home(){
             >
               {card ? (
                 <>
-                  <CardImage card={card} alt={card.name}/>
+                  <CardImage key={card.id} card={card} alt={card.name}/>
                   <span className="zoomHint" aria-hidden="true">⌕</span>
                 </>
               ) : (
@@ -480,7 +489,7 @@ export default function Home(){
                   </span>
                 </span>
                 <span className="cardFace cardFaceFront">
-                  <CardImage card={c} alt={c.name}/>
+                  <CardImage key={c.id} card={c} alt={c.name}/>
                 </span>
               </span>
               {isPicked && <span className="pickedMark">{pickNumber + 1}</span>}
@@ -518,7 +527,7 @@ export default function Home(){
         {selected.map((c,i)=><article className="positionReading" key={c.id}>
           <div className="positionNumber">{String(i+1).padStart(2,"0")}</div>
           <button className="readingCardThumb" type="button" onClick={() => setZoomCard(c)} aria-label={`Ampliar ${c.name}`}>
-            <CardImage card={c} alt={c.name}/>
+            <CardImage key={c.id} card={c} alt={c.name}/>
             <span className="zoomHint" aria-hidden="true">⌕</span>
           </button>
           <div className="positionInfo"><span>{current.positions[i]}</span><h3>{c.name}</h3><small>{cardArea(c)}</small></div>
