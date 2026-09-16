@@ -9,7 +9,7 @@ type Card = {
   essence: string;
   light: string;
   shadow: string;
-  selectedPosition?: number;
+  slot?: number;
 };
 
 type Spread = {
@@ -178,14 +178,17 @@ export default function Home(){
   const [customQuestion, setCustomQuestion] = useState("");
   const [spread, setSpread] = useState(3);
   const [threeCardVariant, setThreeCardVariant] = useState(1);
-  // FUENTE ÚNICA DE VERDAD:
-  // deckOrder contiene las 78 cartas, su orden actual y, cuando están giradas,
-  // la posición que ocupan en la tirada. No existe un segundo estado de selección.
+  // ÚNICA FUENTE DE VERDAD:
+  // deckOrder contiene las 78 cartas, su orden actual y, si están giradas,
+  // la posición exacta que ocupan en la tirada.
+  // La mesa superior, las marcas de la baraja y la lectura nacen de este mismo estado.
   const [reading, setReading] = useState(false);
   const [mode, setMode] = useState(0);
-  const [deckOrder, setDeckOrder] = useState<Card[]>(() =>
-    shuffleCards().map(card => ({...card, selectedPosition: undefined}))
-  );
+
+  const makeDeck = () =>
+    shuffleCards().map(card => ({...card, slot: undefined}));
+
+  const [deckOrder, setDeckOrder] = useState<Card[]>(makeDeck);
 
   const baseSpread = spreads.find(s => s.id === spread)!;
   const current = spread === 3
@@ -193,30 +196,23 @@ export default function Home(){
     : baseSpread;
   const count = current.positions.length;
   const effectiveQuestion = customQuestion.trim() || question;
-  const normalizedQuestion = effectiveQuestion.toLowerCase();
-  const suggestedSpreadId = categories[cat].recommended;
-  const suggestedThreeVariant =
-    normalizedQuestion.includes("siente") ||
-    normalizedQuestion.includes("piensa") ||
-    normalizedQuestion.includes("intenciones") ? 2 :
-    cat === 0 ? 1 : 0;
 
-  // La mesa superior se construye directamente desde las mismas cartas que
-  // están en deckOrder. Si una carta tiene selectedPosition, es exactamente
-  // la carta que aparece arriba en esa posición.
-  const selected = Array.from({length: count}, (_, index) =>
-    deckOrder.find(card => card.selectedPosition === index + 1) ?? null
-  );
-  const selectedFilled = selected.filter((card): card is Card => Boolean(card));
+  // Las cartas elegidas se leen DIRECTAMENTE del mismo deckOrder.
+  const selected = deckOrder
+    .filter(card => card.slot != null)
+    .sort((a,b) => (a.slot as number) - (b.slot as number))
+    .slice(0, count);
+
+  const selectedFilled = selected;
   const picked = selectedFilled;
   const [zoomCard, setZoomCard] = useState<Card | null>(null);
 
-  function shuffledDeck(){
-    return shuffleCards().map(card => ({...card, selectedPosition: undefined}));
+  function freshDeck(){
+    return makeDeck();
   }
 
   function resetDeck(){
-    setDeckOrder(shuffledDeck());
+    setDeckOrder(freshDeck());
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -228,41 +224,43 @@ export default function Home(){
     setCustomQuestion("");
     setSpread(categories[i].recommended);
     setThreeCardVariant(i === 0 ? 1 : 0);
-    setDeckOrder(shuffledDeck());
+    setDeckOrder(freshDeck());
     setReading(false);
     setMode(0);
     setZoomCard(null);
   }
 
+  // Este es el único mecanismo de selección.
+  // La carta pulsada conserva su posición dentro de la baraja y recibe un slot.
+  // La misma carta/slot alimenta arriba, abajo y la lectura.
   function choose(card:Card){
     if(reading) return;
 
     setDeckOrder(order => {
-      // La carta ya girada vuelve a boca abajo y libera su posición.
-      if(card.selectedPosition != null){
-        return order.map(item =>
-          item.id === card.id
-            ? {...item, selectedPosition: undefined}
-            : item
-        );
+      const clicked = order.find(item => item.id === card.id);
+      if(!clicked) return order;
+
+      // Si ya está girada, la quitamos y compactamos las posiciones.
+      if(clicked.slot != null){
+        const removedSlot = clicked.slot;
+        return order.map(item => {
+          if(item.id === card.id) return {...item, slot: undefined};
+          if(item.slot != null && item.slot > removedSlot) {
+            return {...item, slot: item.slot - 1};
+          }
+          return item;
+        });
       }
 
-      // Busca la primera posición libre de la tirada.
-      const used = new Set(
-        order
-          .filter(item => item.selectedPosition != null)
-          .map(item => item.selectedPosition as number)
-      );
+      // Si aún quedan posiciones libres, esta carta ocupa la siguiente.
+      const selectedCount = order.filter(item => item.slot != null).length;
+      if(selectedCount >= count) return order;
 
-      let position = 1;
-      while(used.has(position)) position++;
+      const nextSlot = selectedCount + 1;
 
-      if(position > count) return order;
-
-      // La misma carta queda marcada abajo y pasa arriba a esa posición.
       return order.map(item =>
         item.id === card.id
-          ? {...item, selectedPosition: position}
+          ? {...item, slot: nextSlot}
           : item
       );
     });
@@ -272,21 +270,22 @@ export default function Home(){
     if(reading) return;
 
     setDeckOrder(order =>
-      order.map(item =>
-        item.selectedPosition === index + 1
-          ? {...item, selectedPosition: undefined}
-          : item
-      )
+      order.map(item => {
+        if(item.slot === index + 1) return {...item, slot: undefined};
+        if(item.slot != null && item.slot > index + 1) {
+          return {...item, slot: item.slot - 1};
+        }
+        return item;
+      })
     );
   }
 
   function random(){
-    // Tirada al azar: nueva baraja, nuevo orden y nuevas cartas seleccionadas.
+    // Tirada al Azar: baraja de nuevo y asigna las primeras posiciones.
     const order = shuffleCards().map((card, index) => ({
       ...card,
-      selectedPosition: index < count ? index + 1 : undefined
+      slot: index < count ? index + 1 : undefined
     }));
-
     setDeckOrder(order);
     setReading(false);
     setMode(0);
@@ -386,14 +385,12 @@ export default function Home(){
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
     setSpread(3);
     setThreeCardVariant(2);
-    setDeckOrder(shuffledDeck());
-    setDeckOrder(shuffleCards());
+    setDeckOrder(freshDeck());
     setReading(false);
   } else if (cat === 0) {
     setSpread(3);
     setThreeCardVariant(1);
-    setDeckOrder(shuffledDeck());
-    setDeckOrder(shuffleCards());
+    setDeckOrder(freshDeck());
     setReading(false);
   }
 }} key={q}>{q}</button>)}
@@ -414,14 +411,14 @@ export default function Home(){
           <button
             key={s.id}
             className={spread===3 ? "spread active" : "spread"}
-            onClick={()=>{setSpread(3);setDeckOrder(shuffledDeck());setReading(false);setZoomCard(null);}}
+            onClick={()=>{setSpread(3);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
             type="button"
           >
             <strong>3 cartas</strong>
             <span>elige una de las tres formas de mirar</span>
           </button>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(shuffledDeck());setDeckOrder(shuffleCards());setReading(false);setZoomCard(null);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(freshDeck());setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -434,7 +431,7 @@ export default function Home(){
               type="button"
               key={v.id}
               className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(shuffledDeck());setDeckOrder(shuffleCards());setReading(false);setZoomCard(null);}}
+              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(freshDeck());setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
             >
               <span>{v.id+1}</span>
               <b>{v.label}</b>
@@ -492,7 +489,7 @@ export default function Home(){
       <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
         {deckOrder.map((c) => {
-          const pickNumber = c.selectedPosition != null ? c.selectedPosition - 1 : -1;
+          const pickNumber = c.slot != null ? c.slot - 1 : -1;
           const isPicked = pickNumber !== -1;
           return (
             <button
