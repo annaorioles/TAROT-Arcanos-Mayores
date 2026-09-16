@@ -108,17 +108,7 @@ function imageSources(card: Card){
 }
 
 function CardImage({card, className, alt}:{card:Card; className?:string; alt:string}){
-  const sources = imageSources(card);
-  const [index, setIndex] = useState(0);
-
-  return (
-    <img
-      className={className}
-      src={sources[index]}
-      alt={alt}
-      onError={() => setIndex(i => Math.min(i + 1, sources.length - 1))}
-    />
-  );
+  return <img className={className} src={`/cards/${card.file}`} alt={alt} />;
 }
 
 const spreads: Spread[] = [
@@ -175,13 +165,13 @@ const modes = [
 ];
 
 export default function Home(){
-  const shuffleIds = () => {
-    const ids = cards.map(c => c.id);
-    for (let i = ids.length - 1; i > 0; i--) {
+  const shuffleCards = () => {
+    const order = [...cards];
+    for (let i = order.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [ids[i], ids[j]] = [ids[j], ids[i]];
+      [order[i], order[j]] = [order[j], order[i]];
     }
-    return ids;
+    return order;
   };
   const [cat, setCat] = useState(0);
   const [question, setQuestion] = useState(categories[0].questions[0]);
@@ -189,10 +179,10 @@ export default function Home(){
   const [spread, setSpread] = useState(3);
   const [threeCardVariant, setThreeCardVariant] = useState(1);
   // Guardamos directamente el ID de la carta pulsada. La misma referencia alimenta la baraja y la lectura.
-  const [selectedIds, setSelectedIds] = useState<(string | null)[]>(Array(3).fill(null));
+  const [selectedCards, setSelectedCards] = useState<(Card | null)[]>(Array(3).fill(null));
   const [reading, setReading] = useState(false);
   const [mode, setMode] = useState(0);
-  const [deckOrder, setDeckOrder] = useState<string[]>(shuffleIds);
+  const [deckOrder, setDeckOrder] = useState<Card[]>(shuffleCards);
 
   const baseSpread = spreads.find(s => s.id === spread)!;
   const current = spread === 3
@@ -208,20 +198,14 @@ export default function Home(){
     normalizedQuestion.includes("intenciones") ? 2 :
     cat === 0 ? 1 : 0;
 
-  const selected = useMemo(
-    () => selectedIds.map(id => id === null ? null : cardById.get(id) ?? null),
-    [selectedIds]
-  );
-  const selectedCards = useMemo(
-    () => selected.filter((card): card is Card => Boolean(card)),
-    [selected]
-  );
-  const picked = selectedIds.filter((id): id is string => id !== null);
+  const selected = selectedCards;
+  const selectedFilled = selectedCards.filter((card): card is Card => Boolean(card));
+  const picked = selectedCards.filter((card): card is Card => Boolean(card));
   const [zoomCard, setZoomCard] = useState<Card | null>(null);
 
   function resetDeck(){
-    setDeckOrder(shuffleIds());
-    setSelectedIds(Array(count).fill(null));
+    setDeckOrder(shuffleCards());
+    setSelectedCards(Array(count).fill(null));
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -233,33 +217,42 @@ export default function Home(){
     setCustomQuestion("");
     setSpread(categories[i].recommended);
     setThreeCardVariant(i === 0 ? 1 : 0);
-    setDeckOrder(shuffleIds());
-    setSelectedIds(Array(categories[i].recommended).fill(null));
+    setDeckOrder(shuffleCards());
+    setSelectedCards(Array(categories[i].recommended).fill(null));
     setReading(false);
     setMode(0);
   }
 
-  function choose(cardId:string){
+  function choose(card:Card){
     if(reading) return;
-    setSelectedIds(slots => {
-      const existing = slots.findIndex(id => id === cardId);
+    setSelectedCards(slots => {
+      const existing = slots.findIndex(item => item?.id === card.id);
       if (existing !== -1) {
         const next = [...slots];
         next[existing] = null;
         return next;
       }
-      const empty = slots.findIndex(id => id === null);
+      const empty = slots.findIndex(item => item === null);
       if (empty === -1) return slots;
       const next = [...slots];
-      next[empty] = cardId;
+      next[empty] = card;
+      return next;
+    });
+  }
+
+  function changeCardAt(index:number){
+    if(reading) return;
+    setSelectedCards(slots => {
+      const next = [...slots];
+      next[index] = null;
       return next;
     });
   }
 
   function random(){
-    const order = shuffleIds();
+    const order = shuffleCards();
     setDeckOrder(order);
-    setSelectedIds(order.slice(0, count));
+    setSelectedCards(order.slice(0, count));
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -301,10 +294,10 @@ export default function Home(){
   }
 
   function synthesis(){
-    const majorsCount = selectedCards.filter(c => Number(c.id) < 22).length;
-    const areas = selectedCards.map(cardArea);
+    const majorsCount = selectedFilled.filter(c => Number(c.id) < 22).length;
+    const areas = selectedFilled.map(cardArea);
     const repeated = areas.find(a => areas.filter(x => x === a).length > 1);
-    const sequence = selectedCards.map(c => c.name).join(" → ");
+    const sequence = selectedFilled.map(c => c.name).join(" → ");
     let focus = repeated
       ? `Hay una concentración clara en ${repeated.toLowerCase()}, por lo que ese territorio merece una atención especial.`
       : "La tirada reparte la energía entre varios territorios, lo que sugiere una lectura que necesita integrar perspectivas distintas.";
@@ -313,8 +306,8 @@ export default function Home(){
   }
 
   function narrative(){
-    const names = selectedCards.map(c => c.name).join(" → ");
-      if(spread === 1) return `${selectedCards[0].name} concentra el mensaje de la tirada. La pregunta «${effectiveQuestion}» funciona como lente: el mismo arcano puede hablar de algo distinto según aquello que quieres comprender. La lectura invita a observar el símbolo en tu realidad y decidir qué significado tiene para ti.`;
+    const names = selectedFilled.map(c => c.name).join(" → ");
+      if(spread === 1) return `${selectedFilled[0].name} concentra el mensaje de la tirada. La pregunta «${effectiveQuestion}» funciona como lente: el mismo arcano puede hablar de algo distinto según aquello que quieres comprender. La lectura invita a observar el símbolo en tu realidad y decidir qué significado tiene para ti.`;
     if(spread === 2) return `${names} construyen un diálogo. La primera carta establece el terreno y la segunda responde, corrige o reorienta ese terreno. La lectura gana profundidad cuando buscas la relación entre ambas en lugar de interpretar cada una por separado.`;
     if(spread === 3) return `${names} forman una trayectoria. El origen explica una raíz activa, el presente muestra dónde está concentrada la experiencia y la tendencia abre una posibilidad de desarrollo. La tendencia no se presenta como destino: cambia cuando cambia la manera de actuar, percibir o relacionarte con la situación.`;
     if(spread === 5) return `${names} forman una arquitectura de cinco movimientos. La dinámica abre la escena, lo que está en juego concentra el conflicto o deseo, lo no dicho introduce la zona menos visible, la dirección muestra hacia dónde puede organizarse la energía y la clave integra el aprendizaje. Cada carta modifica el significado de las demás.`;
@@ -358,12 +351,12 @@ export default function Home(){
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
     setSpread(3);
     setThreeCardVariant(2);
-    setSelectedIds(Array(3).fill(null));
+    setSelectedCards(Array(3).fill(null));
     setReading(false);
   } else if (cat === 0) {
     setSpread(3);
     setThreeCardVariant(1);
-    setSelectedIds(Array(3).fill(null));
+    setSelectedCards(Array(3).fill(null));
     setReading(false);
   }
 }} key={q}>{q}</button>)}
@@ -384,7 +377,7 @@ export default function Home(){
           <div className="spreadGroup" key={s.id}>
             <button
               className={spread===3 ? "spread active" : "spread"}
-              onClick={()=>{setSpread(3);setSelectedIds(Array(3).fill(null));setReading(false);}}
+              onClick={()=>{setSpread(3);setSelectedCards(Array(3).fill(null));setReading(false);}}
               type="button"
             >
               <strong>3 cartas</strong>
@@ -397,7 +390,7 @@ export default function Home(){
                     type="button"
                     key={v.id}
                     className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-                    onClick={()=>{setThreeCardVariant(v.id);setSelectedIds(Array(3).fill(null));setReading(false);}}
+                    onClick={()=>{setThreeCardVariant(v.id);setSelectedCards(Array(3).fill(null));setReading(false);}}
                   >
                     <span>{v.id+1}</span>
                     <b>{v.label}</b>
@@ -407,7 +400,7 @@ export default function Home(){
             )}
           </div>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setSelectedIds(Array(s.positions.length).fill(null));setReading(false);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setSelectedCards(Array(s.positions.length).fill(null));setReading(false);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -423,6 +416,7 @@ export default function Home(){
         <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
       </div>
 
+      <div className="selectionRow">
       <div className="selectedSpread" aria-label="Tu tirada">
         {current.positions.map((position,i) => {
           const card = selected[i] ?? undefined;
@@ -446,24 +440,31 @@ export default function Home(){
             </button>
             <div className="drawName">
               {card ? card.name : "Elige una carta"}
-              {card && <button className="changeCard" type="button" onClick={() => { const id = selectedIds[i]; if (id !== null) choose(id); }}>Cambiar</button>}
+              {card && <button className="changeCard" type="button" onClick={() => changeCardAt(i)}>Cambiar</button>}
             </div>
           </div>;
         })}
       </div>
 
+        <div className="actions">
+          <button className="secondary shuffleButton" onClick={resetDeck}>Mezclar</button>
+          <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
+          <button className="secondary" onClick={random}>Dejar que CARTAS elija</button>
+          <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
+        </div>
+      </div>
+
       <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
-        {deckOrder.map((id) => {
-          const c = cardById.get(id)!;
-          const pickNumber = selectedIds.findIndex(selectedId => selectedId === id);
+        {deckOrder.map((c) => {
+          const pickNumber = selectedCards.findIndex(selectedCard => selectedCard?.id === c.id);
           const isPicked = pickNumber !== -1;
           return (
             <button
               className={isPicked ? "tarot picked" : "tarot"}
-              key={id}
+              key={c.id}
               type="button"
-              onClick={() => choose(c.id)}
+              onClick={() => choose(c)}
               aria-label={isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
               title={isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
             >
@@ -487,12 +488,7 @@ export default function Home(){
         })}
       </div>
 
-      <div className="actions">
-        <button className="secondary shuffleButton" onClick={resetDeck}>Mezclar</button>
-        <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
-        <button className="secondary" onClick={random}>Dejar que CARTAS elija</button>
-        <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
-      </div>
+
     </section>
 
     {reading && <section className="sectionBlock readingSection" id="lectura">
