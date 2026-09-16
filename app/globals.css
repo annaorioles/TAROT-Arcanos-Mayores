@@ -89,3 +89,7 @@ footer{padding:32px 0 0;color:var(--muted);font-size:11px;text-align:center}
 @media (max-width:370px){
   .deck{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
+
+/* V10 — tres modalidades de tirada de 3 cartas */
+.spread:nth-child(3), .spread:nth-child(4), .spread:nth-child(5){min-width:0}
+@media (min-width:1181px){.spreads{grid-template-columns:repeat(6,minmax(0,1fr))}.spread:nth-child(4) strong{line-height:1.12}.spread:nth-child(4) span{max-width:145px}}
