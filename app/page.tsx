@@ -150,7 +150,14 @@ function narrative(selected:Card[], spread:Spread, q:string){
 }
 
 export default function Home(){
-  const shuffleIds = () => [...cards].sort(() => Math.random() - 0.5).map(c => c.id);
+  const shuffleIds = () => {
+    const ids = cards.map(c => c.id);
+    for (let i = ids.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ids[i], ids[j]] = [ids[j], ids[i]];
+    }
+    return ids;
+  };
   const [cat, setCat] = useState(0);
   const [question, setQuestion] = useState(categories[0].questions[0]);
   const [customQuestion, setCustomQuestion] = useState("");
@@ -159,6 +166,7 @@ export default function Home(){
   const [reading, setReading] = useState(false);
   const [mode, setMode] = useState(0);
   const [deckOrder, setDeckOrder] = useState<string[]>(shuffleIds);
+  const [zoomCard, setZoomCard] = useState<Card | null>(null);
 
   const current = spreads.find(s => s.id === spread)!;
   const count = current.positions.length;
@@ -175,6 +183,7 @@ export default function Home(){
     setPicked([]);
     setReading(false);
     setMode(0);
+    setZoomCard(null);
   }
 
   function selectCat(i:number){
@@ -186,14 +195,16 @@ export default function Home(){
     setPicked([]);
     setReading(false);
     setMode(0);
+    setZoomCard(null);
   }
 
   function choose(id:string){
     if(reading) return;
-    setPicked(p => p.includes(id)
-      ? p.filter(x => x !== id)
-      : p.length < count ? [...p, id] : p
-    );
+    setPicked(p => {
+      if (p.includes(id)) return p.filter(x => x !== id);
+      if (p.length >= count) return p;
+      return [...p, id];
+    });
   }
 
   function random(){
@@ -201,6 +212,15 @@ export default function Home(){
     setDeckOrder(order);
     setPicked(order.slice(0, count));
     setReading(false);
+    setZoomCard(null);
+  }
+
+  function shuffleTable(){
+    setDeckOrder(shuffleIds());
+    setPicked([]);
+    setReading(false);
+    setZoomCard(null);
+    requestAnimationFrame(() => document.getElementById("mesa")?.scrollIntoView({behavior:"smooth", block:"start"}));
   }
 
   function interpret(){
@@ -312,7 +332,7 @@ export default function Home(){
             <button
               type="button"
               className="drawCard"
-              onClick={() => card && choose(card.id)}
+              onClick={() => card && setZoomCard(card)}
               disabled={!card}
               aria-label={card ? `${card.name}, posición ${i+1}. Pulsa para retirar` : `Posición ${position}`}
             >
@@ -324,29 +344,33 @@ export default function Home(){
                   image.style.display = "none";
                   image.parentElement?.classList.add("imageMissing");
                 }}
-              /> : <div className="emptyBack"><span>CARTAS</span><i>✦</i></div>}
+              /> : <div className="emptyBack"><span>Selecciona una carta</span><i>✦</i></div>}
+              {card && <span className="zoomHint" aria-hidden="true">⌕</span>}
             </button>
             <div className="drawName">{card ? card.name : "Elige una carta"}</div>
           </div>;
         })}
       </div>
 
-      <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
+      <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><button className="shuffleButton" onClick={shuffleTable}>Mezclar</button><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
         {deckOrder.map(id => {
           const c = cardById.get(id)!;
-          if (picked.includes(c.id)) return null;
+          const isPicked = picked.includes(c.id);
           return <button
-            className="tarot tarotBack"
+            className={isPicked ? "tarot tarotBack deckPicked" : "tarot tarotBack"}
             key={c.id}
             onClick={()=>choose(c.id)}
-            aria-label={`Elegir ${c.name}`}
-            title="Toca para revelar esta carta"
+            aria-label={isPicked ? `${c.name}, seleccionada` : `Elegir ${c.name}`}
+            title={isPicked ? "Carta seleccionada · pulsa para retirarla" : "Toca para seleccionar esta carta"}
           >
             <span className="backInner" aria-hidden="true">
-              <span className="backStar">✦</span>
-              <span className="backLabel">CARTAS</span>
-              <span className="backStar">✦</span>
+              <span className="backVine"></span>
+              <span className="backLeaf leaf1"></span>
+              <span className="backLeaf leaf2"></span>
+              <span className="backLeaf leaf3"></span>
+              <span className="backLeaf leaf4"></span>
+              <span className="backOrnament"></span>
             </span>
           </button>;
         })}
@@ -379,6 +403,7 @@ export default function Home(){
         <div className="readingLabel">Lectura carta a carta</div>
         {selected.map((c,i)=><article className="positionReading" key={c.id}>
           <div className="positionNumber">{String(i+1).padStart(2,"0")}</div>
+          <div className="positionCardImage"><button type="button" onClick={()=>setZoomCard(c)} aria-label={`Ampliar ${c.name}`}><img src={`/cards/${c.file}`} alt={c.name}/><span>⌕</span></button></div>
           <div className="positionInfo"><span>{current.positions[i]}</span><h3>{c.name}</h3><small>{cardArea(c)}</small></div>
           <div className="positionText"><p>{contextualReading(c,i)}</p><div className="lightShadow"><span><b>Luz</b> {c.light}</span><span><b>Sombra</b> {c.shadow}</span></div></div>
         </article>)}
@@ -387,6 +412,14 @@ export default function Home(){
       <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
       <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
     </section>}
+
+    {zoomCard && <div className="cardZoomOverlay" role="dialog" aria-modal="true" aria-label={`Carta ampliada: ${zoomCard.name}`} onClick={()=>setZoomCard(null)}>
+      <div className="cardZoomPanel" onClick={e=>e.stopPropagation()}>
+        <button className="cardZoomClose" onClick={()=>setZoomCard(null)} aria-label="Cerrar ampliación">×</button>
+        <img src={`/cards/${zoomCard.file}`} alt={zoomCard.name}/>
+        <div className="zoomCardName">{zoomCard.name}</div>
+      </div>
+    </div>}
 
     <footer>El tarot se presenta aquí como lenguaje simbólico de reflexión. La lectura abre perspectivas; tus decisiones siguen siendo tuyas.</footer>
   </main>;
