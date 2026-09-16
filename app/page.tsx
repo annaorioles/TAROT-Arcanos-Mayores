@@ -35,7 +35,7 @@ const majors: Card[] = [
   ["06","Los Enamorados","06-los-enamorados.png","elección, vínculo y coherencia","elegir desde los valores","indecisión o elegir por miedo a perder"],
   ["07","El Carro","07-el-carro.png","dirección, voluntad y avance","tomar las riendas","forzar o correr sin integrar fuerzas opuestas"],
   ["08","La Fuerza","08-la-fuerza.png","coraje sereno e integración del impulso","firmeza sin violencia","contención excesiva o lucha interna"],
-  ["09","El Ermitaño","09-el-ermitaño.png","discernimiento, retiro fértil y búsqueda","escuchar la propia verdad","aislamiento o postergar indefinidamente"],
+  ["09","El Ermitaño","09-el-ermitano.png","discernimiento, retiro fértil y búsqueda","escuchar la propia verdad","aislamiento o postergar indefinidamente"],
   ["10","La Rueda de la Fortuna","10-la-rueda-de-la-fortuna.png","cambio de ciclo y factores no controlables","adaptarse al movimiento","pasividad ante el cambio"],
   ["11","La Justicia","11-la-justicia.png","hechos, límites y responsabilidad","claridad y decisiones sostenibles","juicio frío o autoexigencia"],
   ["12","El Colgado","12-el-colgado.png","pausa, perspectiva y renuncia a forzar","ver de otra manera","estancamiento o sacrificio sin sentido"],
@@ -78,7 +78,7 @@ const minors: Card[] = suitData.flatMap(suit =>
   suit.names.map((name,i) => ({
     id:String(suit.start+i).padStart(2,"0"),
     name,
-    file:`${String(suit.start+i).padStart(2,"0")}-${suit.files[i]}.png`,
+    file:(suit.start+i) === 44 ? "44-nueve-de-espada.png" : `${String(suit.start+i).padStart(2,"0")}-${suit.files[i]}.png`,
     essence:`${rankEssence[i]}, en el ámbito de ${suit.area}`,
     light:i===0?"abrir una posibilidad y darle espacio":i<10?"integrar la experiencia y actuar con conciencia":i===10?"explorar y aprender con apertura":i===11?"llevar la energía hacia una experiencia":i===12?"encarnar la cualidad del palo con autonomía":"dirigir recursos con visión y responsabilidad",
     shadow:i<4?"no reconocer o no canalizar el potencial":i<10?"dispersar la energía o avanzar sin revisar":i===10?"inmadurez o falta de continuidad":i===11?"precipitación o dificultad para sostener el rumbo":i===12?"exceso de entrega o necesidad de demostrar":"rigidez, control o identificación excesiva con el poder"
@@ -97,11 +97,17 @@ function imageSources(card: Card){
   // Fallbacks for the two filenames that have caused path/name mismatches.
   if (card.id === "09") {
     sources.push("/cards/09-el-ermitano.png", "/09-el-ermitano.png");
+    sources.push("/cards/09-el-ermitaño.png", "/09-el-ermitaño.png");
     sources.push("/cards/el-ermitaño.png", "/el-ermitaño.png");
   }
   if (card.id === "29") {
+    sources.push("/cards/29-ocho-de-copas.png", "/29-ocho-de-copas.png");
     sources.push("/cards/ocho-de-copas.png", "/ocho-de-copas.png");
     sources.push("/cards/29-ocho-de-copas.jpg", "/29-ocho-de-copas.jpg");
+  }
+  if (card.id === "44") {
+    sources.push("/cards/44-nueve-de-espada.png", "/44-nueve-de-espada.png");
+    sources.push("/cards/44-nueve-de-espadas.png", "/44-nueve-de-espadas.png");
   }
 
   return [...new Set(sources)];
