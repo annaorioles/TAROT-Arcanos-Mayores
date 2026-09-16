@@ -88,17 +88,21 @@ const cards: Card[] = [...majors,...minors];
 const cardById = new Map(cards.map(card => [card.id, card]));
 
 const spreads: Spread[] = [
-  {id:1,name:"1 carta",subtitle:"Mensaje",positions:["Lo esencial ahora"]},
-  {id:2,name:"2 cartas",subtitle:"Situación / orientación",positions:["Situación","Orientación"]},
-  {id:3,name:"3 cartas",subtitle:"Origen / presente / tendencia",positions:["Origen","Presente","Tendencia"]},
-  {id:31,name:"YO · EL OTRO · EL VÍNCULO",subtitle:"Lectura de relación",positions:["YO","EL OTRO","EL VÍNCULO"]},
-  {id:32,name:"3 cartas",subtitle:"Qué siente / qué piensa / qué intenciones",positions:["Qué siente","Qué piensa","Qué intenciones"]},
-  {id:5,name:"5 cartas",subtitle:"Lectura profunda",positions:["Dinámica","En juego","Lo no dicho","Dirección","Clave"]},
-  {id:7,name:"7 cartas",subtitle:"Lectura profesional",positions:["Contexto","Tensión","Deseo","Miedo","Camino","Clave","Síntesis"]}
+  {id:1,name:"1 carta",subtitle:"mensaje",positions:["lo esencial ahora"]},
+  {id:2,name:"2 cartas",subtitle:"situación / orientación",positions:["situación","orientación"]},
+  {id:3,name:"3 cartas",subtitle:"",positions:["origen","presente","tendencia"]},
+  {id:5,name:"5 cartas",subtitle:"lectura profunda",positions:["dinámica","en juego","lo no dicho","dirección","clave"]},
+  {id:7,name:"7 cartas",subtitle:"lectura profesional",positions:["contexto","tensión","deseo","miedo","camino","clave","síntesis"]}
+];
+
+const threeCardVariants = [
+  {id:0, label:"origen / presente / tendencia", positions:["origen","presente","tendencia"]},
+  {id:1, label:"yo / el otro / el vínculo", positions:["yo","el otro","el vínculo"]},
+  {id:2, label:"qué siente / qué piensa / qué intenciones", positions:["qué siente","qué piensa","qué intenciones"]}
 ];
 
 const categories: Category[] = [
-  {name:"Amor y relaciones",recommended:31,questions:[
+  {name:"Amor y relaciones",recommended:3,questions:[
     "¿Qué necesito comprender sobre mi relación y hacia dónde se está moviendo?",
     "¿Qué piensa esta persona sobre nuestra situación?",
     "¿Qué siente esta persona respecto a mí y al vínculo?",
@@ -138,16 +142,16 @@ const modes = [
 
 function narrative(selected:Card[], spread:Spread, q:string){
   const names = selected.map(c=>c.name).join(" → ");
-  if(spread.id===32 && selected.length===3)
-    return `La secuencia ${names} se lee como qué siente, qué piensa y qué intenciones muestra simbólicamente la dinámica de la situación. Las tres cartas deben contrastarse entre sí: coherencias, contradicciones y cambios de tono. No es una afirmación literal sobre el mundo interior de otra persona, sino una herramienta para ordenar percepciones y preguntas.`;
-  if(spread.id===31 && selected.length===3)
-    return `La secuencia ${names} se lee como una dinámica de tres planos: YO, EL OTRO y EL VÍNCULO. La primera carta muestra tu posición ante la pregunta; la segunda representa una dinámica que puede observarse en la otra persona sin convertir el símbolo en una afirmación literal sobre su mente; la tercera muestra la cualidad que toma el vínculo entre ambos. Para profundizar en «${q}», observa especialmente dónde se complementan, se tensan o se transforman las tres cartas.`;
+  if(spread.id===3 && selected.length===3 && spread.positions.join("|")==="yo|el otro|el vínculo")
+    return `La secuencia ${names} se lee como una dinámica de tres planos: yo, el otro y el vínculo. La primera carta muestra tu posición ante la pregunta; la segunda representa una dinámica que puede observarse en la otra persona sin convertir el símbolo en una afirmación literal sobre su mente; la tercera muestra la cualidad que toma el vínculo entre ambos. Para profundizar en «${q}», observa especialmente dónde se complementan, se tensan o se transforman las tres cartas.`;
+  if(spread.id===3 && selected.length===3 && spread.positions.join("|")==="qué siente|qué piensa|qué intenciones")
+    return `La secuencia ${names} organiza la lectura en tres planos: qué siente, qué piensa y qué intenciones muestra la dinámica. Las cartas se interpretan como lenguaje simbólico de la relación, no como acceso literal a la mente de otra persona. Observa qué coincide, qué se contradice y qué necesita expresarse con mayor claridad ante «${q}».`;
   if(selected.length===1)
     return `${selected[0].name} concentra la lectura. Ante «${q}», no anuncia un hecho: pone el foco en ${selected[0].essence}. Su luz es ${selected[0].light}; su sombra, ${selected[0].shadow}. La pregunta que queda abierta es qué cambia cuando observas tu situación desde este símbolo.`;
   if(selected.length===2)
     return `La secuencia ${names} funciona como diálogo. ${selected[0].name} describe el terreno —${selected[0].essence}— y ${selected[1].name} modifica la respuesta desde ${selected[1].essence}. La lectura invita a pasar de comprender lo que ocurre a decidir cómo quieres relacionarte con ello.`;
   if(selected.length===3)
-    return `La secuencia ${names} forma una trayectoria: el origen aporta la raíz, el presente muestra dónde se concentra la experiencia y la tendencia señala una posibilidad de desarrollo, no un destino. La lectura se vuelve útil al preguntar qué parte del pasado sigue actuando, qué decisión pertenece al presente y qué puede cambiar si esa decisión cambia.`;
+    return `La secuencia ${names} forma una lectura de tres planos. Cada posición cambia el sentido de la carta y el conjunto se interpreta desde la pregunta. La lectura observa qué se refuerza, qué entra en tensión y qué movimiento propone la relación entre las tres cartas.`;
   if(selected.length===5)
     return `La secuencia ${names} tiene una arquitectura clara. ${selected[0].name} abre la dinámica; ${selected[1].name} muestra qué está realmente en juego; ${selected[2].name} introduce la zona que todavía no está completamente visible; ${selected[3].name} responde con una dirección posible; y ${selected[4].name} integra el sentido de la tirada. No son cinco definiciones: cada carta modifica la anterior.`;
   return `La secuencia ${names} funciona como un proceso completo. Contexto y tensión muestran el escenario; deseo y miedo revelan fuerzas que pueden tirar en sentidos opuestos; el camino transforma esa tensión en posibilidad de acción; la clave condensa el aprendizaje y la síntesis devuelve una visión más amplia. La última carta no borra las anteriores: las reinterpreta.`;
@@ -165,15 +169,26 @@ export default function Home(){
   const [cat, setCat] = useState(0);
   const [question, setQuestion] = useState(categories[0].questions[0]);
   const [customQuestion, setCustomQuestion] = useState("");
-  const [spread, setSpread] = useState(31);
+  const [spread, setSpread] = useState(3);
+  const [threeCardVariant, setThreeCardVariant] = useState(1);
   const [picked, setPicked] = useState<string[]>([]);
   const [reading, setReading] = useState(false);
   const [mode, setMode] = useState(0);
   const [deckOrder, setDeckOrder] = useState<string[]>(shuffleIds);
 
-  const current = spreads.find(s => s.id === spread)!;
+  const baseSpread = spreads.find(s => s.id === spread)!;
+  const current = spread === 3
+    ? {...baseSpread, subtitle: threeCardVariants[threeCardVariant].label, positions: threeCardVariants[threeCardVariant].positions}
+    : baseSpread;
   const count = current.positions.length;
   const effectiveQuestion = customQuestion.trim() || question;
+  const normalizedQuestion = effectiveQuestion.toLowerCase();
+  const suggestedSpreadId = categories[cat].recommended;
+  const suggestedThreeVariant =
+    normalizedQuestion.includes("siente") ||
+    normalizedQuestion.includes("piensa") ||
+    normalizedQuestion.includes("intenciones") ? 2 :
+    cat === 0 ? 1 : 0;
 
   const selected = useMemo(
     () => picked.map(id => cardById.get(id)).filter(Boolean) as Card[],
@@ -194,6 +209,7 @@ export default function Home(){
     setQuestion(categories[i].questions[0]);
     setCustomQuestion("");
     setSpread(categories[i].recommended);
+    setThreeCardVariant(i === 0 ? 1 : 0);
     setDeckOrder(shuffleIds());
     setPicked([]);
     setReading(false);
@@ -241,12 +257,6 @@ export default function Home(){
       ? ` Al dialogar con ${neighbours.map(n => n.name).join(" y ")}, esta cualidad adquiere un matiz que conviene observar dentro del conjunto.`
       : " Aquí la carta funciona como núcleo de la lectura, por lo que su posición tiene un peso especial.";
 
-    if(spread === 32){
-      if(i === 0) return `En QUÉ SIENTE, ${c.name} representa simbólicamente la dimensión afectiva que estás percibiendo en la situación: ${c.essence}. La luz que puede abrirse aquí es ${c.light}; la sombra, ${c.shadow}. La carta funciona como hipótesis simbólica para contrastar con hechos y conversación.${neighbourText}`;
-      if(i === 1) return `En QUÉ PIENSA, ${c.name} representa el plano mental o interpretativo que la dinámica pone en juego: ${c.essence}. La luz es ${c.light}; la sombra, ${c.shadow}. Aquí conviene observar si lo que se piensa, se dice y se hace mantiene una misma dirección.${neighbourText}`;
-      return `En QUÉ INTENCIONES, ${c.name} muestra simbólicamente hacia dónde parece organizarse la energía del vínculo: ${c.essence}. La luz disponible es ${c.light}; la sombra, ${c.shadow}. La lectura invita a contrastar esta dirección con conductas observables, no a convertirla en una certeza sobre la otra persona.${neighbourText}`;
-    }
-
     if(spread === 31){
       if(i === 0) return `En YO, ${c.name} habla de tu lugar dentro de la situación: ${c.essence}. La luz que puede abrirse aquí es ${c.light}. La sombra a vigilar es ${c.shadow}. La carta no te pide adivinar al otro; te devuelve a aquello que sí puedes observar, elegir y transformar.${neighbourText}`;
       if(i === 1) return `En EL OTRO, ${c.name} representa simbólicamente la dinámica que estás percibiendo en la otra parte del vínculo. Señala ${c.essence}. La lectura sirve para contrastar esa percepción con hechos y conversaciones, no para convertir el símbolo en una certeza sobre su mundo interior. Su luz es ${c.light}; su sombra, ${c.shadow}.${neighbourText}`;
@@ -273,12 +283,12 @@ export default function Home(){
 
   function narrative(){
     const names = selected.map(c => c.name).join(" → ");
-    if(spread === 32) return `La secuencia ${names} se lee como una exploración simbólica de tres planos: qué siente, qué piensa y qué intenciones muestra la dinámica de la persona en relación con la situación. Las tres cartas se contrastan entre sí: una emoción puede reforzar o contradecir un pensamiento, y las intenciones se observan como dirección del vínculo. El símbolo no convierte la lectura en una afirmación literal sobre la mente de otra persona; sirve para ordenar lo que percibes y llevarlo a la conversación y a los hechos. La clave está en observar dónde hay coherencia y dónde aparece una tensión que merece ser aclarada.`;
     if(spread === 31) return `Entre YO, EL OTRO y EL VÍNCULO aparece la secuencia ${names}. La lectura parte de tu posición, observa después la dinámica percibida en la otra parte y finalmente mira el espacio que se crea entre ambos. Lo importante no es convertir la segunda carta en una afirmación literal sobre lo que la otra persona piensa o siente, sino comprobar cómo encaja ese símbolo con lo que sucede entre vosotros. La tercera carta actúa como síntesis relacional: muestra qué patrón toma fuerza y qué necesita ser visto con mayor claridad.`;
     if(spread === 1) return `${selected[0].name} concentra el mensaje de la tirada. La pregunta «${effectiveQuestion}» funciona como lente: el mismo arcano puede hablar de algo distinto según aquello que quieres comprender. La lectura invita a observar el símbolo en tu realidad y decidir qué significado tiene para ti.`;
     if(spread === 2) return `${names} construyen un diálogo. La primera carta establece el terreno y la segunda responde, corrige o reorienta ese terreno. La lectura gana profundidad cuando buscas la relación entre ambas en lugar de interpretar cada una por separado.`;
     if(spread === 3) return `${names} forman una trayectoria. El origen explica una raíz activa, el presente muestra dónde está concentrada la experiencia y la tendencia abre una posibilidad de desarrollo. La tendencia no se presenta como destino: cambia cuando cambia la manera de actuar, percibir o relacionarte con la situación.`;
-    if(spread === 5) return `${names} forman una arquitectura de cinco movimientos. La dinámica abre la escena, lo que está en juego concentra el conflicto o deseo, lo no dicho introduce la zona menos visible, la dirección muestra hacia dónde puede organizarse la energía y la clave integra el aprendizaje. Cada carta modifica el significado de las demás.`;
+    if(spread === 32) return `En la tirada QUÉ SIENTE · QUÉ PIENSA · QUÉ INTENCIONES, ${names.join(" · ")} recorren tres planos distintos de la dinámica. La primera carta abre el clima emocional, la segunda el plano mental y la tercera la dirección simbólica de la relación. La lectura conjunta observa coincidencias, tensiones y cambios entre esos tres niveles sin convertirlos en afirmaciones literales sobre la mente de otra persona.`;
+  if(spread === 5) return `${names} forman una arquitectura de cinco movimientos. La dinámica abre la escena, lo que está en juego concentra el conflicto o deseo, lo no dicho introduce la zona menos visible, la dirección muestra hacia dónde puede organizarse la energía y la clave integra el aprendizaje. Cada carta modifica el significado de las demás.`;
     return `${names} forman un proceso completo. El contexto sitúa la experiencia; la tensión muestra dónde se concentra; deseo y miedo pueden empujar en sentidos distintos; el camino convierte esa tensión en posibilidad; la clave condensa el aprendizaje y la síntesis devuelve una mirada más amplia. La última carta no borra las anteriores: las reinterpreta.`;
   }
 
@@ -295,7 +305,7 @@ export default function Home(){
         <p className="heroIntro">Elige un tema, formula tu propia pregunta y deja que la tirada organice aquello que quieres mirar.</p>
       </div>
       <div className="heroArtwork" aria-hidden="true">
-        <img src="/cartas-hero.png" alt="" />
+        <img src="/76-reina-de-oros.png" alt="" />
       </div>
 
       <div className="categories" role="tablist" aria-label="Temas">
@@ -305,7 +315,22 @@ export default function Home(){
       <div className="questionPanel">
         <div className="label">Preguntas para empezar</div>
         <div className="questionList">
-          {categories[cat].questions.map(q => <button className={question===q && !customQuestion.trim() ? "qoption active" : "qoption"} onClick={()=>{setQuestion(q);setCustomQuestion(""); if(cat===0 && /piensa|siente|intenciones/i.test(q)) setSpread(32); else if(cat===0) setSpread(31);}} key={q}>{q}</button>)}
+          {categories[cat].questions.map(q => <button className={question===q && !customQuestion.trim() ? "qoption active" : "qoption"} onClick={()=>{
+  setQuestion(q);
+  setCustomQuestion("");
+  const nq = q.toLowerCase();
+  if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
+    setSpread(3);
+    setThreeCardVariant(2);
+    setPicked([]);
+    setReading(false);
+  } else if (cat === 0) {
+    setSpread(3);
+    setThreeCardVariant(1);
+    setPicked([]);
+    setReading(false);
+  }
+}} key={q}>{q}</button>)}
         </div>
         <div className="customQuestion">
           <div className="label">Tu propia pregunta <span>· opcional</span></div>
@@ -319,9 +344,27 @@ export default function Home(){
       <div className="eyebrow">02 · La tirada</div>
       <div className="sectionHeading"><div><h2>Elige la forma de mirar.</h2><p>La propuesta se adapta a tu pregunta, pero tú decides.</p></div></div>
       <div className="spreads">
-        {spreads.map(s => <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setPicked([]);setReading(false);}} key={s.id}><strong>{s.name}</strong><span>{s.subtitle}</span></button>)}
+        {spreads.map(s => <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setPicked([]);setReading(false);}} key={s.id}>
+          <strong>{s.name}</strong>
+          {s.id !== 3 && <span>{s.subtitle}</span>}
+        </button>)}
       </div>
-      <div className="recommend">Para esta pregunta, la lectura propuesta es <b>{(cat===0 && /piensa|siente|intenciones/i.test(effectiveQuestion)) ? "3 cartas · Qué siente / qué piensa / qué intenciones" : spreads.find(s=>s.id===categories[cat].recommended)?.name}</b>.</div>
+      {spread === 3 && (
+        <div className="threeVariants" aria-label="Versiones de la tirada de 3 cartas">
+          {threeCardVariants.map(v => (
+            <button
+              type="button"
+              key={v.id}
+              className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
+              onClick={()=>{setThreeCardVariant(v.id);setPicked([]);setReading(false);}}
+            >
+              <span>{v.id+1}</span>
+              <b>{v.label}</b>
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="recommend">Para esta pregunta, la lectura propuesta es <b>{spreads.find(s=>s.id===suggestedSpreadId)?.name}</b>{suggestedSpreadId === 3 ? ` · ${threeCardVariants[suggestedThreeVariant].label}` : ` · ${spreads.find(s=>s.id===suggestedSpreadId)?.subtitle}`}.</div>
     </section>
 
     <section className="sectionBlock tableSection" id="mesa">
