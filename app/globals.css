@@ -1,391 +1,559 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+'use client';
 
-:root{--paper:#f5eee3;--paper2:#fcf8f1;--paper3:#e9dece;--ink:#2b2925;--soft:#625d55;--muted:#817a70;--line:#d8ccbb;--line2:#bda991;--rose:#bf7770;--rose2:#a85e58;--roseSoft:#ead1cb;--sage:#82927d;--sage2:#647461;--sageSoft:#dce5d9;--gold:#ae884d;--white:#fffdf9;--shadow:0 16px 36px rgba(63,49,35,.11);--radius:18px}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;background:var(--paper)}
-body{margin:0;min-width:320px;background:radial-gradient(circle at 12% 5%,rgba(255,255,255,.8),transparent 28rem),radial-gradient(circle at 92% 18%,rgba(234,209,203,.35),transparent 30rem),linear-gradient(180deg,#faf4e9 0%,var(--paper) 46%,#f0e5d5 100%);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.12;background-image:radial-gradient(rgba(89,69,48,.18) .55px,transparent .55px);background-size:7px 7px;mix-blend-mode:multiply}
-button,textarea{font:inherit}button{color:inherit}
-.appShell{width:min(1440px,calc(100% - 64px));margin:0 auto;padding:26px 0 70px}
-.topbar{display:flex;align-items:flex-end;justify-content:space-between;padding:4px 2px 28px;border-bottom:1px solid var(--line)}
-.logo{font-size:27px;line-height:1;letter-spacing:.27em;font-weight:700}.headerMeta{font-size:10px;letter-spacing:.17em;color:var(--muted);font-weight:600}
-.sectionBlock{padding:74px 0;border-bottom:1px solid var(--line)}
-.eyebrow{margin-bottom:13px;color:var(--rose2);font-size:11px;line-height:1;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
-h1,h2,h3{margin:0;color:var(--ink);letter-spacing:-.045em}h1{font-size:clamp(48px,6.2vw,92px);line-height:.98;font-weight:600;max-width:1000px}h1 span{color:var(--rose2)}h2{font-size:clamp(32px,4vw,56px);line-height:1.04;font-weight:600}h3{font-size:23px;line-height:1.1}.hero{position:relative;overflow:hidden}.heroCopy{position:relative;z-index:2;max-width:820px}.heroArtwork{position:absolute;right:0;top:25px;width:min(390px,31vw);pointer-events:none}.heroArtwork img{display:block;width:100%;height:auto;object-fit:contain}.heroIntro{max-width:700px;margin:25px 0 30px;color:var(--soft);font-size:18px}
-.categories{display:flex;flex-wrap:wrap;gap:9px;margin:28px 0 25px}.category,.qoption,.spread,.mode{border:1px solid var(--line);background:rgba(255,253,248,.55);cursor:pointer;transition:.18s ease}.category{border-radius:999px;padding:10px 17px;color:var(--soft);font-size:13px}.category:hover,.category.active{background:var(--rose);border-color:var(--rose);color:white}
-.questionPanel{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(290px,.6fr);gap:28px;padding:27px;border:1px solid var(--line);background:rgba(255,253,248,.55);border-radius:var(--radius)}.label{font-size:10px;text-transform:uppercase;letter-spacing:.16em;font-weight:700;color:var(--muted);margin-bottom:12px}.questionList{display:flex;flex-direction:column;gap:8px}.qoption{text-align:left;border-radius:11px;padding:13px 15px;color:var(--soft);line-height:1.4}.qoption:hover,.qoption.active{border-color:var(--rose);background:var(--roseSoft);color:var(--ink)}.customQuestion{border-left:1px solid var(--line);padding-left:28px}.customQuestion .label span{font-weight:400}.customQuestion textarea{display:block;width:100%;min-height:122px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:var(--paper2);padding:14px;color:var(--ink);outline:none}.customQuestion textarea:focus{border-color:var(--rose)}.questionEcho{margin-top:20px;color:var(--rose2);font-size:17px;font-weight:500}
-.sectionHeading{display:flex;justify-content:space-between;align-items:end;margin-bottom:25px}.sectionHeading p,.pickHeader p{margin:10px 0 0;color:var(--muted)}.spreads{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.spread{min-height:94px;border-radius:14px;padding:16px;text-align:left;display:flex;flex-direction:column;justify-content:space-between}.spread strong{font-size:16px}.spread span{font-size:11px;color:var(--muted);line-height:1.35}.spread:hover,.spread.active{border-color:var(--rose);box-shadow:inset 0 0 0 1px var(--rose);background:var(--roseSoft)}.spread.active span{color:var(--rose2)}.recommend{margin-top:15px;padding:12px 15px;background:var(--sageSoft);color:var(--sage2);font-size:13px;border-radius:10px}
-.pickHeader{display:flex;align-items:end;justify-content:space-between;gap:25px}.counter{display:flex;align-items:baseline;gap:3px;white-space:nowrap}.counter b{font-size:30px;color:var(--rose2)}.counter span{font-size:14px;color:var(--muted)}
-.selectedSpread{display:grid;grid-template-columns:repeat(7,minmax(92px,1fr));gap:14px;margin:32px 0 42px}.drawSlot{min-width:0}.drawTop{min-height:38px;display:flex;flex-direction:column;gap:2px;margin-bottom:8px}.drawTop span{font-size:9px;letter-spacing:.16em;color:var(--rose2);font-weight:700}.drawTop b{font-size:11px;color:var(--soft);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drawCard{aspect-ratio:2/3;border-radius:9px;overflow:hidden;background:var(--paper3);box-shadow:var(--shadow-soft,0 5px 16px rgba(68,55,39,.08));border:1px solid var(--line);position:relative}.drawCard img{width:100%;height:100%;object-fit:cover;display:block}.emptyBack{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;background:linear-gradient(145deg,#d9cbb9,#eee3d3);color:#8c7b65}.emptyBack span{font-size:8px;letter-spacing:.18em;font-weight:700}.emptyBack i{font-style:normal;font-size:24px;color:var(--gold)}.drawSlot.filled .drawCard{border-color:var(--rose);box-shadow:0 10px 25px rgba(125,75,68,.15)}.drawName{font-size:11px;text-align:center;margin-top:8px;color:var(--soft);font-weight:600;min-height:17px}
-.deckToolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-top:17px;border-top:1px solid var(--line);font-size:10px;letter-spacing:.16em;color:var(--muted);font-weight:700}.deckToolbar small{font-size:11px;letter-spacing:0;color:var(--sage2);font-weight:500}.deck{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px}
-.tarot{position:relative;border:1px solid var(--line);padding:0;background:transparent;border-radius:8px;overflow:hidden;cursor:pointer;aspect-ratio:2/3;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
-.tarot:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--rose)}
-.tarot.picked{border:2px solid var(--rose);box-shadow:0 8px 20px rgba(113,71,65,.18);transform:translateY(-3px)}
-.cardBack{position:absolute;inset:0;display:block;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(174,136,77,.13),transparent 25%),linear-gradient(145deg,#fbf6ec 0%,#f2e7d6 100%)}
-.backFrame{position:absolute;pointer-events:none;border:1px solid var(--gold);border-radius:7px}
-.backFrameOuter{inset:5px}
-.backFrameInner{inset:9px;border-color:rgba(174,136,77,.55);border-radius:5px}
-.backGarland{position:absolute;top:10%;bottom:10%;width:42%;border-top:1px solid rgba(130,146,125,.8);border-bottom:1px solid rgba(191,119,112,.72);border-radius:50%}
-.backGarlandLeft{left:-9%;transform:rotate(16deg)}
-.backGarlandRight{right:-9%;transform:rotate(-16deg)}
-.backGarland::before,.backGarland::after{content:"";position:absolute;width:7px;height:11px;border:1px solid var(--sage);border-radius:80% 20% 80% 20%}
-.backGarland::before{top:22%;right:8%;transform:rotate(35deg)}
-.backGarland::after{bottom:20%;left:8%;transform:rotate(215deg)}
-.backMedallion{position:absolute;left:50%;top:50%;width:38%;aspect-ratio:1;transform:translate(-50%,-50%);display:grid;place-items:center;border:1px solid var(--gold);border-radius:50%;background:#fbf6ec;box-shadow:0 0 0 4px rgba(174,136,77,.07)}
-.backMedallion::before{content:"";position:absolute;width:58%;height:58%;border:1px solid var(--gold);transform:rotate(45deg)}
-.backStar{position:relative;z-index:2;color:var(--gold);font-size:clamp(11px,1.2vw,21px)}
-.pickedMark{position:absolute;right:5px;top:5px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:var(--rose2);color:#fff;font-size:11px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.18)}
-.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:28px}.primary,.secondary,.textButton{border-radius:999px;padding:12px 19px;cursor:pointer;border:1px solid transparent}.primary{background:var(--rose2);color:#fff;font-weight:700}.primary:disabled{opacity:.38;cursor:not-allowed}.primary:not(:disabled):hover{background:#914d48}.secondary{background:var(--paper2);border-color:var(--line);color:var(--soft)}.secondary:hover{border-color:var(--rose);color:var(--rose2)}.textButton{background:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
-.readingSection{border-bottom:0}.readingIntro{display:flex;justify-content:space-between;align-items:end;gap:25px}.readingQuestion{margin:14px 0 0;color:var(--rose2);font-size:16px}.readingBadge{padding:9px 13px;border-radius:999px;background:var(--sageSoft);color:var(--sage2);font-size:11px;font-weight:700}.readingModes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:30px 0}.mode{border-radius:13px;text-align:left;padding:15px;display:flex;flex-direction:column;gap:5px}.mode b{font-size:13px}.mode span{font-size:11px;color:var(--muted);line-height:1.35}.mode.active{background:var(--sageSoft);border-color:var(--sage)}
-.expertGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:15px;margin-bottom:44px}.expertCard,.storyBlock,.deepQuestion{border:1px solid var(--line);background:rgba(255,253,248,.58);border-radius:var(--radius);padding:26px}.expertCard.mainSynthesis{background:var(--roseSoft);border-color:#dfbbb4}.expertCard p,.storyBlock p,.deepQuestion p{font-size:16px;line-height:1.72;margin:0;color:var(--soft)}
-.positionReadings{margin-top:20px}.readingLabel{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:14px}.positionReading{display:grid;grid-template-columns:48px 220px minmax(0,1fr);gap:24px;padding:25px 0;border-top:1px solid var(--line)}.positionNumber{font-size:11px;color:var(--rose2);font-weight:700;letter-spacing:.12em;padding-top:4px}.positionInfo span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin-bottom:8px}.positionInfo h3{margin-bottom:7px}.positionInfo small{color:var(--sage2);font-size:11px}.positionText p{margin:0;color:var(--soft);line-height:1.72}.lightShadow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}.lightShadow span{font-size:12px;color:var(--muted)}.lightShadow b{color:var(--rose2);margin-right:4px}.storyBlock{margin-top:35px}.deepQuestion{margin-top:15px;background:var(--sageSoft);border-color:#c6d2c2}.deepQuestion p{color:var(--sage2);font-weight:500}
+import { useMemo, useState } from 'react';
 
-/* V9 — cartas seleccionadas, zoom y lectura */
-.drawCard{width:100%;aspect-ratio:2/3;border-radius:9px;overflow:hidden;background:var(--paper3);box-shadow:0 5px 16px rgba(68,55,39,.08);border:1px solid var(--line);position:relative;padding:0;cursor:zoom-in;display:block}
-.drawCard:disabled{cursor:default}
-.drawCard img{width:100%;height:100%;object-fit:cover;display:block}
-.zoomHint{position:absolute;right:7px;bottom:7px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:rgba(255,253,248,.94);color:var(--ink);box-shadow:0 2px 7px rgba(50,40,30,.16);font-size:16px}
-.changeCard{display:block;margin:5px auto 0;border:0;background:none;color:var(--rose2);font-size:9px;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
-.readingCardThumb{position:relative;width:100%;max-width:150px;aspect-ratio:2/3;padding:0;border:0;background:none;border-radius:9px;overflow:hidden;cursor:zoom-in;box-shadow:var(--shadow)}
-.readingCardThumb img{display:block;width:100%;height:100%;object-fit:cover}
-.positionReading{grid-template-columns:42px 150px 200px minmax(0,1fr)}
-.jointReading{margin-top:30px;padding:28px;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper2)}
-.jointReading h3{margin:0 0 10px;font-size:25px}
-.jointReading p{margin:0;max-width:900px;color:var(--soft);line-height:1.75}
-.cardZoomOverlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(43,37,31,.72);backdrop-filter:blur(5px)}
-.cardZoomPanel{position:relative;max-width:min(520px,92vw);max-height:92vh;padding:12px;border-radius:15px;background:var(--paper2);box-shadow:0 24px 70px rgba(20,15,10,.38)}
-.cardZoomPanel img{display:block;max-width:100%;max-height:calc(92vh - 60px);width:auto;height:auto;border-radius:9px}
-.cardZoomClose{position:absolute;top:-12px;right:-12px;width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--paper2);color:var(--ink);cursor:pointer;box-shadow:0 4px 12px rgba(40,30,20,.2);font-size:23px}
-.zoomCaption{text-align:center;padding:8px 0 2px;font-size:12px;color:var(--soft);font-weight:600}
-.shuffleButton::before{content:"↻";margin-right:7px;color:var(--gold);font-size:17px}
+type Card = {
+  id: string;
+  name: string;
+  file: string;
+  essence: string;
+  light: string;
+  shadow: string;
+};
 
-footer{padding:32px 0 0;color:var(--muted);font-size:11px;text-align:center}
+type Spread = {
+  id: number;
+  name: string;
+  subtitle: string;
+  positions: string[];
+};
 
-@media (max-width:1180px){.appShell{width:min(100% - 42px,1100px)}.deck{grid-template-columns:repeat(10,minmax(0,1fr))}.spreads{grid-template-columns:repeat(3,1fr)}.selectedSpread{grid-template-columns:repeat(7,minmax(75px,1fr));gap:10px}}
-@media (max-width:820px){.appShell{width:min(100% - 30px,720px)}.sectionBlock{padding:52px 0}.topbar{padding-bottom:20px}.headerMeta{font-size:8px}.questionPanel{grid-template-columns:1fr;gap:22px}.customQuestion{border-left:0;border-top:1px solid var(--line);padding:22px 0 0}.selectedSpread{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:26px}.selectedSpread .drawSlot:nth-child(n+5){grid-column:span 1}.deck{grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}.readingIntro{align-items:flex-start;flex-direction:column}.readingModes{grid-template-columns:repeat(2,1fr)}.expertGrid{grid-template-columns:1fr}.positionReading{grid-template-columns:40px 180px minmax(0,1fr);gap:16px}}
-@media (max-width:560px){body{font-size:15px}.appShell{width:calc(100% - 22px);padding-top:15px}.topbar{align-items:center}.logo{font-size:22px}.headerMeta{display:none}.sectionBlock{padding:40px 0}.hero{padding-top:46px}h1{font-size:clamp(40px,13vw,58px);line-height:1}.heroIntro{font-size:16px;margin:20px 0 24px}.categories{gap:7px}.category{padding:8px 12px;font-size:11px}.questionPanel{padding:18px}.qoption{font-size:13px;padding:11px 12px}.questionEcho{font-size:14px}.spreads{grid-template-columns:repeat(2,1fr);gap:8px}.spread{min-height:84px;padding:13px}.spread strong{font-size:14px}.spread span{font-size:10px}.pickHeader{align-items:flex-start}.pickHeader p{font-size:13px}.counter b{font-size:25px}.selectedSpread{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:25px 0 30px}.drawTop{min-height:33px}.drawTop b{font-size:9px}.drawName{font-size:9px}.deckToolbar{font-size:8px}.deckToolbar small{font-size:9px}.deck{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.tarot{border-radius:5px}.pickedMark{width:19px;height:19px;font-size:9px;right:3px;top:3px}.actions{display:grid;grid-template-columns:1fr;gap:8px}.primary,.secondary,.textButton{width:100%;padding:12px 15px}.readingIntro h2{font-size:38px}.readingBadge{align-self:flex-start}.readingModes{grid-template-columns:1fr;gap:7px}.mode{padding:12px}.expertCard,.storyBlock,.deepQuestion{padding:20px}.expertCard p,.storyBlock p,.deepQuestion p{font-size:14px;line-height:1.65}.positionReading{grid-template-columns:30px 1fr;gap:10px;padding:21px 0}.positionText{grid-column:2}.positionInfo h3{font-size:20px}.lightShadow{grid-template-columns:1fr;gap:8px}.positionNumber{font-size:9px}.readingLabel{margin-bottom:4px}}
-@media (max-width:370px){.deck{grid-template-columns:repeat(4,minmax(0,1fr))}.selectedSpread{grid-template-columns:repeat(3,minmax(0,1fr))}.drawTop b{font-size:8px}.drawName{font-size:8px}}
+type Category = {
+  name: string;
+  questions: string[];
+  recommended: number;
+};
 
-@media (max-width:1180px){
-  .heroArtwork{width:min(330px,29vw)}
-  .deck{grid-template-columns:repeat(10,minmax(0,1fr))}
-  .positionReading{grid-template-columns:38px 130px 180px minmax(0,1fr)}
-}
-@media (max-width:820px){
-  .heroArtwork{position:relative;right:auto;top:auto;width:min(360px,80%);margin:25px auto 0}
-  .heroCopy{max-width:none}
-  .deck{grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}
-  .positionReading{grid-template-columns:36px 110px minmax(0,1fr);gap:15px}
-  .positionReading .positionText{grid-column:3}
-}
-@media (max-width:560px){
-  .heroArtwork{width:min(330px,94%);margin:20px auto 0}
-  .deck{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
-  .positionReading{grid-template-columns:28px 86px minmax(0,1fr);gap:10px}
-  .positionReading .positionText{grid-column:3}
-  .readingCardThumb{max-width:86px}
-  .jointReading{padding:20px}
-}
-@media (max-width:370px){
-  .deck{grid-template-columns:repeat(4,minmax(0,1fr))}
-}
+const majors: Card[] = [
+  ["00","El Loco","00-el-loco.png","inicio, libertad y salto hacia lo desconocido","atreverse sin exigir certezas","impulsividad o huida de la responsabilidad"],
+  ["01","El Mago","01-el-mago.png","recursos, iniciativa y capacidad de actuar","agencia y creatividad","dispersión o manipulación"],
+  ["02","La Sacerdotisa","02-la-sacerdotisa.png","silencio, intuición y conocimiento interior","escucha y percepción fina","pasividad, secreto o esperar que el otro adivine"],
+  ["03","La Emperatriz","03-la-emperatriz.png","deseo, creación y aquello que necesita cuidado","nutrir y hacer crecer","sobreproteger o confundir cuidado con control"],
+  ["04","El Emperador","04-el-emperador.png","estructura, límites y responsabilidad","estabilidad y autoridad propia","rigidez o necesidad de controlar"],
+  ["05","El Sacerdote","05-el-sacerdote.png","valores, aprendizaje y marcos compartidos","sentido y guía","dogma o vivir según expectativas ajenas"],
+  ["06","Los Enamorados","06-los-enamorados.png","elección, vínculo y coherencia","elegir desde los valores","indecisión o elegir por miedo a perder"],
+  ["07","El Carro","07-el-carro.png","dirección, voluntad y avance","tomar las riendas","forzar o correr sin integrar fuerzas opuestas"],
+  ["08","La Fuerza","08-la-fuerza.png","coraje sereno e integración del impulso","firmeza sin violencia","contención excesiva o lucha interna"],
+  ["09","El Ermitaño","09-el-ermitaño.png","discernimiento, retiro fértil y búsqueda","escuchar la propia verdad","aislamiento o postergar indefinidamente"],
+  ["10","La Rueda de la Fortuna","10-la-rueda-de-la-fortuna.png","cambio de ciclo y factores no controlables","adaptarse al movimiento","pasividad ante el cambio"],
+  ["11","La Justicia","11-la-justicia.png","hechos, límites y responsabilidad","claridad y decisiones sostenibles","juicio frío o autoexigencia"],
+  ["12","El Colgado","12-el-colgado.png","pausa, perspectiva y renuncia a forzar","ver de otra manera","estancamiento o sacrificio sin sentido"],
+  ["13","La Muerte","13-la-muerte.png","fin de una forma y transformación","soltar lo agotado","resistencia al cambio"],
+  ["14","La Templanza","14-la-templanza.png","integración, diálogo, tiempo y equilibrio","regular y mezclar sin borrar diferencias","diluir necesidades o esperar demasiado"],
+  ["15","El Diablo","15-el-diablo.png","deseo, intensidad, apego y poder personal","reconocer el deseo sin negarlo","dependencia, compulsión o vínculo que encadena"],
+  ["16","La Torre","16-la-torre.png","ruptura de una estructura que ya no sostiene","liberación y verdad","caos o aferrarse a lo que cae"],
+  ["17","La Estrella","17-la-estrella.png","confianza, vulnerabilidad e inspiración","recuperar orientación","idealización o esperar una salvación externa"],
+  ["18","La Luna","18-la-luna.png","incertidumbre, proyección, miedo e intuición","dar espacio a lo inconsciente","confundir temor con intuición o fantasía con evidencia"],
+  ["19","El Sol","19-el-sol.png","claridad, vitalidad y evidencia","mostrar y compartir","exceso de certeza o necesidad de reconocimiento"],
+  ["20","El Juicio","20-el-juicio.png","despertar, revisión y llamada a responder","reconocer lo aprendido","culpa o vivir atrapado en el pasado"],
+  ["21","El Mundo","21-el-mundo.png","culminación, integración y cambio de nivel","completar e integrar","cerrar en falso o no reconocer lo conseguido"]
+].map(([id,name,file,essence,light,shadow]) => ({id,name,file,essence,light,shadow}));
 
-/* V11 — hero Reina de Oros */
-.heroArtwork{
-  display:block;
-  position:absolute;
-  right:2%;
-  top:20px;
-  width:min(420px,34vw);
-  max-height:620px;
-  z-index:1;
-  opacity:1;
-  pointer-events:none;
-}
-.heroArtwork img{
-  display:block;
-  width:100%;
-  height:auto;
-  max-height:620px;
-  object-fit:contain;
-}
-.heroCopy,
-.categories,
-.questionPanel,
-.questionEcho{
-  position:relative;
-  z-index:2;
-}
-@media(max-width:820px){
-  .heroArtwork{
-    position:relative;
-    right:auto;
-    top:auto;
-    width:min(360px,92%);
-    max-height:none;
-    margin:18px auto 8px;
+const suitData = [
+  {start:22, names:["As de Copas","Dos de Copas","Tres de Copas","Cuatro de Copas","Cinco de Copas","Seis de Copas","Siete de Copas","Ocho de Copas","Nueve de Copas","Diez de Copas","Sota de Copas","Caballero de Copas","Reina de Copas","Rey de Copas"], files:["as-de-copas","dos-de-copas","tres-de-copas","cuatro-de-copas","cinco-de-copas","seis-de-copas","siete-de-copas","ocho-de-copas","nueve-de-copas","diez-de-copas","sota-de-copas","caballero-de-copas","reina-de-copas","rey-de-copas"], area:"emociones, vínculos y mundo afectivo"},
+  {start:36, names:["As de Espadas","Dos de Espadas","Tres de Espadas","Cuatro de Espadas","Cinco de Espadas","Seis de Espadas","Siete de Espadas","Ocho de Espadas","Nueve de Espadas","Diez de Espadas","Sota de Espadas","Caballero de Espadas","Reina de Espadas","Rey de Espadas"], files:["as-de-espadas","dos-de-espadas","tres-de-espadas","cuatro-de-espadas","cinco-de-espadas","seis-de-espadas","siete-de-espadas","ocho-de-espadas","nueve-de-espadas","diez-de-espadas","sota-de-espadas","caballero-de-espadas","reina-de-espadas","rey-de-espadas"], area:"pensamiento, verdad y conflicto mental"},
+  {start:50, names:["As de Bastos","Dos de Bastos","Tres de Bastos","Cuatro de Bastos","Cinco de Bastos","Seis de Bastos","Siete de Bastos","Ocho de Bastos","Nueve de Bastos","Diez de Bastos","Sota de Bastos","Caballero de Bastos","Reina de Bastos","Rey de Bastos"], files:["as-de-bastos","dos-de-bastos","tres-de-bastos","cuatro-de-bastos","cinco-de-bastos","seis-de-bastos","siete-de-bastos","ocho-de-bastos","nueve-de-bastos","diez-de-bastos","sota-de-bastos","caballero-de-bastos","reina-de-bastos","rey-de-bastos"], area:"energía, deseo, acción y creatividad"},
+  {start:64, names:["As de Oros","Dos de Oros","Tres de Oros","Cuatro de Oros","Cinco de Oros","Seis de Oros","Siete de Oros","Ocho de Oros","Nueve de Oros","Diez de Oros","Sota de Oros","Caballero de Oros","Reina de Oros","Rey de Oros"], files:["as-de-oros","dos-de-oros","tres-de-oros","cuatro-de-oros","cinco-de-oros","seis-de-oros","siete-de-oros","ocho-de-oros","nueve-de-oros","diez-de-oros","sota-de-oros","caballero-de-oros","reina-de-oros","rey-de-oros"], area:"materia, recursos, cuerpo y construcción"}
+];
+
+const rankEssence = [
+  "inicio y potencial de la energía",
+  "encuentro, equilibrio y primera relación",
+  "desarrollo, expresión y expansión inicial",
+  "estructura, pausa y necesidad de estabilidad",
+  "fricción, cambio y desafío",
+  "movimiento, equilibrio y recuperación de lo aprendido",
+  "evaluación, posición y defensa de lo que importa",
+  "movimiento, práctica y aceleración",
+  "madurez, resistencia y fruto de la experiencia",
+  "culminación, carga e integración del ciclo",
+  "aprendizaje, curiosidad y comienzo consciente",
+  "movimiento, iniciativa y expresión activa",
+  "madurez, presencia y dominio sensible",
+  "dominio, experiencia y capacidad de dirección"
+];
+
+const minors: Card[] = suitData.flatMap(suit =>
+  suit.names.map((name,i) => ({
+    id:String(suit.start+i).padStart(2,"0"),
+    name,
+    file:`${String(suit.start+i).padStart(2,"0")}-${suit.files[i]}.png`,
+    essence:`${rankEssence[i]}, en el ámbito de ${suit.area}`,
+    light:i===0?"abrir una posibilidad y darle espacio":i<10?"integrar la experiencia y actuar con conciencia":i===10?"explorar y aprender con apertura":i===11?"llevar la energía hacia una experiencia":i===12?"encarnar la cualidad del palo con autonomía":"dirigir recursos con visión y responsabilidad",
+    shadow:i<4?"no reconocer o no canalizar el potencial":i<10?"dispersar la energía o avanzar sin revisar":i===10?"inmadurez o falta de continuidad":i===11?"precipitación o dificultad para sostener el rumbo":i===12?"exceso de entrega o necesidad de demostrar":"rigidez, control o identificación excesiva con el poder"
+  }))
+);
+
+const cards: Card[] = [...majors,...minors];
+const cardById = new Map(cards.map(card => [card.id, card]));
+
+function imageSources(card: Card){
+  const sources = [
+    `/cards/${card.file}`,
+    `/${card.file}`,
+  ];
+
+  // Fallbacks for the two filenames that have caused path/name mismatches.
+  if (card.id === "09") {
+    sources.push("/cards/09-el-ermitano.png", "/09-el-ermitano.png");
+    sources.push("/cards/el-ermitaño.png", "/el-ermitaño.png");
   }
-  .heroArtwork img{max-height:none}
-}
-
-/* V12 — una sola tirada de 3 cartas con tres versiones */
-.threeVariants{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-  margin-top:14px;
-}
-.threeVariant{
-  min-height:58px;
-  padding:12px 15px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:var(--paper2);
-  color:var(--ink);
-  text-align:left;
-  cursor:pointer;
-  transition:all .16s ease;
-}
-.threeVariant span{
-  display:inline-grid;
-  place-items:center;
-  width:22px;height:22px;
-  margin-right:8px;
-  border-radius:50%;
-  background:rgba(185,120,118,.10);
-  color:var(--rose2);
-  font-size:10px;
-  font-weight:700;
-}
-.threeVariant b{
-  font-size:13px;
-  font-weight:600;
-}
-.threeVariant.active{
-  border-color:var(--rose);
-  background:rgba(185,120,118,.10);
-  box-shadow:0 4px 14px rgba(113,71,65,.08);
-}
-.threeVariant:hover{
-  border-color:var(--rose);
-  transform:translateY(-1px);
-}
-@media(max-width:680px){
-  .threeVariants{grid-template-columns:1fr;gap:8px}
-  .threeVariant{min-height:50px}
-}
-
-
-/* V14 — portada Reina de Oros en /cards y visibilidad reforzada */
-.heroArtwork{
-  display:block;
-  position:absolute;
-  right:1%;
-  top:0;
-  width:min(400px,34vw);
-  max-height:650px;
-  z-index:1;
-  opacity:1;
-  pointer-events:none;
-}
-.heroArtwork img{
-  display:block;
-  width:100%;
-  height:auto;
-  max-height:650px;
-  object-fit:contain;
-}
-.hero{min-height:560px;}
-@media(max-width:820px){
-  .hero{min-height:0;}
-  .heroArtwork{
-    position:relative;
-    right:auto;
-    top:auto;
-    width:min(360px,92%);
-    max-height:none;
-    margin:20px auto 10px;
+  if (card.id === "29") {
+    sources.push("/cards/ocho-de-copas.png", "/ocho-de-copas.png");
+    sources.push("/cards/29-ocho-de-copas.jpg", "/29-ocho-de-copas.jpg");
   }
-  .heroArtwork img{max-height:none;}
+
+  return [...new Set(sources)];
 }
 
-/* V15 — 3 cartas integradas + giro de carta al elegir */
-.spreads{grid-template-columns:repeat(5,minmax(0,1fr));}
-.spread:nth-child(3){grid-column:auto;}
-.threeVariants{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-  margin-top:12px;
-  padding:10px;
-  border:1px solid var(--line);
-  border-radius:16px;
-  background:rgba(255,253,248,.42);
-}
-.threeVariant{
-  min-height:64px;
-  padding:12px 14px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:var(--paper2);
-  color:var(--ink);
-  text-align:left;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;
-}
-.threeVariant span{
-  flex:0 0 25px;
-  width:25px;height:25px;
-  display:grid;place-items:center;
-  margin:0;
-  border-radius:50%;
-  background:var(--roseSoft);
-  color:var(--rose2);
-  font-size:10px;
-  font-weight:700;
-}
-.threeVariant b{font-size:12px;font-weight:600;line-height:1.35;text-transform:lowercase;}
-.threeVariant.active{border-color:var(--rose);background:var(--roseSoft);box-shadow:0 4px 14px rgba(113,71,65,.08);}
-.threeVariant:hover{border-color:var(--rose);transform:translateY(-1px);}
+function CardImage({card, className, alt}:{card:Card; className?:string; alt:string}){
+  const sources = imageSources(card);
+  const [index, setIndex] = useState(0);
 
-/* Baraja: la carta empieza boca abajo y se gira al seleccionarla */
-.tarot{perspective:900px;transform-style:preserve-3d;}
-.tarotFlip{position:absolute;inset:0;display:block;transform-style:preserve-3d;transition:transform .62s cubic-bezier(.2,.7,.2,1);}
-.tarot.picked .tarotFlip{transform:rotateY(180deg);}
-.cardFace{position:absolute;inset:0;display:block;overflow:hidden;border-radius:inherit;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
-.cardFaceBack{background:radial-gradient(circle at 50% 50%,rgba(174,136,77,.13),transparent 25%),linear-gradient(145deg,#fbf6ec 0%,#f2e7d6 100%);}
-.cardFaceFront{transform:rotateY(180deg);background:var(--paper2);}
-.cardFaceFront img{display:block;width:100%;height:100%;object-fit:cover;}
-.tarot.picked{transform:translateY(-3px);}
-
-/* Portada: la Reina de Oros queda visible sin tapar el texto */
-.heroArtwork{display:block;position:absolute;right:0;top:0;width:min(430px,34vw);z-index:1;opacity:1;}
-.heroArtwork img{display:block;width:100%;height:auto;max-height:650px;object-fit:contain;}
-@media(max-width:1180px){
-  .spreads{grid-template-columns:repeat(3,minmax(0,1fr));}
-  .heroArtwork{width:min(360px,31vw);}
-}
-@media(max-width:820px){
-  .threeVariants{grid-template-columns:1fr;}
-  .heroArtwork{position:relative;right:auto;top:auto;width:min(360px,88%);margin:20px auto 0;}
-}
-@media(max-width:560px){
-  .spreads{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .threeVariants{padding:8px;gap:7px;}
-  .threeVariant{min-height:54px;padding:10px 11px;}
-  .threeVariant b{font-size:11px;}
-  .heroArtwork{width:min(330px,94%);margin:18px auto 0;}
+  return (
+    <img
+      className={className}
+      src={sources[index]}
+      alt={alt}
+      onError={() => setIndex(i => Math.min(i + 1, sources.length - 1))}
+    />
+  );
 }
 
-/* V15b — el selector de 3 cartas vive dentro de su propia tarjeta */
-.spreads{align-items:start;}
-.spreadGroup{min-width:0;border:1px solid transparent;border-radius:16px;}
-.spreadGroup > .spread{width:100%;}
-.spreadGroup.active{border-color:var(--rose);background:rgba(234,209,203,.28);padding:0 0 10px;box-shadow:0 8px 22px rgba(113,71,65,.06);}
-.spreadGroup.active > .spread{border-color:transparent;box-shadow:none;background:var(--roseSoft);border-radius:14px 14px 8px 8px;}
-.spreadGroup .threeVariants{margin:8px 8px 0;padding:0;border:0;background:transparent;display:flex;flex-direction:column;gap:5px;}
-.spreadGroup .threeVariant{min-height:42px;padding:8px 9px;border-radius:9px;background:rgba(255,253,248,.76);gap:8px;}
-.spreadGroup .threeVariant span{width:20px;height:20px;flex-basis:20px;font-size:9px;}
-.spreadGroup .threeVariant b{font-size:10px;line-height:1.25;}
-.spreadGroup .threeVariant.active{background:var(--white);border-color:var(--rose);box-shadow:none;}
-@media(max-width:1180px){.spreadGroup{grid-column:auto;}}
-@media(max-width:680px){
-  .spreadGroup .threeVariants{display:flex;}
-  .spreadGroup .threeVariant{min-height:44px;}
+const spreads: Spread[] = [
+  {id:1,name:"1 carta",subtitle:"mensaje",positions:["lo esencial ahora"]},
+  {id:2,name:"2 cartas",subtitle:"situación / orientación",positions:["situación","orientación"]},
+  {id:3,name:"3 cartas",subtitle:"",positions:["origen","presente","tendencia"]},
+  {id:5,name:"5 cartas",subtitle:"lectura profunda",positions:["dinámica","en juego","lo no dicho","dirección","clave"]},
+  {id:7,name:"7 cartas",subtitle:"lectura profesional",positions:["contexto","tensión","deseo","miedo","camino","clave","síntesis"]}
+];
+
+const threeCardVariants = [
+  {id:0, label:"origen / presente / tendencia", positions:["origen","presente","tendencia"]},
+  {id:1, label:"yo / el otro / el vínculo", positions:["yo","el otro","el vínculo"]},
+  {id:2, label:"qué siente / qué piensa / qué intenciones", positions:["qué siente","qué piensa","qué intenciones"]}
+];
+
+const categories: Category[] = [
+  {name:"Amor y relaciones",recommended:3,questions:[
+    "¿Qué necesito comprender sobre mi relación y hacia dónde se está moviendo?",
+    "¿Qué piensa esta persona sobre nuestra situación?",
+    "¿Qué siente esta persona respecto a mí y al vínculo?",
+    "¿Qué intenciones muestra esta persona en relación con el vínculo?",
+    "¿Qué está ocurriendo realmente entre nosotros?",
+    "¿Qué necesito ver con claridad sobre este vínculo?"
+  ]},
+  {name:"Una decisión",recommended:5,questions:[
+    "¿Qué necesito ver con claridad antes de tomar esta decisión?",
+    "¿Qué estoy evitando considerar en esta elección?",
+    "¿Qué me ayudará a elegir de forma coherente conmigo?",
+    "¿Qué diferencia realmente los dos caminos que tengo delante?"
+  ]},
+  {name:"Trabajo y propósito",recommended:3,questions:[
+    "¿Qué está pidiendo transformarse en mi vida profesional?",
+    "¿Dónde está mi energía más fértil ahora?",
+    "¿Qué necesito comprender sobre mi próximo paso profesional?"
+  ]},
+  {name:"Crecimiento personal",recommended:3,questions:[
+    "¿Qué patrón necesito reconocer para avanzar?",
+    "¿Qué parte de mí necesita atención en este momento?",
+    "¿Qué aprendizaje está intentando abrirse paso?"
+  ]},
+  {name:"Pregunta libre",recommended:3,questions:[
+    "¿Qué necesito comprender de la situación que estoy viviendo?",
+    "¿Qué no estoy viendo todavía con suficiente claridad?",
+    "¿Qué pregunta debería hacerme ahora?"
+  ]}
+];
+
+const modes = [
+  ["Lectura profunda","La dinámica emocional, interna y simbólica de la tirada."],
+  ["Relacional","Cómo dialogan las cartas entre sí y qué ocurre en el vínculo."],
+  ["Proceso","La evolución de la primera carta hasta la síntesis final."],
+  ["Práctica","Qué preguntas y movimientos concretos sugiere la lectura."]
+];
+
+function narrative(selected:Card[], spread:Spread, q:string){
+  const names = selected.map(c=>c.name).join(" → ");
+  if(spread.id===3 && selected.length===3 && spread.positions.join("|")==="yo|el otro|el vínculo")
+    return `La secuencia ${names} se lee como una dinámica de tres planos: yo, el otro y el vínculo. La primera carta muestra tu posición ante la pregunta; la segunda representa una dinámica que puede observarse en la otra persona sin convertir el símbolo en una afirmación literal sobre su mente; la tercera muestra la cualidad que toma el vínculo entre ambos. Para profundizar en «${q}», observa especialmente dónde se complementan, se tensan o se transforman las tres cartas.`;
+  if(spread.id===3 && selected.length===3 && spread.positions.join("|")==="qué siente|qué piensa|qué intenciones")
+    return `La secuencia ${names} organiza la lectura en tres planos: qué siente, qué piensa y qué intenciones muestra la dinámica. Las cartas se interpretan como lenguaje simbólico de la relación, no como acceso literal a la mente de otra persona. Observa qué coincide, qué se contradice y qué necesita expresarse con mayor claridad ante «${q}».`;
+  if(selected.length===1)
+    return `${selected[0].name} concentra la lectura. Ante «${q}», no anuncia un hecho: pone el foco en ${selected[0].essence}. Su luz es ${selected[0].light}; su sombra, ${selected[0].shadow}. La pregunta que queda abierta es qué cambia cuando observas tu situación desde este símbolo.`;
+  if(selected.length===2)
+    return `La secuencia ${names} funciona como diálogo. ${selected[0].name} describe el terreno —${selected[0].essence}— y ${selected[1].name} modifica la respuesta desde ${selected[1].essence}. La lectura invita a pasar de comprender lo que ocurre a decidir cómo quieres relacionarte con ello.`;
+  if(selected.length===3)
+    return `La secuencia ${names} forma una lectura de tres planos. Cada posición cambia el sentido de la carta y el conjunto se interpreta desde la pregunta. La lectura observa qué se refuerza, qué entra en tensión y qué movimiento propone la relación entre las tres cartas.`;
+  if(selected.length===5)
+    return `La secuencia ${names} tiene una arquitectura clara. ${selected[0].name} abre la dinámica; ${selected[1].name} muestra qué está realmente en juego; ${selected[2].name} introduce la zona que todavía no está completamente visible; ${selected[3].name} responde con una dirección posible; y ${selected[4].name} integra el sentido de la tirada. No son cinco definiciones: cada carta modifica la anterior.`;
+  return `La secuencia ${names} funciona como un proceso completo. Contexto y tensión muestran el escenario; deseo y miedo revelan fuerzas que pueden tirar en sentidos opuestos; el camino transforma esa tensión en posibilidad de acción; la clave condensa el aprendizaje y la síntesis devuelve una visión más amplia. La última carta no borra las anteriores: las reinterpreta.`;
 }
 
+export default function Home(){
+  const shuffleIds = () => {
+    const ids = cards.map(c => c.id);
+    for (let i = ids.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ids[i], ids[j]] = [ids[j], ids[i]];
+    }
+    return ids;
+  };
+  const [cat, setCat] = useState(0);
+  const [question, setQuestion] = useState(categories[0].questions[0]);
+  const [customQuestion, setCustomQuestion] = useState("");
+  const [spread, setSpread] = useState(3);
+  const [threeCardVariant, setThreeCardVariant] = useState(1);
+  const [slotIds, setSlotIds] = useState<(string | null)[]>(Array(3).fill(null));
+  const [reading, setReading] = useState(false);
+  const [mode, setMode] = useState(0);
+  const [deckOrder, setDeckOrder] = useState<string[]>(shuffleIds);
 
-/* V17 — las 3 opciones de "3 cartas" van en horizontal debajo del botón */
-.spreadGroup{display:contents;}
-.spreadGroup .threeVariants{
-  grid-column:3 / span 3;
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-  margin:0;
-  padding:0;
-  border:0;
-  background:transparent;
-}
-.spreadGroup .threeVariant{
-  min-height:58px;
-  padding:12px 14px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:var(--paper2);
-  display:flex;
-  align-items:center;
-  gap:9px;
-  text-align:left;
-}
-.spreadGroup .threeVariant b{
-  font-size:12px;
-  line-height:1.25;
-  text-transform:lowercase;
-}
-.spreadGroup .threeVariant span{
-  flex:0 0 24px;
-  width:24px;height:24px;
-  margin:0;
-}
-@media(max-width:1180px){
-  .spreadGroup .threeVariants{grid-column:1 / -1;}
-}
-@media(max-width:680px){
-  .spreadGroup .threeVariants{
-    grid-column:1 / -1;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:6px;
+  const baseSpread = spreads.find(s => s.id === spread)!;
+  const current = spread === 3
+    ? {...baseSpread, subtitle: threeCardVariants[threeCardVariant].label, positions: threeCardVariants[threeCardVariant].positions}
+    : baseSpread;
+  const count = current.positions.length;
+  const effectiveQuestion = customQuestion.trim() || question;
+  const normalizedQuestion = effectiveQuestion.toLowerCase();
+  const suggestedSpreadId = categories[cat].recommended;
+  const suggestedThreeVariant =
+    normalizedQuestion.includes("siente") ||
+    normalizedQuestion.includes("piensa") ||
+    normalizedQuestion.includes("intenciones") ? 2 :
+    cat === 0 ? 1 : 0;
+
+  const picked = useMemo(() => slotIds.filter((id): id is string => Boolean(id)), [slotIds]);
+  const selected = useMemo(
+    () => slotIds.map(id => id ? cardById.get(id) : undefined).filter(Boolean) as Card[],
+    [slotIds]
+  );
+  const [zoomCard, setZoomCard] = useState<Card | null>(null);
+
+  function resetDeck(){
+    setDeckOrder(shuffleIds());
+    setSlotIds(Array(count).fill(null));
+    setReading(false);
+    setMode(0);
+    setZoomCard(null);
   }
-  .spreadGroup .threeVariant{
-    min-height:64px;
-    padding:9px 8px;
-    gap:5px;
-  }
-  .spreadGroup .threeVariant span{flex-basis:20px;width:20px;height:20px;font-size:9px;}
-  .spreadGroup .threeVariant b{font-size:10px;}
-}
 
-/* V18 — preguntas sin espacio en blanco y en horizontal */
-.questionPanel{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:0;
-  padding:27px;
-}
-.questionPanel > .label{
-  grid-column:1 / -1;
-  margin-bottom:14px;
-}
-.questionList{
-  grid-column:1 / -1;
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-}
-.qoption{
-  min-height:68px;
-  display:flex;
-  align-items:center;
-  text-align:left;
-}
-.customQuestion{
-  grid-column:1 / -1;
-  border-left:0;
-  border-top:1px solid var(--line);
-  padding:22px 0 0;
-  margin-top:22px;
-}
-.customQuestion textarea{min-height:100px}
-@media(max-width:820px){
-  .questionList{grid-template-columns:repeat(2,minmax(0,1fr));}
-}
-@media(max-width:560px){
-  .questionPanel{padding:18px}
-  .questionList{grid-template-columns:1fr;gap:8px}
-  .qoption{min-height:56px}
-  .customQuestion{margin-top:18px;padding-top:18px}
+  function selectCat(i:number){
+    setCat(i);
+    setQuestion(categories[i].questions[0]);
+    setCustomQuestion("");
+    setSpread(categories[i].recommended);
+    setThreeCardVariant(i === 0 ? 1 : 0);
+    setDeckOrder(shuffleIds());
+    setSlotIds(Array(categories[i].recommended).fill(null));
+    setReading(false);
+    setMode(0);
+  }
+
+  function choose(id:string){
+    if(reading) return;
+    setSlotIds(slots => {
+      const existing = slots.indexOf(id);
+      if (existing !== -1) {
+        const next = [...slots];
+        next[existing] = null;
+        return next;
+      }
+      const empty = slots.indexOf(null);
+      if (empty === -1) return slots;
+      const next = [...slots];
+      next[empty] = id;
+      return next;
+    });
+  }
+
+  function random(){
+    const order = shuffleIds();
+    setDeckOrder(order);
+    setSlotIds(order.slice(0, count));
+    setReading(false);
+    setMode(0);
+    setZoomCard(null);
+  }
+
+  function interpret(){
+    if(picked.length === count) {
+      setReading(true);
+      requestAnimationFrame(() => document.getElementById("lectura")?.scrollIntoView({behavior:"smooth", block:"start"}));
+    }
+  }
+
+  function cardArea(c:Card){
+    if(c.id.length && Number(c.id) < 22) return "Arcano Mayor";
+    const n = Number(c.id);
+    if(n < 36) return "Copas";
+    if(n < 50) return "Espadas";
+    if(n < 64) return "Bastos";
+    return "Oros";
+  }
+
+  function contextualReading(c:Card, i:number){
+    const position = current.positions[i];
+    const neighbours = [selected[i-1], selected[i+1]].filter(Boolean);
+    const neighbourText = neighbours.length
+      ? ` Al dialogar con ${neighbours.map(n => n.name).join(" y ")}, esta cualidad adquiere un matiz que conviene observar dentro del conjunto.`
+      : " Aquí la carta funciona como núcleo de la lectura, por lo que su posición tiene un peso especial.";
+
+    if(spread === 1) return `${c.name} ocupa la posición «${position}». El símbolo concentra la lectura en ${c.essence}. Su expresión luminosa es ${c.light}; cuando se bloquea puede aparecer como ${c.shadow}. La clave está en llevar esta imagen a tu situación concreta y observar qué encaja y qué necesita contraste.`;
+    if(spread === 2) return `En «${position}», ${c.name} responde desde ${c.essence}. No es una definición aislada: esta posición le da dirección a la carta. Su recurso es ${c.light}; su tensión, ${c.shadow}.${neighbourText}`;
+    if(spread === 3) {
+      if(threeCardVariant === 1 && i === 0) return `En «yo», ${c.name} devuelve la mirada a tu lugar dentro del vínculo: ${c.essence}. La carta señala qué puedes observar, expresar y elegir desde tu propia posición. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
+      if(threeCardVariant === 1 && i === 1) return `En «el otro», ${c.name} representa simbólicamente la dinámica que percibes en la otra parte del vínculo: ${c.essence}. Se lee como una hipótesis simbólica que conviene contrastar con hechos, gestos y conversaciones, no como acceso literal a su mundo interior. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
+      if(threeCardVariant === 1 && i === 2) return `En «el vínculo», ${c.name} muestra la cualidad que toma el espacio entre ambos: ${c.essence}. Aquí importa observar qué se activa cuando tu posición y la dinámica del otro entran en relación. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
+      if(threeCardVariant === 2) return `En «${position}», ${c.name} aporta ${c.essence}. Esta variante organiza la lectura en tres planos simbólicos —qué siente, qué piensa y qué intenciones muestra la dinámica—. La carta no afirma literalmente el mundo interior de otra persona: invita a contrastar la percepción con hechos y conversaciones. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
+      return `En «${position}», ${c.name} aporta ${c.essence}. Como parte de una secuencia, interesa ver qué recibe de la carta anterior y qué prepara para la siguiente. La expresión disponible es ${c.light}; el punto de atención es ${c.shadow}.${neighbourText}`;
+    }
+    return `En «${position}», ${c.name} introduce ${c.essence}. La carta funciona como una pieza dentro de una arquitectura mayor: ${c.light} muestra el recurso disponible y ${c.shadow} señala dónde puede perderse la claridad.${neighbourText}`;
+  }
+
+  function synthesis(){
+    const majorsCount = selected.filter(c => Number(c.id) < 22).length;
+    const areas = selected.map(cardArea);
+    const repeated = areas.find(a => areas.filter(x => x === a).length > 1);
+    const sequence = selected.map(c => c.name).join(" → ");
+    let focus = repeated
+      ? `Hay una concentración clara en ${repeated.toLowerCase()}, por lo que ese territorio merece una atención especial.`
+      : "La tirada reparte la energía entre varios territorios, lo que sugiere una lectura que necesita integrar perspectivas distintas.";
+    if(majorsCount >= 2) focus += " La presencia de varios Arcanos Mayores da peso a la dimensión de proceso y transformación de la pregunta.";
+    return `La secuencia ${sequence} no se lee como una suma de significados. Primero miro la pregunta y las posiciones; después observo qué cartas se refuerzan, cuáles introducen tensión y dónde cambia el movimiento de la historia. ${focus} El punto de trabajo está en reconocer qué parte de la lectura describe una experiencia que ya puedes observar y qué parte abre una pregunta para seguir explorando.`;
+  }
+
+  function narrative(){
+    const names = selected.map(c => c.name).join(" → ");
+      if(spread === 1) return `${selected[0].name} concentra el mensaje de la tirada. La pregunta «${effectiveQuestion}» funciona como lente: el mismo arcano puede hablar de algo distinto según aquello que quieres comprender. La lectura invita a observar el símbolo en tu realidad y decidir qué significado tiene para ti.`;
+    if(spread === 2) return `${names} construyen un diálogo. La primera carta establece el terreno y la segunda responde, corrige o reorienta ese terreno. La lectura gana profundidad cuando buscas la relación entre ambas en lugar de interpretar cada una por separado.`;
+    if(spread === 3) return `${names} forman una trayectoria. El origen explica una raíz activa, el presente muestra dónde está concentrada la experiencia y la tendencia abre una posibilidad de desarrollo. La tendencia no se presenta como destino: cambia cuando cambia la manera de actuar, percibir o relacionarte con la situación.`;
+    if(spread === 5) return `${names} forman una arquitectura de cinco movimientos. La dinámica abre la escena, lo que está en juego concentra el conflicto o deseo, lo no dicho introduce la zona menos visible, la dirección muestra hacia dónde puede organizarse la energía y la clave integra el aprendizaje. Cada carta modifica el significado de las demás.`;
+    return `${names} forman un proceso completo. El contexto sitúa la experiencia; la tensión muestra dónde se concentra; deseo y miedo pueden empujar en sentidos distintos; el camino convierte esa tensión en posibilidad; la clave condensa el aprendizaje y la síntesis devuelve una mirada más amplia. La última carta no borra las anteriores: las reinterpreta.`;
+  }
+
+  return <main className="appShell">
+    <header className="topbar">
+      <div className="logo">CARTAS</div>
+      <div className="headerMeta">TAROT INTERACTIVO · 78 CARTAS</div>
+    </header>
+
+    <section className="hero sectionBlock">
+      <div className="heroCopy">
+        <div className="eyebrow">01 · La pregunta</div>
+        <h1>Empieza por lo que<br/><span>quieres comprender.</span></h1>
+        <p className="heroIntro">Elige un tema, formula tu propia pregunta y deja que la tirada organice aquello que quieres mirar.</p>
+      </div>
+      <div className="heroArtwork" aria-hidden="true">
+        <img
+          src="/cards/76-reina-de-oros.png"
+          alt=""
+          onError={(e) => {
+            const img = e.currentTarget;
+            if (img.src.endsWith("/cards/76-reina-de-oros.png")) img.src = "/76-reina-de-oros.png";
+          }}
+        />
+      </div>
+
+      <div className="categories" role="tablist" aria-label="Temas">
+        {categories.map((c,i) => <button className={cat===i ? "category active" : "category"} onClick={()=>selectCat(i)} key={c.name}>{c.name}</button>)}
+      </div>
+
+      <div className="questionPanel">
+        <div className="label">Preguntas para empezar</div>
+        <div className="questionList">
+          {categories[cat].questions.map(q => <button className={question===q && !customQuestion.trim() ? "qoption active" : "qoption"} onClick={()=>{
+  setQuestion(q);
+  setCustomQuestion("");
+  const nq = q.toLowerCase();
+  if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
+    setSpread(3);
+    setThreeCardVariant(2);
+    setSlotIds(Array(count).fill(null));
+    setReading(false);
+  } else if (cat === 0) {
+    setSpread(3);
+    setThreeCardVariant(1);
+    setSlotIds(Array(count).fill(null));
+    setReading(false);
+  }
+}} key={q}>{q}</button>)}
+        </div>
+        <div className="customQuestion">
+          <div className="label">Tu propia pregunta <span>· opcional</span></div>
+          <textarea value={customQuestion} placeholder="Escribe aquí tu pregunta..." onChange={e=>setCustomQuestion(e.target.value)} />
+        </div>
+      </div>
+      <div className="questionEcho">“{effectiveQuestion}”</div>
+    </section>
+
+    <section className="sectionBlock spreadSection">
+      <div className="eyebrow">02 · La tirada</div>
+      <div className="sectionHeading"><div><h2>Elige la forma de mirar.</h2><p>La propuesta se adapta a tu pregunta, pero tú decides.</p></div></div>
+      <div className="spreads">
+        {spreads.map(s => s.id === 3 ? (
+          <div className="spreadGroup" key={s.id}>
+            <button
+              className={spread===3 ? "spread active" : "spread"}
+              onClick={()=>{setSpread(3);setSlotIds(Array(3).fill(null));setReading(false);}}
+              type="button"
+            >
+              <strong>3 cartas</strong>
+              <span>elige una de las tres formas de mirar</span>
+            </button>
+            {spread === 3 && (
+              <div className="threeVariants" aria-label="Opciones de la tirada de 3 cartas">
+                {threeCardVariants.map(v => (
+                  <button
+                    type="button"
+                    key={v.id}
+                    className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
+                    onClick={()=>{setThreeCardVariant(v.id);setSlotIds(Array(3).fill(null));setReading(false);}}
+                  >
+                    <span>{v.id+1}</span>
+                    <b>{v.label}</b>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setSlotIds(Array(s.positions.length).fill(null));setReading(false);}} key={s.id} type="button">
+            <strong>{s.name}</strong>
+            <span>{s.subtitle}</span>
+          </button>
+        ))}
+      </div>
+      <div className="recommend">Para esta pregunta, la lectura propuesta es <b>{spreads.find(s=>s.id===suggestedSpreadId)?.name}</b>{suggestedSpreadId === 3 ? ` · ${threeCardVariants[suggestedThreeVariant].label}` : ` · ${spreads.find(s=>s.id===suggestedSpreadId)?.subtitle}`}.</div>
+    </section>
+
+    <section className="sectionBlock tableSection" id="mesa">
+      <div className="eyebrow">03 · La mesa</div>
+      <div className="pickHeader">
+        <div><h2>Elige tus cartas.</h2><p>Toca una carta para incorporarla a la tirada. Puedes cambiar una elección antes de revelar la lectura.</p></div>
+        <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
+      </div>
+
+      <div className="selectedSpread" aria-label="Tu tirada">
+        {current.positions.map((position,i) => {
+          const card = slotIds[i] ? cardById.get(slotIds[i]!) : undefined;
+          return <div className={card ? "drawSlot filled" : "drawSlot"} key={position}>
+            <div className="drawTop"><span>{String(i+1).padStart(2,"0")}</span><b>{position}</b></div>
+            <button
+              className="drawCard"
+              type="button"
+              disabled={!card}
+              onClick={() => card && setZoomCard(card)}
+              aria-label={card ? `Ampliar ${card.name}` : "Elige una carta"}
+            >
+              {card ? (
+                <>
+                  <CardImage key={card.id} card={card} alt={card.name}/>
+                  <span className="zoomHint" aria-hidden="true">⌕</span>
+                </>
+              ) : (
+                <div className="emptyBack"><span>Elige una carta</span><i>✦</i></div>
+              )}
+            </button>
+            <div className="drawName">
+              {card ? card.name : "Elige una carta"}
+              {card && <button className="changeCard" type="button" onClick={() => choose(card.id)}>Cambiar</button>}
+            </div>
+          </div>;
+        })}
+      </div>
+
+      <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
+      <div className="deck" aria-label="Baraja de 78 cartas">
+        {deckOrder.map(id => {
+          const c = cardById.get(id)!;
+          const isPicked = picked.includes(c.id);
+          const pickNumber = picked.indexOf(c.id);
+          return (
+            <button
+              className={isPicked ? "tarot picked" : "tarot"}
+              key={c.id}
+              type="button"
+              onClick={() => choose(c.id)}
+              aria-label={isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
+              title={isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
+            >
+              <span className="tarotFlip">
+                <span className="cardFace cardFaceBack">
+                  <span className="backFrame backFrameOuter"></span>
+                  <span className="backFrame backFrameInner"></span>
+                  <span className="backGarland backGarlandLeft"></span>
+                  <span className="backGarland backGarlandRight"></span>
+                  <span className="backMedallion">
+                    <span className="backStar">✦</span>
+                  </span>
+                </span>
+                <span className="cardFace cardFaceFront">
+                  <CardImage key={c.id} card={c} alt={c.name}/>
+                </span>
+              </span>
+              {isPicked && <span className="pickedMark">{pickNumber + 1}</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="actions">
+        <button className="secondary shuffleButton" onClick={resetDeck}>Mezclar</button>
+        <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
+        <button className="secondary" onClick={random}>Dejar que CARTAS elija</button>
+        <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
+      </div>
+    </section>
+
+    {reading && <section className="sectionBlock readingSection" id="lectura">
+      <div className="eyebrow">04 · La revelación</div>
+      <div className="readingIntro">
+        <div><h2>Ahora mira la historia.</h2><p className="readingQuestion">“{effectiveQuestion}”</p></div>
+        <div className="readingBadge">Lectura {current.name}</div>
+      </div>
+
+      <div className="readingModes">
+        {modes.map((m,i)=><button className={mode===i ? "mode active" : "mode"} onClick={()=>setMode(i)} key={m[0]}><b>{m[0]}</b><span>{m[1]}</span></button>)}
+      </div>
+
+      <div className="expertGrid">
+        <div className="expertCard mainSynthesis"><div className="label">Lo que veo</div><p>{synthesis()}</p></div>
+        <div className="expertCard"><div className="label">La conversación entre las cartas</div><p>{narrative()}</p></div>
+      </div>
+
+      <div className="positionReadings">
+        <div className="readingLabel">Lectura carta a carta</div>
+        {selected.map((c,i)=><article className="positionReading" key={c.id}>
+          <div className="positionNumber">{String(i+1).padStart(2,"0")}</div>
+          <button className="readingCardThumb" type="button" onClick={() => setZoomCard(c)} aria-label={`Ampliar ${c.name}`}>
+            <CardImage key={c.id} card={c} alt={c.name}/>
+            <span className="zoomHint" aria-hidden="true">⌕</span>
+          </button>
+          <div className="positionInfo"><span>{current.positions[i]}</span><h3>{c.name}</h3><small>{cardArea(c)}</small></div>
+          <div className="positionText"><p>{contextualReading(c,i)}</p><div className="lightShadow"><span><b>Luz</b> {c.light}</span><span><b>Sombra</b> {c.shadow}</span></div></div>
+        </article>)}
+      </div>
+
+      <div className="jointReading">
+        <div className="label">La narración conjunta</div>
+        <h3>Cómo hablan las cartas entre sí</h3>
+        <p>{narrative()}</p>
+      </div>
+      <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
+      <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
+    </section>}
+
+    {zoomCard && (
+      <div className="cardZoomOverlay" role="dialog" aria-modal="true" aria-label={`Carta ${zoomCard.name}`} onClick={() => setZoomCard(null)}>
+        <div className="cardZoomPanel" onClick={e => e.stopPropagation()}>
+          <button className="cardZoomClose" type="button" onClick={() => setZoomCard(null)} aria-label="Cerrar">×</button>
+          <CardImage card={zoomCard} alt={zoomCard.name}/>
+          <div className="zoomCaption">{zoomCard.name}</div>
+        </div>
+      </div>
+    )}
+
+    <footer>El tarot se presenta aquí como lenguaje simbólico de reflexión. La lectura abre perspectivas; tus decisiones siguen siendo tuyas.</footer>
+  </main>;
 }
