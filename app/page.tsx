@@ -34,7 +34,7 @@ const majors: Card[] = [
   ["06","Los Enamorados","06-los-enamorados.png","elección, vínculo y coherencia","elegir desde los valores","indecisión o elegir por miedo a perder"],
   ["07","El Carro","07-el-carro.png","dirección, voluntad y avance","tomar las riendas","forzar o correr sin integrar fuerzas opuestas"],
   ["08","La Fuerza","08-la-fuerza.png","coraje sereno e integración del impulso","firmeza sin violencia","contención excesiva o lucha interna"],
-  ["09","El Ermitaño","09-el-ermitano.png","discernimiento, retiro fértil y búsqueda","escuchar la propia verdad","aislamiento o postergar indefinidamente"],
+  ["09","El Ermitaño","09-el-ermitaño.png","discernimiento, retiro fértil y búsqueda","escuchar la propia verdad","aislamiento o postergar indefinidamente"],
   ["10","La Rueda de la Fortuna","10-la-rueda-de-la-fortuna.png","cambio de ciclo y factores no controlables","adaptarse al movimiento","pasividad ante el cambio"],
   ["11","La Justicia","11-la-justicia.png","hechos, límites y responsabilidad","claridad y decisiones sostenibles","juicio frío o autoexigencia"],
   ["12","El Colgado","12-el-colgado.png","pausa, perspectiva y renuncia a forzar","ver de otra manera","estancamiento o sacrificio sin sentido"],
@@ -164,9 +164,10 @@ export default function Home(){
   const count = current.positions.length;
   const effectiveQuestion = customQuestion.trim() || question;
 
+  const cardById = useMemo(() => new Map(cards.map(card => [card.id, card])), []);
   const selected = useMemo(
-    () => picked.map(id => cards.find(c => c.id === id)).filter(Boolean) as Card[],
-    [picked]
+    () => picked.map(id => cardById.get(id)).filter(Boolean) as Card[],
+    [picked, cardById]
   );
 
   function resetDeck(){
@@ -308,9 +309,23 @@ export default function Home(){
           const card = selected[i];
           return <div className={card ? "drawSlot filled" : "drawSlot"} key={position}>
             <div className="drawTop"><span>{String(i+1).padStart(2,"0")}</span><b>{position}</b></div>
-            <div className="drawCard">
-              {card ? <img src={`/cards/${card.file}`} alt={card.name}/> : <div className="emptyBack"><span>CARTAS</span><i>✦</i></div>}
-            </div>
+            <button
+              type="button"
+              className="drawCard"
+              onClick={() => card && choose(card.id)}
+              disabled={!card}
+              aria-label={card ? `${card.name}, posición ${i+1}. Pulsa para retirar` : `Posición ${position}`}
+            >
+              {card ? <img
+                src={`/cards/${card.file}`}
+                alt={card.name}
+                onError={(event) => {
+                  const image = event.currentTarget;
+                  image.style.display = "none";
+                  image.parentElement?.classList.add("imageMissing");
+                }}
+              /> : <div className="emptyBack"><span>CARTAS</span><i>✦</i></div>}
+            </button>
             <div className="drawName">{card ? card.name : "Elige una carta"}</div>
           </div>;
         })}
@@ -319,12 +334,20 @@ export default function Home(){
       <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
         {deckOrder.map(id => {
-          const c = cards.find(card => card.id === id)!;
-          const isPicked = picked.includes(c.id);
-          const pickNumber = picked.indexOf(c.id);
-          return <button className={isPicked ? "tarot picked" : "tarot"} key={c.id} onClick={()=>choose(c.id)} aria-label={isPicked ? `${c.name}, posición ${pickNumber+1}` : c.name}>
-            <img src={`/cards/${c.file}`} alt="" loading="lazy" />
-            {isPicked && <span className="pickedMark">{pickNumber+1}</span>}
+          const c = cardById.get(id)!;
+          if (picked.includes(c.id)) return null;
+          return <button
+            className="tarot tarotBack"
+            key={c.id}
+            onClick={()=>choose(c.id)}
+            aria-label={`Elegir ${c.name}`}
+            title="Toca para revelar esta carta"
+          >
+            <span className="backInner" aria-hidden="true">
+              <span className="backStar">✦</span>
+              <span className="backLabel">CARTAS</span>
+              <span className="backStar">✦</span>
+            </span>
           </button>;
         })}
       </div>
