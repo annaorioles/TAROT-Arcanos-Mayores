@@ -1,0 +1,483 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --paper:#f5eee3;
+  --paper-2:#fbf7ef;
+  --ink:#25231f;
+  --muted:#756f66;
+  --line:#d8cdbc;
+  --rose:#b87578;
+  --rose-soft:#ead4ce;
+  --sage:#71847b;
+  --gold:#b18a45;
+  --shadow:rgba(70,55,40,.12);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 12% 18%,rgba(184,117,120,.10),transparent 23%),
+    radial-gradient(circle at 88% 38%,rgba(113,132,123,.10),transparent 25%),
+    linear-gradient(180deg,#f8f1e7 0%,var(--paper) 48%,#f3ebdf 100%);
+  color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,textarea{font:inherit}
+button{cursor:pointer}
+
+main{
+  max-width:1180px;
+  margin:auto;
+  padding:26px 28px 80px;
+  position:relative;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 4px 58px;
+}
+.logo{
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:.28em;
+}
+.headerMeta{
+  font-size:9px;
+  letter-spacing:.16em;
+  color:var(--muted);
+}
+
+.eyebrow,.label,.position{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.hero{
+  position:relative;
+  padding:20px 0 20px;
+}
+
+h1{
+  max-width:900px;
+  font-size:clamp(48px,7.2vw,88px);
+  line-height:.98;
+  letter-spacing:-.055em;
+  margin:12px 0 24px;
+  font-weight:700;
+}
+h1 em{
+  font-style:normal;
+  color:#77736c;
+}
+h2{
+  font-size:31px;
+  line-height:1.05;
+  letter-spacing:-.045em;
+  margin:8px 0 20px;
+  font-weight:700;
+}
+.hero>p{
+  max-width:670px;
+  font-size:15px;
+  line-height:1.75;
+  color:#514c45;
+}
+
+/* soft botanical-inspired framing without adding external assets */
+.hero:after{
+  content:"✿";
+  position:absolute;
+  right:5%;
+  top:0;
+  font-size:120px;
+  line-height:1;
+  color:rgba(184,117,120,.13);
+  pointer-events:none;
+}
+
+.categories{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin:30px 0 13px;
+}
+.category{
+  border:1px solid var(--line);
+  background:rgba(255,252,246,.55);
+  color:var(--ink);
+  border-radius:999px;
+  padding:11px 16px;
+  font-size:11px;
+  font-weight:600;
+  transition:.18s ease;
+}
+.category:hover{transform:translateY(-1px)}
+.category.active{
+  background:var(--rose);
+  border-color:var(--rose);
+  color:white;
+}
+
+.question{
+  background:rgba(255,252,246,.72);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:21px;
+  margin-bottom:60px;
+  box-shadow:0 8px 30px var(--shadow);
+  backdrop-filter:blur(4px);
+}
+.questionList{
+  display:grid;
+  gap:4px;
+  margin:11px 0;
+}
+.qoption{
+  border:0;
+  background:transparent;
+  text-align:left;
+  padding:11px 12px;
+  border-radius:11px;
+  font-size:13px;
+  line-height:1.45;
+  color:#575149;
+}
+.qoption.active{
+  background:#eee4d7;
+  color:var(--ink);
+  font-weight:700;
+}
+.question textarea{
+  width:100%;
+  border:0;
+  border-top:1px solid #e1d8ca;
+  padding:15px 0 0;
+  background:transparent;
+  outline:0;
+  resize:none;
+  font-size:17px;
+  font-weight:600;
+  line-height:1.45;
+  color:var(--ink);
+}
+
+.spreads{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:9px;
+}
+.spread{
+  min-height:104px;
+  text-align:center;
+  border:1px solid var(--line);
+  background:rgba(255,252,246,.58);
+  border-radius:17px;
+  padding:15px 10px;
+  color:var(--ink);
+  transition:.18s ease;
+}
+.spread:hover{transform:translateY(-2px);box-shadow:0 8px 22px var(--shadow)}
+.spread strong{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+}
+.spread span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.35;
+  margin-top:9px;
+}
+.spread.active{
+  background:#f2ddd7;
+  border-color:var(--rose);
+  color:var(--ink);
+}
+.spread.active span{color:#655d55}
+
+.recommend{
+  margin:12px 0 60px;
+  padding:12px 15px;
+  border-left:2px solid var(--rose);
+  background:rgba(235,224,211,.72);
+  font-size:10px;
+  color:#5e574e;
+}
+
+.pickTitle{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+}
+.pickTitle h2{margin-bottom:5px}
+.pickTitle span{
+  font-size:11px;
+  font-weight:700;
+}
+.hint{
+  font-size:12px;
+  color:#696158;
+  line-height:1.6;
+  max-width:720px;
+}
+
+/* 78-card face-down deck */
+.deck{
+  display:grid;
+  grid-template-columns:repeat(13,1fr);
+  gap:8px;
+  margin:24px 0 20px;
+}
+.tarot{
+  border:0;
+  background:transparent;
+  padding:0;
+  text-align:left;
+  position:relative;
+  min-width:0;
+}
+.tarot img,.cardBack{
+  display:block;
+  width:100%;
+  aspect-ratio:3/4;
+  border-radius:9px;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.tarot img{
+  object-fit:cover;
+  box-shadow:0 7px 16px rgba(62,49,37,.16);
+}
+.cardBack{
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at 50% 45%,rgba(177,138,69,.12),transparent 28%),
+    #f7eee1;
+  border:1px solid #cbb99d;
+  color:#8e6c3d;
+  box-shadow:0 7px 16px rgba(62,49,37,.13);
+}
+.cardBack:before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid #cdbda5;
+  border-radius:6px;
+  background:
+    linear-gradient(45deg,transparent 47%,rgba(184,117,120,.13) 48%,rgba(184,117,120,.13) 52%,transparent 53%),
+    linear-gradient(-45deg,transparent 47%,rgba(113,132,123,.13) 48%,rgba(113,132,123,.13) 52%,transparent 53%);
+  background-size:12px 12px;
+}
+.cardBack span,.cardBack b{position:relative;z-index:1}
+.cardBack span{
+  font-size:6px;
+  letter-spacing:.22em;
+  font-weight:800;
+  color:#6e665c;
+}
+.cardBack b{
+  font-size:22px;
+  font-weight:500;
+  color:var(--gold);
+  margin-top:4px;
+}
+.cardName{
+  display:block;
+  font-size:8px;
+  font-weight:600;
+  margin:6px 1px;
+  color:#514a42;
+}
+.tarot.picked img{
+  transform:translateY(-7px);
+  box-shadow:0 13px 28px rgba(62,49,37,.22);
+  outline:2px solid var(--rose);
+  outline-offset:2px;
+}
+.tarot.picked .cardName{font-weight:700}
+.tarot i{
+  position:absolute;
+  top:5px;
+  right:5px;
+  width:21px;
+  height:21px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--rose);
+  color:#fff;
+  font-size:9px;
+  font-style:normal;
+  font-weight:800;
+}
+
+.actions{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin:20px 0 65px;
+}
+.primary,.secondary{
+  border-radius:999px;
+  padding:13px 19px;
+  font-size:11px;
+  font-weight:700;
+}
+.primary{
+  border:1px solid var(--sage);
+  background:var(--sage);
+  color:#fff;
+}
+.primary:disabled{
+  opacity:.28;
+  cursor:not-allowed;
+}
+.secondary{
+  border:1px solid #8c8479;
+  background:rgba(255,252,246,.45);
+  color:var(--ink);
+}
+
+.result{
+  border-top:1px solid var(--line);
+  padding-top:48px;
+}
+.echo{
+  font-size:20px;
+  font-weight:600;
+  line-height:1.5;
+  max-width:800px;
+}
+.readingModes{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin:25px 0 30px;
+}
+.mode{
+  border:1px solid var(--line);
+  background:rgba(255,252,246,.68);
+  border-radius:17px;
+  text-align:left;
+  padding:15px;
+  color:var(--ink);
+}
+.mode.active{
+  border-color:var(--rose);
+  box-shadow:inset 0 0 0 1px var(--rose);
+  background:#f4e3dc;
+}
+.mode b{display:block;font-size:11px}
+.mode span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.45;
+  margin-top:5px;
+}
+
+.resultCards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+}
+.resultImg{
+  border-radius:13px;
+  overflow:hidden;
+  background:#e9e0d2;
+  box-shadow:0 7px 20px var(--shadow);
+}
+.resultImg img{width:100%;display:block}
+.position{margin-top:10px}
+.resultCards h3{font-size:14px;margin:6px 0}
+.resultCards p{
+  font-size:12px;
+  line-height:1.65;
+  color:#504a42;
+}
+.resultCards details{
+  border-top:1px solid var(--line);
+  margin-top:10px;
+  padding-top:9px;
+}
+.resultCards summary{
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+.story{
+  margin-top:35px;
+  background:rgba(255,252,246,.72);
+  border:1px solid var(--line);
+  border-radius:23px;
+  padding:25px;
+  box-shadow:0 8px 30px var(--shadow);
+}
+.story .label{margin-bottom:13px}
+.story p{
+  font-size:16px;
+  line-height:1.8;
+  margin:0;
+}
+.closing{
+  margin-top:12px;
+  border:1px solid var(--line);
+  border-radius:19px;
+  padding:18px;
+  background:#eee1d4;
+}
+.closing b{font-size:11px}
+.closing p{
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:0;
+}
+footer{
+  font-size:9px;
+  color:var(--muted);
+  line-height:1.6;
+  margin-top:25px;
+  max-width:700px;
+}
+
+@media(max-width:1050px){
+  .deck{grid-template-columns:repeat(10,1fr)}
+  .spreads{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:700px){
+  main{padding:18px 13px 55px}
+  header{padding-bottom:38px}
+  .headerMeta{font-size:7px}
+  h1{font-size:clamp(43px,12vw,65px)}
+  h2{font-size:27px}
+  .hero:after{font-size:75px;right:2%}
+  .spreads{grid-template-columns:1fr 1fr}
+  .deck{grid-template-columns:repeat(4,1fr);gap:7px}
+  .cardBack span{font-size:5px}
+  .cardBack b{font-size:16px}
+  .cardName{font-size:7px}
+  .readingModes{grid-template-columns:1fr 1fr}
+  .resultCards{gap:6px}
+  .resultCards h3{font-size:9px}
+  .resultCards p{font-size:9px;line-height:1.5}
+  .resultCards .eyebrow,.position{font-size:6px}
+  .story{padding:19px}
+  .story p{font-size:14px}
+  .echo{font-size:17px}
+  .categories{gap:6px}
+  .category{font-size:10px;padding:10px 11px}
+}
+@media(max-width:390px){
+  .deck{grid-template-columns:repeat(3,1fr)}
+  .resultCards{grid-template-columns:repeat(2,1fr)}
+}
