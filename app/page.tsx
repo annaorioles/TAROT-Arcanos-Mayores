@@ -108,7 +108,25 @@ function imageSources(card: Card){
 }
 
 function CardImage({card, className, alt}:{card:Card; className?:string; alt:string}){
-  return <img className={className} src={`/cards/${card.file}`} alt={alt} />;
+  const sources = imageSources(card);
+
+  return (
+    <img
+      className={className}
+      src={sources[0]}
+      alt={alt}
+      onError={(e) => {
+        const img = e.currentTarget;
+        const currentIndex = Number(img.dataset.sourceIndex || "0");
+        const nextIndex = currentIndex + 1;
+
+        if (nextIndex < sources.length) {
+          img.dataset.sourceIndex = String(nextIndex);
+          img.src = sources[nextIndex];
+        }
+      }}
+    />
+  );
 }
 
 const spreads: Spread[] = [
