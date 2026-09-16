@@ -150,22 +150,22 @@ function narrative(selected:Card[], spread:Spread, q:string){
 }
 
 export default function Home(){
-  const shuffleIds = () => [...cards].sort(()=>Math.random()-.5).map(c=>c.id);
-  const [cat,setCat] = useState(0);
-  const [question,setQuestion] = useState(categories[0].questions[0]);
-  const [customQuestion,setCustomQuestion] = useState("");
-  const [spread,setSpread] = useState(31);
-  const [picked,setPicked] = useState<string[]>([]);
-  const [reading,setReading] = useState(false);
-  const [mode,setMode] = useState(0);
-  const [deckOrder,setDeckOrder] = useState<string[]>(shuffleIds);
+  const shuffleIds = () => [...cards].sort(() => Math.random() - 0.5).map(c => c.id);
+  const [cat, setCat] = useState(0);
+  const [question, setQuestion] = useState(categories[0].questions[0]);
+  const [customQuestion, setCustomQuestion] = useState("");
+  const [spread, setSpread] = useState(31);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [reading, setReading] = useState(false);
+  const [mode, setMode] = useState(0);
+  const [deckOrder, setDeckOrder] = useState<string[]>(shuffleIds);
 
-  const current = spreads.find(s=>s.id===spread)!;
+  const current = spreads.find(s => s.id === spread)!;
   const count = current.positions.length;
   const effectiveQuestion = customQuestion.trim() || question;
 
   const selected = useMemo(
-    ()=>picked.map(id=>cards.find(c=>c.id===id)!).filter(Boolean),
+    () => picked.map(id => cards.find(c => c.id === id)).filter(Boolean) as Card[],
     [picked]
   );
 
@@ -173,6 +173,7 @@ export default function Home(){
     setDeckOrder(shuffleIds());
     setPicked([]);
     setReading(false);
+    setMode(0);
   }
 
   function selectCat(i:number){
@@ -180,196 +181,190 @@ export default function Home(){
     setQuestion(categories[i].questions[0]);
     setCustomQuestion("");
     setSpread(categories[i].recommended);
-    resetDeck();
+    setDeckOrder(shuffleIds());
+    setPicked([]);
+    setReading(false);
+    setMode(0);
   }
 
   function choose(id:string){
-    if(reading)return;
-    setPicked(p=>p.includes(id)
-      ? p.filter(x=>x!==id)
-      : p.length<count ? [...p,id] : p
+    if(reading) return;
+    setPicked(p => p.includes(id)
+      ? p.filter(x => x !== id)
+      : p.length < count ? [...p, id] : p
     );
   }
 
   function random(){
-    const order=shuffleIds();
+    const order = shuffleIds();
     setDeckOrder(order);
-    setPicked(order.slice(0,count));
+    setPicked(order.slice(0, count));
     setReading(false);
   }
 
   function interpret(){
-    if(picked.length===count)setReading(true);
+    if(picked.length === count) {
+      setReading(true);
+      requestAnimationFrame(() => document.getElementById("lectura")?.scrollIntoView({behavior:"smooth", block:"start"}));
+    }
   }
 
-  return <main>
-    <header>
+  function cardArea(c:Card){
+    if(c.id.length && Number(c.id) < 22) return "Arcano Mayor";
+    const n = Number(c.id);
+    if(n < 36) return "Copas";
+    if(n < 50) return "Espadas";
+    if(n < 64) return "Bastos";
+    return "Oros";
+  }
+
+  function contextualReading(c:Card, i:number){
+    const position = current.positions[i];
+    const neighbours = [selected[i-1], selected[i+1]].filter(Boolean);
+    const neighbourText = neighbours.length
+      ? ` Al dialogar con ${neighbours.map(n => n.name).join(" y ")}, esta cualidad adquiere un matiz que conviene observar dentro del conjunto.`
+      : " Aquí la carta funciona como núcleo de la lectura, por lo que su posición tiene un peso especial.";
+
+    if(spread === 31){
+      if(i === 0) return `En YO, ${c.name} habla de tu lugar dentro de la situación: ${c.essence}. La luz que puede abrirse aquí es ${c.light}. La sombra a vigilar es ${c.shadow}. La carta no te pide adivinar al otro; te devuelve a aquello que sí puedes observar, elegir y transformar.${neighbourText}`;
+      if(i === 1) return `En EL OTRO, ${c.name} representa simbólicamente la dinámica que estás percibiendo en la otra parte del vínculo. Señala ${c.essence}. La lectura sirve para contrastar esa percepción con hechos y conversaciones, no para convertir el símbolo en una certeza sobre su mundo interior. Su luz es ${c.light}; su sombra, ${c.shadow}.${neighbourText}`;
+      return `En EL VÍNCULO, ${c.name} muestra la cualidad que toma el espacio entre ambos: ${c.essence}. Aquí importa especialmente qué se activa cuando las dos posiciones anteriores entran en relación. La luz disponible es ${c.light}; la tensión posible aparece como ${c.shadow}.${neighbourText}`;
+    }
+
+    if(spread === 1) return `${c.name} ocupa la posición «${position}». El símbolo concentra la lectura en ${c.essence}. Su expresión luminosa es ${c.light}; cuando se bloquea puede aparecer como ${c.shadow}. La clave está en llevar esta imagen a tu situación concreta y observar qué encaja y qué necesita contraste.`;
+    if(spread === 2) return `En «${position}», ${c.name} responde desde ${c.essence}. No es una definición aislada: esta posición le da dirección a la carta. Su recurso es ${c.light}; su tensión, ${c.shadow}.${neighbourText}`;
+    if(spread === 3) return `En «${position}», ${c.name} aporta ${c.essence}. Como parte de una secuencia, interesa ver qué recibe de la carta anterior y qué prepara para la siguiente. La expresión disponible es ${c.light}; el punto de atención es ${c.shadow}.${neighbourText}`;
+    return `En «${position}», ${c.name} introduce ${c.essence}. La carta funciona como una pieza dentro de una arquitectura mayor: ${c.light} muestra el recurso disponible y ${c.shadow} señala dónde puede perderse la claridad.${neighbourText}`;
+  }
+
+  function synthesis(){
+    const majorsCount = selected.filter(c => Number(c.id) < 22).length;
+    const areas = selected.map(cardArea);
+    const repeated = areas.find(a => areas.filter(x => x === a).length > 1);
+    const sequence = selected.map(c => c.name).join(" → ");
+    let focus = repeated
+      ? `Hay una concentración clara en ${repeated.toLowerCase()}, por lo que ese territorio merece una atención especial.`
+      : "La tirada reparte la energía entre varios territorios, lo que sugiere una lectura que necesita integrar perspectivas distintas.";
+    if(majorsCount >= 2) focus += " La presencia de varios Arcanos Mayores da peso a la dimensión de proceso y transformación de la pregunta.";
+    return `La secuencia ${sequence} no se lee como una suma de significados. Primero miro la pregunta y las posiciones; después observo qué cartas se refuerzan, cuáles introducen tensión y dónde cambia el movimiento de la historia. ${focus} El punto de trabajo está en reconocer qué parte de la lectura describe una experiencia que ya puedes observar y qué parte abre una pregunta para seguir explorando.`;
+  }
+
+  function narrative(){
+    const names = selected.map(c => c.name).join(" → ");
+    if(spread === 31) return `Entre YO, EL OTRO y EL VÍNCULO aparece la secuencia ${names}. La lectura parte de tu posición, observa después la dinámica percibida en la otra parte y finalmente mira el espacio que se crea entre ambos. Lo importante no es convertir la segunda carta en una afirmación literal sobre lo que la otra persona piensa o siente, sino comprobar cómo encaja ese símbolo con lo que sucede entre vosotros. La tercera carta actúa como síntesis relacional: muestra qué patrón toma fuerza y qué necesita ser visto con mayor claridad.`;
+    if(spread === 1) return `${selected[0].name} concentra el mensaje de la tirada. La pregunta «${effectiveQuestion}» funciona como lente: el mismo arcano puede hablar de algo distinto según aquello que quieres comprender. La lectura invita a observar el símbolo en tu realidad y decidir qué significado tiene para ti.`;
+    if(spread === 2) return `${names} construyen un diálogo. La primera carta establece el terreno y la segunda responde, corrige o reorienta ese terreno. La lectura gana profundidad cuando buscas la relación entre ambas en lugar de interpretar cada una por separado.`;
+    if(spread === 3) return `${names} forman una trayectoria. El origen explica una raíz activa, el presente muestra dónde está concentrada la experiencia y la tendencia abre una posibilidad de desarrollo. La tendencia no se presenta como destino: cambia cuando cambia la manera de actuar, percibir o relacionarte con la situación.`;
+    if(spread === 5) return `${names} forman una arquitectura de cinco movimientos. La dinámica abre la escena, lo que está en juego concentra el conflicto o deseo, lo no dicho introduce la zona menos visible, la dirección muestra hacia dónde puede organizarse la energía y la clave integra el aprendizaje. Cada carta modifica el significado de las demás.`;
+    return `${names} forman un proceso completo. El contexto sitúa la experiencia; la tensión muestra dónde se concentra; deseo y miedo pueden empujar en sentidos distintos; el camino convierte esa tensión en posibilidad; la clave condensa el aprendizaje y la síntesis devuelve una mirada más amplia. La última carta no borra las anteriores: las reinterpreta.`;
+  }
+
+  return <main className="appShell">
+    <header className="topbar">
       <div className="logo">CARTAS</div>
-      <div className="headerMeta">LECTURA SIMBÓLICA · 78 CARTAS</div>
+      <div className="headerMeta">TAROT INTERACTIVO · 78 CARTAS</div>
     </header>
 
-    <section className="hero">
+    <section className="hero sectionBlock">
       <div className="eyebrow">01 · La pregunta</div>
-      <h1>Empieza por lo que<br/><em>quieres comprender.</em></h1>
-      <p>Elige un tema o formula tu propia pregunta. CARTAS adapta la profundidad de la lectura a lo que estás buscando.</p>
+      <h1>Empieza por lo que<br/><span>quieres comprender.</span></h1>
+      <p className="heroIntro">Elige un tema, formula tu propia pregunta y deja que la tirada organice aquello que quieres mirar.</p>
 
-      <div className="categories">
-        {categories.map((c,i)=>
-          <button className={cat===i?"category active":"category"} onClick={()=>selectCat(i)} key={c.name}>
-            {c.name}
-          </button>
-        )}
+      <div className="categories" role="tablist" aria-label="Temas">
+        {categories.map((c,i) => <button className={cat===i ? "category active" : "category"} onClick={()=>selectCat(i)} key={c.name}>{c.name}</button>)}
       </div>
 
-      <div className="question">
+      <div className="questionPanel">
         <div className="label">Preguntas para empezar</div>
         <div className="questionList">
-          {categories[cat].questions.map(q=>
-            <button
-              className={question===q && !customQuestion.trim()?"qoption active":"qoption"}
-              onClick={()=>{setQuestion(q);setCustomQuestion("");}}
-              key={q}
-            >
-              {q}
-            </button>
-          )}
+          {categories[cat].questions.map(q => <button className={question===q && !customQuestion.trim() ? "qoption active" : "qoption"} onClick={()=>{setQuestion(q);setCustomQuestion("");}} key={q}>{q}</button>)}
         </div>
-
         <div className="customQuestion">
           <div className="label">Tu propia pregunta <span>· opcional</span></div>
-          <textarea
-            value={customQuestion}
-            placeholder="Escribe aquí tu pregunta..."
-            onChange={e=>setCustomQuestion(e.target.value)}
-          />
-          <p>Si prefieres, puedes continuar con una de las preguntas propuestas.</p>
+          <textarea value={customQuestion} placeholder="Escribe aquí tu pregunta..." onChange={e=>setCustomQuestion(e.target.value)} />
         </div>
       </div>
-
       <div className="questionEcho">“{effectiveQuestion}”</div>
     </section>
 
-    <section>
+    <section className="sectionBlock spreadSection">
       <div className="eyebrow">02 · La tirada</div>
-      <h2>Elige la forma de mirar.</h2>
-
+      <div className="sectionHeading"><div><h2>Elige la forma de mirar.</h2><p>La propuesta se adapta a tu pregunta, pero tú decides.</p></div></div>
       <div className="spreads">
-        {spreads.map(s=>
-          <button
-            className={spread===s.id?"spread active":"spread"}
-            onClick={()=>{setSpread(s.id);setPicked([]);setReading(false);}}
-            key={s.id}
-          >
-            <strong>{s.name}</strong>
-            <span>{s.subtitle}</span>
-          </button>
-        )}
+        {spreads.map(s => <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setPicked([]);setReading(false);}} key={s.id}><strong>{s.name}</strong><span>{s.subtitle}</span></button>)}
       </div>
-
-      <div className="recommend">
-        Para esta pregunta, la lectura propuesta es <b>{spreads.find(s=>s.id===categories[cat].recommended)?.name}</b>.
-      </div>
+      <div className="recommend">Para esta pregunta, la lectura propuesta es <b>{spreads.find(s=>s.id===categories[cat].recommended)?.name}</b>.</div>
     </section>
 
-    <section>
-      <div className="eyebrow">03 · La elección</div>
-
-      <div className="pickTitle">
-        <h2>Deja que la pregunta te guíe.</h2>
-        <span>{picked.length} / {count}</span>
+    <section className="sectionBlock tableSection" id="mesa">
+      <div className="eyebrow">03 · La mesa</div>
+      <div className="pickHeader">
+        <div><h2>Elige tus cartas.</h2><p>Toca una carta para incorporarla a la tirada. Puedes cambiar una elección antes de revelar la lectura.</p></div>
+        <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
       </div>
 
-      <p className="hint">La baraja se mezcla automáticamente. Todas las cartas comienzan boca abajo. Elige una carta y se revela para ocupar su posición en la tirada.</p>
-
-      <div className="drawSlots">
-        {current.positions.map((position,i)=>
-          <div className="drawSlot" key={position}>
-            <div className="drawNumber">{String(i+1).padStart(2,"0")}</div>
-            <div className="drawPosition">{position}</div>
+      <div className="selectedSpread" aria-label="Tu tirada">
+        {current.positions.map((position,i) => {
+          const card = selected[i];
+          return <div className={card ? "drawSlot filled" : "drawSlot"} key={position}>
+            <div className="drawTop"><span>{String(i+1).padStart(2,"0")}</span><b>{position}</b></div>
             <div className="drawCard">
-              {selected[i]
-                ? <img src={`/cards/${selected[i].file}`} alt={selected[i].name}/>
-                : <div className="cardBack"><span>CARTAS</span><b>✦</b></div>
-              }
+              {card ? <img src={`/cards/${card.file}`} alt={card.name}/> : <div className="emptyBack"><span>CARTAS</span><i>✦</i></div>}
             </div>
-          </div>
-        )}
+            <div className="drawName">{card ? card.name : "Elige una carta"}</div>
+          </div>;
+        })}
       </div>
 
-      <div className="deckLabel">ELIGE UNA CARTA DE LA MESA</div>
-
-      <div className="deck">
-        {deckOrder.map(id=>{
-          const c=cards.find(card=>card.id===id)!;
-          const isPicked=picked.includes(c.id);
-          return <button
-            className={isPicked?"tarot picked":"tarot"}
-            key={c.id}
-            onClick={()=>choose(c.id)}
-            aria-label={isPicked?c.name:"Carta boca abajo"}
-          >
-            {isPicked
-              ? <img src={`/cards/${c.file}`} alt={c.name}/>
-              : <span className="cardBack" aria-hidden="true"><span>CARTAS</span><b>✦</b></span>
-            }
-            {isPicked&&<span className="cardName">{c.name}</span>}
-            {isPicked&&<i>{picked.indexOf(c.id)+1}</i>}
-          </button>
+      <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
+      <div className="deck" aria-label="Baraja de 78 cartas">
+        {deckOrder.map(id => {
+          const c = cards.find(card => card.id === id)!;
+          const isPicked = picked.includes(c.id);
+          const pickNumber = picked.indexOf(c.id);
+          return <button className={isPicked ? "tarot picked" : "tarot"} key={c.id} onClick={()=>choose(c.id)} aria-label={isPicked ? `${c.name}, posición ${pickNumber+1}` : c.name}>
+            <img src={`/cards/${c.file}`} alt="" loading="lazy" />
+            {isPicked && <span className="pickedMark">{pickNumber+1}</span>}
+          </button>;
         })}
       </div>
 
       <div className="actions">
-        <button className="primary" disabled={picked.length!==count} onClick={interpret}>Revelar interpretación</button>
-        <button className="secondary" onClick={random}>Elegir por azar</button>
-        <button className="secondary" onClick={resetDeck}>Empezar de nuevo</button>
+        <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
+        <button className="secondary" onClick={random}>Dejar que CARTAS elija</button>
+        <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
       </div>
     </section>
 
-    {reading&&
-      <section className="result">
-        <div className="eyebrow">04 · La lectura</div>
-        <h2>Lo que cuenta tu tirada</h2>
-        <div className="echo">«{effectiveQuestion}»</div>
+    {reading && <section className="sectionBlock readingSection" id="lectura">
+      <div className="eyebrow">04 · La revelación</div>
+      <div className="readingIntro">
+        <div><h2>Ahora mira la historia.</h2><p className="readingQuestion">“{effectiveQuestion}”</p></div>
+        <div className="readingBadge">Lectura {current.name}</div>
+      </div>
 
-        <div className="readingModes">
-          {modes.map((m,i)=>
-            <button className={mode===i?"mode active":"mode"} onClick={()=>setMode(i)} key={m[0]}>
-              <b>{m[0]}</b><span>{m[1]}</span>
-            </button>
-          )}
-        </div>
+      <div className="readingModes">
+        {modes.map((m,i)=><button className={mode===i ? "mode active" : "mode"} onClick={()=>setMode(i)} key={m[0]}><b>{m[0]}</b><span>{m[1]}</span></button>)}
+      </div>
 
-        <div className="resultCards">
-          {selected.map((c,i)=>
-            <article key={c.id}>
-              <div className="resultImg">
-                <img src={`/cards/${c.file}`} alt={c.name}/>
-              </div>
-              <div className="position">{String(i+1).padStart(2,"0")} · {current.positions[i]}</div>
-              <h3>{c.name}</h3>
-              <p>{c.essence}</p>
-              <details>
-                <summary>Profundizar</summary>
-                <p><b>Luz:</b> {c.light}. <b>Sombra:</b> {c.shadow}. En esta posición, pregunta qué aporta este arcano a «{effectiveQuestion}» y qué cambia al leerlo junto a las cartas vecinas.</p>
-              </details>
-            </article>
-          )}
-        </div>
+      <div className="expertGrid">
+        <div className="expertCard mainSynthesis"><div className="label">Lo que veo</div><p>{synthesis()}</p></div>
+        <div className="expertCard"><div className="label">La conversación entre las cartas</div><p>{narrative()}</p></div>
+      </div>
 
-        <div className="story">
-          <div className="label">Narración conjunta · {modes[mode][0]}</div>
-          <p>{narrative(selected,current,effectiveQuestion)}</p>
-        </div>
+      <div className="positionReadings">
+        <div className="readingLabel">Lectura carta a carta</div>
+        {selected.map((c,i)=><article className="positionReading" key={c.id}>
+          <div className="positionNumber">{String(i+1).padStart(2,"0")}</div>
+          <div className="positionInfo"><span>{current.positions[i]}</span><h3>{c.name}</h3><small>{cardArea(c)}</small></div>
+          <div className="positionText"><p>{contextualReading(c,i)}</p><div className="lightShadow"><span><b>Luz</b> {c.light}</span><span><b>Sombra</b> {c.shadow}</span></div></div>
+        </article>)}
+      </div>
 
-        <div className="closing">
-          <b>Una última pregunta</b>
-          <p>¿Qué parte de esta lectura reconoces en tu realidad y qué parte necesitas comprobar antes de actuar?</p>
-        </div>
-      </section>
-    }
+      <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
+      <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
+    </section>}
 
-    <footer>
-      El tarot se presenta aquí como lenguaje simbólico de reflexión. No determina hechos futuros ni sustituye el criterio personal.
-    </footer>
+    <footer>El tarot se presenta aquí como lenguaje simbólico de reflexión. La lectura abre perspectivas; tus decisiones siguen siendo tuyas.</footer>
   </main>;
 }
