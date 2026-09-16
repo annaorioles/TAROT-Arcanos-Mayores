@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 type Card = {
   id: string;
@@ -202,6 +202,17 @@ export default function Home(){
     .filter(card => card.slot != null)
     .sort((a,b) => (a.slot as number) - (b.slot as number))
     .slice(0, count);
+
+  // Invariante de producto: una posición solo puede pertenecer a una carta
+  // y una carta solo puede tener una posición. Si este estado se rompe,
+  // el problema queda detectado en consola en lugar de producir una lectura falsa.
+  if (process.env.NODE_ENV !== "production") {
+    const slots = selected.map(card => card.slot);
+    const uniqueSlots = new Set(slots);
+    if (slots.length !== uniqueSlots.size || selected.length > count) {
+      console.error("CARTAS: estado de tirada inválido", {selected, count});
+    }
+  }
 
   const selectedFilled = selected;
   const picked = selectedFilled;
@@ -418,7 +429,7 @@ export default function Home(){
             <span>elige una de las tres formas de mirar</span>
           </button>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(freshDeck());setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -431,7 +442,7 @@ export default function Home(){
               type="button"
               key={v.id}
               className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(freshDeck());setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
+              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
             >
               <span>{v.id+1}</span>
               <b>{v.label}</b>
@@ -494,7 +505,7 @@ export default function Home(){
           return (
             <button
               className={isPicked ? "tarot picked" : "tarot"}
-              key={c.id}
+              key={`${c.id}-${c.slot ?? 0}`}
               type="button"
               onClick={() => choose(c)}
               aria-label={isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
