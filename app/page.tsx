@@ -451,7 +451,7 @@ export default function Home(){
         <div className="actions actionsCentered">
           <button className="secondary shuffleButton" onClick={resetDeck}>Mezclar</button>
           <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
-          <button className="secondary" onClick={random}>Dejar que CARTAS elija</button>
+          <button className="secondary" onClick={random}>Tirada al Azar</button>
           <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
         </div>
       </div>
