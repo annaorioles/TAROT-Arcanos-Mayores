@@ -531,3 +531,7 @@ footer{padding:32px 0 0;color:var(--muted);font-size:11px;text-align:center}
   .selectionRow .actions{display:grid;grid-template-columns:1fr 1fr}
   .selectionRow .actions .textButton{grid-column:1/-1}
 }
+
+/* V25 — la carta marcada y la carta de la tirada comparten el mismo ID */
+.tarot.picked .tarotFlip{transform:rotateY(180deg)!important}
+.tarot:not(.picked) .tarotFlip{transform:rotateY(0deg)!important}
