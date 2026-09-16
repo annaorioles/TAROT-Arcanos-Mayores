@@ -383,7 +383,7 @@ export default function Home(){
       <div className="sectionHeading"><div><h2>Elige la forma de mirar.</h2><p>La propuesta se adapta a tu pregunta, pero tú decides.</p></div></div>
       <div className="spreads">
         {spreads.map(s => s.id === 3 ? (
-          <div className={spread===3 ? "spreadGroup active" : "spreadGroup"} key={s.id}>
+          <div className="spreadGroup" key={s.id}>
             <button
               className={spread===3 ? "spread active" : "spread"}
               onClick={()=>{setSpread(3);setPicked([]);setReading(false);}}
