@@ -602,3 +602,10 @@ footer{padding:32px 0 0;color:var(--muted);font-size:11px;text-align:center}
   .selectedSpread{gap:9px !important;}
   .selectedSpread .drawSlot{flex-basis:calc((100vw - 52px)/3) !important;width:calc((100vw - 52px)/3) !important;}
 }
+
+/* CORRECCIÓN SELECCIÓN — una carta girada abajo es la misma que aparece arriba */
+.tarot { perspective: 900px; }
+.tarotFlip { transform-style: preserve-3d; will-change: transform; }
+.tarot.picked .tarotFlip { transform: rotateY(180deg); }
+.cardFace { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.cardFaceFront { transform: rotateY(180deg); }
