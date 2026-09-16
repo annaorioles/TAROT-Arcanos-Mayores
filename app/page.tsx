@@ -87,22 +87,57 @@ const minors: Card[] = suitData.flatMap(suit =>
 const cards: Card[] = [...majors,...minors];
 const cardById = new Map(cards.map(card => [card.id, card]));
 
-const spreads: Spread[] = [
-  {id:1,name:"1 carta",subtitle:"mensaje",positions:["lo esencial ahora"]},
-  {id:2,name:"2 cartas",subtitle:"situación / orientación",positions:["situación","orientación"]},
-  {id:3,name:"3 cartas",subtitle:"",positions:["origen","presente","tendencia"]},
-  {id:5,name:"5 cartas",subtitle:"lectura profunda",positions:["dinámica","en juego","lo no dicho","dirección","clave"]},
-  {id:7,name:"7 cartas",subtitle:"lectura profesional",positions:["contexto","tensión","deseo","miedo","camino","clave","síntesis"]}
-];
+function imageSources(card: Card){
+  const sources = [
+    `/cards/${card.file}`,
+    `/${card.file}`,
+  ];
 
-const threeCardVariants = [
-  {id:0, label:"origen / presente / tendencia", positions:["origen","presente","tendencia"]},
-  {id:1, label:"yo / el otro / el vínculo", positions:["yo","el otro","el vínculo"]},
-  {id:2, label:"qué siente / qué piensa / qué intenciones", positions:["qué siente","qué piensa","qué intenciones"]}
+  // Common filename variants for files uploaded without the numeric prefix
+  // or without the ñ character.
+  if (card.id === "09"){
+    sources.push("/cards/09-el-ermitano.png");
+    sources.push("/09-el-ermitano.png");
+    sources.push("/cards/el-ermitaño.png");
+    sources.push("/el-ermitaño.png");
+  }
+
+  if (card.id === "29"){
+    sources.push("/cards/ocho-de-copas.png");
+    sources.push("/ocho-de-copas.png");
+    sources.push("/cards/29-ocho-de-copas.jpg");
+    sources.push("/29-ocho-de-copas.jpg");
+  }
+
+  return [...new Set(sources)];
+}
+
+function CardImage({card, className, alt}:{card:Card; className?:string; alt:string}){
+  const sources = imageSources(card);
+  const [index, setIndex] = useState(0);
+
+  return (
+    <img
+      className={className}
+      src={sources[index]}
+      alt={alt}
+      onError={() => setIndex(i => Math.min(i + 1, sources.length - 1))}
+    />
+  );
+}
+
+const spreads: Spread[] = [
+  {id:1,name:"1 carta",subtitle:"Mensaje",positions:["Lo esencial ahora"]},
+  {id:2,name:"2 cartas",subtitle:"Situación / orientación",positions:["Situación","Orientación"]},
+  {id:3,name:"3 cartas",subtitle:"Origen / presente / tendencia",positions:["Origen","Presente","Tendencia"]},
+  {id:31,name:"3 cartas",subtitle:"yo / el otro / el vínculo",positions:["yo","el otro","el vínculo"]},
+  {id:32,name:"3 cartas",subtitle:"Qué siente / qué piensa / qué intenciones",positions:["Qué siente","Qué piensa","Qué intenciones"]},
+  {id:5,name:"5 cartas",subtitle:"Lectura profunda",positions:["Dinámica","En juego","Lo no dicho","Dirección","Clave"]},
+  {id:7,name:"7 cartas",subtitle:"Lectura profesional",positions:["Contexto","Tensión","Deseo","Miedo","Camino","Clave","Síntesis"]}
 ];
 
 const categories: Category[] = [
-  {name:"Amor y relaciones",recommended:3,questions:[
+  {name:"Amor y relaciones",recommended:31,questions:[
     "¿Qué necesito comprender sobre mi relación y hacia dónde se está moviendo?",
     "¿Qué piensa esta persona sobre nuestra situación?",
     "¿Qué siente esta persona respecto a mí y al vínculo?",
@@ -142,16 +177,14 @@ const modes = [
 
 function narrative(selected:Card[], spread:Spread, q:string){
   const names = selected.map(c=>c.name).join(" → ");
-  if(spread.id===3 && selected.length===3 && spread.positions.join("|")==="yo|el otro|el vínculo")
-    return `La secuencia ${names} se lee como una dinámica de tres planos: yo, el otro y el vínculo. La primera carta muestra tu posición ante la pregunta; la segunda representa una dinámica que puede observarse en la otra persona sin convertir el símbolo en una afirmación literal sobre su mente; la tercera muestra la cualidad que toma el vínculo entre ambos. Para profundizar en «${q}», observa especialmente dónde se complementan, se tensan o se transforman las tres cartas.`;
-  if(spread.id===3 && selected.length===3 && spread.positions.join("|")==="qué siente|qué piensa|qué intenciones")
-    return `La secuencia ${names} organiza la lectura en tres planos: qué siente, qué piensa y qué intenciones muestra la dinámica. Las cartas se interpretan como lenguaje simbólico de la relación, no como acceso literal a la mente de otra persona. Observa qué coincide, qué se contradice y qué necesita expresarse con mayor claridad ante «${q}».`;
+  if(spread.id===31 && selected.length===3)
+    return `La secuencia ${names} se lee como una dinámica de tres planos: YO, EL OTRO y EL VÍNCULO. La primera carta muestra tu posición ante la pregunta; la segunda representa una dinámica que puede observarse en la otra persona sin convertir el símbolo en una afirmación literal sobre su mente; la tercera muestra la cualidad que toma el vínculo entre ambos. Para profundizar en «${q}», observa especialmente dónde se complementan, se tensan o se transforman las tres cartas.`;
   if(selected.length===1)
     return `${selected[0].name} concentra la lectura. Ante «${q}», no anuncia un hecho: pone el foco en ${selected[0].essence}. Su luz es ${selected[0].light}; su sombra, ${selected[0].shadow}. La pregunta que queda abierta es qué cambia cuando observas tu situación desde este símbolo.`;
   if(selected.length===2)
     return `La secuencia ${names} funciona como diálogo. ${selected[0].name} describe el terreno —${selected[0].essence}— y ${selected[1].name} modifica la respuesta desde ${selected[1].essence}. La lectura invita a pasar de comprender lo que ocurre a decidir cómo quieres relacionarte con ello.`;
   if(selected.length===3)
-    return `La secuencia ${names} forma una lectura de tres planos. Cada posición cambia el sentido de la carta y el conjunto se interpreta desde la pregunta. La lectura observa qué se refuerza, qué entra en tensión y qué movimiento propone la relación entre las tres cartas.`;
+    return `La secuencia ${names} forma una trayectoria: el origen aporta la raíz, el presente muestra dónde se concentra la experiencia y la tendencia señala una posibilidad de desarrollo, no un destino. La lectura se vuelve útil al preguntar qué parte del pasado sigue actuando, qué decisión pertenece al presente y qué puede cambiar si esa decisión cambia.`;
   if(selected.length===5)
     return `La secuencia ${names} tiene una arquitectura clara. ${selected[0].name} abre la dinámica; ${selected[1].name} muestra qué está realmente en juego; ${selected[2].name} introduce la zona que todavía no está completamente visible; ${selected[3].name} responde con una dirección posible; y ${selected[4].name} integra el sentido de la tirada. No son cinco definiciones: cada carta modifica la anterior.`;
   return `La secuencia ${names} funciona como un proceso completo. Contexto y tensión muestran el escenario; deseo y miedo revelan fuerzas que pueden tirar en sentidos opuestos; el camino transforma esa tensión en posibilidad de acción; la clave condensa el aprendizaje y la síntesis devuelve una visión más amplia. La última carta no borra las anteriores: las reinterpreta.`;
@@ -169,26 +202,21 @@ export default function Home(){
   const [cat, setCat] = useState(0);
   const [question, setQuestion] = useState(categories[0].questions[0]);
   const [customQuestion, setCustomQuestion] = useState("");
-  const [spread, setSpread] = useState(3);
-  const [threeCardVariant, setThreeCardVariant] = useState(1);
+  const [spread, setSpread] = useState(31);
   const [picked, setPicked] = useState<string[]>([]);
   const [reading, setReading] = useState(false);
   const [mode, setMode] = useState(0);
   const [deckOrder, setDeckOrder] = useState<string[]>(shuffleIds);
 
-  const baseSpread = spreads.find(s => s.id === spread)!;
-  const current = spread === 3
-    ? {...baseSpread, subtitle: threeCardVariants[threeCardVariant].label, positions: threeCardVariants[threeCardVariant].positions}
-    : baseSpread;
+  const current = spreads.find(s => s.id === spread)!;
   const count = current.positions.length;
   const effectiveQuestion = customQuestion.trim() || question;
   const normalizedQuestion = effectiveQuestion.toLowerCase();
-  const suggestedSpreadId = categories[cat].recommended;
-  const suggestedThreeVariant =
-    normalizedQuestion.includes("siente") ||
-    normalizedQuestion.includes("piensa") ||
-    normalizedQuestion.includes("intenciones") ? 2 :
-    cat === 0 ? 1 : 0;
+  const suggestedSpreadId =
+    normalizedQuestion.includes("siente") ? 32 :
+    normalizedQuestion.includes("piensa") ? 32 :
+    normalizedQuestion.includes("intenciones") ? 32 :
+    categories[cat].recommended;
 
   const selected = useMemo(
     () => picked.map(id => cardById.get(id)).filter(Boolean) as Card[],
@@ -209,7 +237,6 @@ export default function Home(){
     setQuestion(categories[i].questions[0]);
     setCustomQuestion("");
     setSpread(categories[i].recommended);
-    setThreeCardVariant(i === 0 ? 1 : 0);
     setDeckOrder(shuffleIds());
     setPicked([]);
     setReading(false);
@@ -305,7 +332,16 @@ export default function Home(){
         <p className="heroIntro">Elige un tema, formula tu propia pregunta y deja que la tirada organice aquello que quieres mirar.</p>
       </div>
       <div className="heroArtwork" aria-hidden="true">
-        <img src="/76-reina-de-oros.png" alt="" />
+        <img
+          src="/76-reina-de-oros.png"
+          alt=""
+          onError={(e) => {
+            const img = e.currentTarget;
+            if (img.src.endsWith("/76-reina-de-oros.png")) {
+              img.src = "/cards/76-reina-de-oros.png";
+            }
+          }}
+        />
       </div>
 
       <div className="categories" role="tablist" aria-label="Temas">
@@ -320,13 +356,7 @@ export default function Home(){
   setCustomQuestion("");
   const nq = q.toLowerCase();
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
-    setSpread(3);
-    setThreeCardVariant(2);
-    setPicked([]);
-    setReading(false);
-  } else if (cat === 0) {
-    setSpread(3);
-    setThreeCardVariant(1);
+    setSpread(32);
     setPicked([]);
     setReading(false);
   }
@@ -344,27 +374,9 @@ export default function Home(){
       <div className="eyebrow">02 · La tirada</div>
       <div className="sectionHeading"><div><h2>Elige la forma de mirar.</h2><p>La propuesta se adapta a tu pregunta, pero tú decides.</p></div></div>
       <div className="spreads">
-        {spreads.map(s => <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setPicked([]);setReading(false);}} key={s.id}>
-          <strong>{s.name}</strong>
-          {s.id !== 3 && <span>{s.subtitle}</span>}
-        </button>)}
+        {spreads.map(s => <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setPicked([]);setReading(false);}} key={s.id}><strong>{s.name}</strong><span>{s.subtitle}</span></button>)}
       </div>
-      {spread === 3 && (
-        <div className="threeVariants" aria-label="Versiones de la tirada de 3 cartas">
-          {threeCardVariants.map(v => (
-            <button
-              type="button"
-              key={v.id}
-              className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-              onClick={()=>{setThreeCardVariant(v.id);setPicked([]);setReading(false);}}
-            >
-              <span>{v.id+1}</span>
-              <b>{v.label}</b>
-            </button>
-          ))}
-        </div>
-      )}
-      <div className="recommend">Para esta pregunta, la lectura propuesta es <b>{spreads.find(s=>s.id===suggestedSpreadId)?.name}</b>{suggestedSpreadId === 3 ? ` · ${threeCardVariants[suggestedThreeVariant].label}` : ` · ${spreads.find(s=>s.id===suggestedSpreadId)?.subtitle}`}.</div>
+      <div className="recommend">Para esta pregunta, la lectura propuesta es <b>{spreads.find(s=>s.id===suggestedSpreadId)?.name}</b> · {spreads.find(s=>s.id===suggestedSpreadId)?.subtitle}.</div>
     </section>
 
     <section className="sectionBlock tableSection" id="mesa">
@@ -388,7 +400,7 @@ export default function Home(){
             >
               {card ? (
                 <>
-                  <img src={`/cards/${card.file}`} alt={card.name}/>
+                  <CardImage card={card} alt={card.name}/>
                   <span className="zoomHint" aria-hidden="true">⌕</span>
                 </>
               ) : (
@@ -462,7 +474,7 @@ export default function Home(){
         {selected.map((c,i)=><article className="positionReading" key={c.id}>
           <div className="positionNumber">{String(i+1).padStart(2,"0")}</div>
           <button className="readingCardThumb" type="button" onClick={() => setZoomCard(c)} aria-label={`Ampliar ${c.name}`}>
-            <img src={`/cards/${c.file}`} alt={c.name}/>
+            <CardImage card={c} alt={c.name}/>
             <span className="zoomHint" aria-hidden="true">⌕</span>
           </button>
           <div className="positionInfo"><span>{current.positions[i]}</span><h3>{c.name}</h3><small>{cardArea(c)}</small></div>
@@ -483,7 +495,7 @@ export default function Home(){
       <div className="cardZoomOverlay" role="dialog" aria-modal="true" aria-label={`Carta ${zoomCard.name}`} onClick={() => setZoomCard(null)}>
         <div className="cardZoomPanel" onClick={e => e.stopPropagation()}>
           <button className="cardZoomClose" type="button" onClick={() => setZoomCard(null)} aria-label="Cerrar">×</button>
-          <img src={`/cards/${zoomCard.file}`} alt={zoomCard.name}/>
+          <CardImage card={zoomCard} alt={zoomCard.name}/>
           <div className="zoomCaption">{zoomCard.name}</div>
         </div>
       </div>
