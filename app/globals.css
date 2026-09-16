@@ -871,3 +871,298 @@ footer{
     transition:none!important;
   }
 }
+
+
+/* ───────── CARTAS · REFERENCE POLISH ───────── */
+
+button{
+  -webkit-appearance:none;
+  appearance:none;
+  font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+button.category,
+button.qoption,
+button.spread,
+button.mode{
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  text-shadow:none!important;
+  outline:none;
+}
+
+button.category{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  color:var(--ink)!important;
+  border:1px solid var(--line-strong)!important;
+  background:rgba(255,253,248,.88)!important;
+}
+
+button.category.active{
+  color:#fff!important;
+  border-color:var(--rose-deep)!important;
+  background:var(--rose-deep)!important;
+}
+
+button.qoption{
+  display:block;
+  color:var(--ink-soft)!important;
+  border:1px solid transparent!important;
+  background:transparent!important;
+}
+
+button.qoption.active{
+  color:var(--ink)!important;
+  border-color:#d5aaa2!important;
+  background:#ead0c9!important;
+}
+
+button.spread{
+  display:block;
+  color:var(--ink)!important;
+  border:1px solid var(--line)!important;
+  background:rgba(255,253,248,.90)!important;
+}
+
+button.spread.active{
+  color:var(--ink)!important;
+  border:1.5px solid var(--rose-deep)!important;
+  background:linear-gradient(135deg,#ead0c9,#fbf7ef)!important;
+}
+
+button.mode{
+  display:block;
+  color:var(--ink)!important;
+  border:1px solid var(--line)!important;
+  background:rgba(255,253,248,.90)!important;
+}
+
+button.mode.active{
+  border-color:var(--sage-deep)!important;
+  background:var(--sage-soft)!important;
+}
+
+.cardBack{
+  display:flex!important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  aspect-ratio:3 / 4.45;
+  padding:8px;
+  overflow:hidden;
+  border:1px solid #bda98d;
+  border-radius:9px;
+  background:
+    linear-gradient(135deg,rgba(255,252,245,.96),rgba(235,224,205,.96));
+  box-shadow:
+    inset 0 0 0 4px rgba(255,253,248,.62),
+    inset 0 0 0 5px #d7c7ac,
+    0 5px 12px rgba(65,51,35,.12);
+  color:#756b5d;
+}
+
+.cardBack span{
+  display:block!important;
+  height:auto!important;
+  overflow:visible!important;
+  opacity:1!important;
+  margin-bottom:10px;
+  font-size:7px;
+  line-height:1;
+  letter-spacing:.22em;
+  font-weight:700;
+}
+
+.cardBack b{
+  display:block;
+  color:var(--gold);
+  font-size:22px;
+  line-height:1;
+  font-weight:400;
+}
+
+.tarot:hover .cardBack{
+  transform:translateY(-5px);
+  border-color:var(--gold);
+  box-shadow:
+    inset 0 0 0 4px rgba(255,253,248,.62),
+    inset 0 0 0 5px #d7c7ac,
+    0 12px 22px rgba(65,51,35,.18);
+}
+
+.cardName{
+  display:block!important;
+  height:auto!important;
+  overflow:visible!important;
+  opacity:1!important;
+  margin-top:7px;
+  color:var(--ink-soft);
+  font-size:10px;
+  line-height:1.2;
+  font-weight:600;
+}
+
+.question .label{
+  color:var(--rose-deep);
+}
+
+.question textarea{
+  min-height:72px;
+  border:1px dashed var(--line-strong);
+  background:rgba(255,253,248,.50);
+}
+
+.question textarea::placeholder{
+  color:#9a9287;
+  font-style:italic;
+}
+
+.pickTitle>span{
+  padding:6px 12px;
+  border-radius:999px;
+  background:var(--rose-soft);
+  color:var(--rose-deep);
+}
+
+@media (max-width:700px){
+  .cardBack span{font-size:5px}
+  .cardBack b{font-size:15px}
+  .cardName{font-size:8px}
+}
+
+
+/* ───────── QUESTION / DRAW STAGE ───────── */
+
+.customQuestion{
+  margin-top:20px;
+  padding:17px 18px 15px;
+  border-top:1px solid var(--line);
+  border-radius:0 0 12px 12px;
+  background:rgba(244,237,225,.48);
+}
+
+.customQuestion .label{
+  margin-bottom:7px;
+}
+
+.customQuestion .label span{
+  color:#aaa298;
+  font-weight:500;
+}
+
+.customQuestion p{
+  margin-top:8px;
+  color:#958d82;
+  font-size:12px;
+}
+
+.questionEcho{
+  max-width:980px;
+  margin-top:28px;
+  padding-left:20px;
+  border-left:3px solid var(--rose);
+  color:#6f675e;
+  font-size:16px;
+  line-height:1.6;
+  font-style:italic;
+}
+
+.drawSlots{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(150px,210px));
+  justify-content:center;
+  gap:30px;
+  margin:44px auto 30px;
+}
+
+.drawSlot{
+  text-align:center;
+}
+
+.drawNumber{
+  color:#a69a8b;
+  font-size:10px;
+  line-height:1;
+  letter-spacing:.18em;
+  font-weight:600;
+}
+
+.drawPosition{
+  min-height:22px;
+  margin-top:7px;
+  color:var(--ink-soft);
+  font-size:11px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  font-weight:700;
+}
+
+.drawCard{
+  margin-top:11px;
+}
+
+.drawCard img,
+.drawCard .cardBack{
+  display:block;
+  width:100%;
+  aspect-ratio:3 / 4.45;
+  object-fit:cover;
+  border-radius:10px;
+  box-shadow:0 9px 24px rgba(65,51,35,.13);
+}
+
+.drawCard img{
+  border:1px solid #c3ae90;
+}
+
+.drawCard .cardBack{
+  border-color:#c9b99e;
+}
+
+.deckLabel{
+  margin:5px 0 0;
+  color:#a0978a;
+  text-align:center;
+  font-size:10px;
+  letter-spacing:.18em;
+  font-weight:700;
+}
+
+@media (max-width:1050px){
+  .drawSlots{
+    grid-template-columns:repeat(3,minmax(130px,190px));
+    gap:18px;
+  }
+}
+
+@media (max-width:700px){
+  .drawSlots{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:9px;
+    margin-top:30px;
+  }
+
+  .drawPosition{
+    font-size:8px;
+    letter-spacing:.08em;
+  }
+
+  .drawCard img,
+  .drawCard .cardBack{
+    border-radius:7px;
+  }
+
+  .deckLabel{
+    font-size:8px;
+  }
+
+  .questionEcho{
+    margin-top:20px;
+    padding-left:14px;
+    font-size:14px;
+  }
+}
