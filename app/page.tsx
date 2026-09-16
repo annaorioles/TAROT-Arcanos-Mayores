@@ -179,7 +179,7 @@ export default function Home(){
   const [spread, setSpread] = useState(3);
   const [threeCardVariant, setThreeCardVariant] = useState(1);
   // Guardamos directamente el ID de la carta pulsada. La misma referencia alimenta la baraja y la lectura.
-  const [selectedCards, setSelectedCards] = useState<(Card | null)[]>(Array(3).fill(null));
+  const [selectedSlots, setSelectedSlots] = useState<(string | null)[]>(Array(3).fill(null));
   const [reading, setReading] = useState(false);
   const [mode, setMode] = useState(0);
   const [deckOrder, setDeckOrder] = useState<Card[]>(shuffleCards);
@@ -198,14 +198,16 @@ export default function Home(){
     normalizedQuestion.includes("intenciones") ? 2 :
     cat === 0 ? 1 : 0;
 
-  const selected = selectedCards;
-  const selectedFilled = selectedCards.filter((card): card is Card => Boolean(card));
-  const picked = selectedCards.filter((card): card is Card => Boolean(card));
+  // ÚNICA FUENTE DE VERDAD: cada posición guarda el ID exacto de la carta elegida.
+  // La mesa superior y la baraja inferior se renderizan siempre desde estos mismos IDs.
+  const selected = selectedSlots.map(id => id ? (cardById.get(id) ?? null) : null);
+  const selectedFilled = selected.filter((card): card is Card => Boolean(card));
+  const picked = selectedFilled;
   const [zoomCard, setZoomCard] = useState<Card | null>(null);
 
   function resetDeck(){
     setDeckOrder(shuffleCards());
-    setSelectedCards(Array(count).fill(null));
+    setSelectedSlots(Array(count).fill(null));
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -218,17 +220,17 @@ export default function Home(){
     setSpread(categories[i].recommended);
     setThreeCardVariant(i === 0 ? 1 : 0);
     setDeckOrder(shuffleCards());
-    setSelectedCards(Array(categories[i].recommended).fill(null));
+    setSelectedSlots(Array(categories[i].recommended).fill(null));
     setReading(false);
     setMode(0);
   }
 
   function choose(card:Card){
     if(reading) return;
-    // Guardamos exactamente el objeto de la carta que se ha pulsado.
-    // No volvemos a calcularla por posición ni por un índice diferente.
-    setSelectedCards(slots => {
-      const existing = slots.findIndex(item => item?.id === card.id);
+    // Guardamos SOLO el ID de la carta pulsada.
+    // La mesa superior y la baraja consultan este mismo ID.
+    setSelectedSlots(slots => {
+      const existing = slots.findIndex(item => item === card.id);
       if (existing !== -1) {
         const next = [...slots];
         next[existing] = null;
@@ -237,14 +239,14 @@ export default function Home(){
       const empty = slots.findIndex(item => item === null);
       if (empty === -1) return slots;
       const next = [...slots];
-      next[empty] = card;
+      next[empty] = card.id;
       return next;
     });
   }
 
   function changeCardAt(index:number){
     if(reading) return;
-    setSelectedCards(slots => {
+    setSelectedSlots(slots => {
       const next = [...slots];
       next[index] = null;
       return next;
@@ -254,7 +256,7 @@ export default function Home(){
   function random(){
     const order = shuffleCards();
     setDeckOrder(order);
-    setSelectedCards(order.slice(0, count));
+    setSelectedSlots(order.slice(0, count).map(card => card.id));
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -353,12 +355,12 @@ export default function Home(){
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
     setSpread(3);
     setThreeCardVariant(2);
-    setSelectedCards(Array(3).fill(null));
+    setSelectedSlots(Array(3).fill(null));
     setReading(false);
   } else if (cat === 0) {
     setSpread(3);
     setThreeCardVariant(1);
-    setSelectedCards(Array(3).fill(null));
+    setSelectedSlots(Array(3).fill(null));
     setReading(false);
   }
 }} key={q}>{q}</button>)}
@@ -379,14 +381,14 @@ export default function Home(){
           <button
             key={s.id}
             className={spread===3 ? "spread active" : "spread"}
-            onClick={()=>{setSpread(3);setSelectedCards(Array(3).fill(null));setReading(false);}}
+            onClick={()=>{setSpread(3);setSelectedSlots(Array(3).fill(null));setReading(false);}}
             type="button"
           >
             <strong>3 cartas</strong>
             <span>elige una de las tres formas de mirar</span>
           </button>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setSelectedCards(Array(s.positions.length).fill(null));setReading(false);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setSelectedSlots(Array(s.positions.length).fill(null));setReading(false);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -399,7 +401,7 @@ export default function Home(){
               type="button"
               key={v.id}
               className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-              onClick={()=>{setThreeCardVariant(v.id);setSelectedCards(Array(3).fill(null));setReading(false);}}
+              onClick={()=>{setThreeCardVariant(v.id);setSelectedSlots(Array(3).fill(null));setReading(false);}}
             >
               <span>{v.id+1}</span>
               <b>{v.label}</b>
@@ -457,7 +459,7 @@ export default function Home(){
       <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
         {deckOrder.map((c) => {
-          const pickNumber = selectedCards.findIndex(selectedCard => selectedCard === c || selectedCard?.id === c.id);
+          const pickNumber = selectedSlots.findIndex(selectedId => selectedId === c.id);
           const isPicked = pickNumber !== -1;
           return (
             <button
