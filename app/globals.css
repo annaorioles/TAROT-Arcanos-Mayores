@@ -847,3 +847,164 @@ footer {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+
+/* =========================================================
+   V6 · MESA DE CARTAS · CONTRAPORTADA + SELECCIÓN
+   ========================================================= */
+
+.tarot {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tarot.tarotBack {
+  position: relative;
+  isolation: isolate;
+  padding: 6px;
+  border: 1px solid rgba(169,133,87,.55);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(184,107,104,.72) 0 2px, transparent 3px),
+    radial-gradient(circle at 82% 84%, rgba(184,107,104,.72) 0 2px, transparent 3px),
+    radial-gradient(circle at 84% 18%, rgba(116,135,108,.7) 0 2px, transparent 3px),
+    radial-gradient(circle at 16% 82%, rgba(116,135,108,.7) 0 2px, transparent 3px),
+    linear-gradient(145deg,#eee2cf,#fbf4e7 48%,#e8dac6);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.65),
+    inset 0 0 0 4px rgba(169,133,87,.16),
+    0 2px 7px rgba(64,50,35,.08);
+}
+
+.tarot.tarotBack::before,
+.tarot.tarotBack::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 28%;
+  height: 28%;
+  opacity: .75;
+  background:
+    radial-gradient(circle at 50% 18%, var(--rose) 0 7%, transparent 8%),
+    radial-gradient(circle at 25% 55%, var(--sage) 0 6%, transparent 7%),
+    radial-gradient(circle at 75% 55%, var(--sage) 0 6%, transparent 7%),
+    linear-gradient(45deg, transparent 46%, var(--gold) 47% 53%, transparent 54%);
+}
+.tarot.tarotBack::before {
+  top: 7px;
+  left: 7px;
+}
+.tarot.tarotBack::after {
+  right: 7px;
+  bottom: 7px;
+  transform: rotate(180deg);
+}
+
+.backInner {
+  position: absolute;
+  inset: 9%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid rgba(169,133,87,.45);
+  border-radius: 5px;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,.4), transparent 42%),
+    linear-gradient(135deg, rgba(255,255,255,.18), rgba(169,133,87,.08));
+  box-shadow: inset 0 0 18px rgba(169,133,87,.12);
+}
+.backStar {
+  color: var(--gold);
+  font-size: clamp(10px, 1.1vw, 17px);
+  line-height: 1;
+}
+.backLabel {
+  color: #897761;
+  font-size: clamp(5px, .55vw, 8px);
+  font-weight: 700;
+  letter-spacing: .18em;
+}
+.tarot.tarotBack:hover {
+  transform: translateY(-5px) scale(1.025);
+  border-color: var(--rose);
+}
+.tarot.tarotBack:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
+/* The selected cards are revealed above the deck.
+   They are the exact same card objects used by the deck buttons. */
+.drawCard {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  cursor: default;
+}
+.drawCard:disabled {
+  opacity: 1;
+}
+.drawSlot.filled .drawCard {
+  cursor: pointer;
+}
+.drawSlot.filled .drawCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 13px 26px rgba(126,70,64,.2);
+}
+.drawSlot.filled .drawCard::after {
+  content: "Pulsa para cambiar";
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  bottom: 7px;
+  padding: 5px 4px;
+  border-radius: 4px;
+  background: rgba(255,249,239,.88);
+  color: var(--rose);
+  font-size: 8px;
+  font-weight: 600;
+  text-align: center;
+  opacity: 0;
+  transition: opacity .16s ease;
+}
+.drawSlot.filled .drawCard:hover::after {
+  opacity: 1;
+}
+
+.imageMissing {
+  display: grid !important;
+  place-items: center;
+  height: 100%;
+  min-height: 80px;
+  padding: 12px;
+  background: linear-gradient(145deg,#eee2d2,#faf2e6);
+  color: var(--rose);
+  text-align: center;
+}
+.imageMissing::before {
+  content: "Imagen no encontrada";
+  font-size: 9px;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+/* The deck reflows naturally after a chosen card is removed.
+   Keep the visual density comfortable at every breakpoint. */
+@media (max-width: 1180px) {
+  .deck { grid-template-columns: repeat(10, minmax(0,1fr)); }
+}
+@media (max-width: 900px) {
+  .deck { grid-template-columns: repeat(8, minmax(0,1fr)); gap: 7px; }
+}
+@media (max-width: 680px) {
+  .deck { grid-template-columns: repeat(5, minmax(0,1fr)); gap: 6px; }
+  .selectedSpread { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+  .drawName { font-size: 9px; }
+}
+@media (max-width: 420px) {
+  .deck { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; }
+  .selectedSpread { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px; }
+  .backInner { inset: 7%; }
+}
