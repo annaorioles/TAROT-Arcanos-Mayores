@@ -195,13 +195,23 @@ export default function Home(){
   // la posición exacta que ocupan en la tirada.
   // La mesa superior, las marcas de la baraja y la lectura nacen de este mismo estado.
   const [reading, setReading] = useState(false);
-  const [mode, setMode] = useState(0);
+const [started, setStarted] = useState(false);
+const [mode, setMode] = useState(0);
 
-  const makeDeck = () =>
-    shuffleCards().map(card => ({...card, slot: undefined}));
+const makeDeck = () =>
+  shuffleCards().map(card => ({...card, slot: undefined}));
 
-  const [deckOrder, setDeckOrder] = useState<Card[]>(makeDeck);
+const contemplativeDeck = () =>
+  cards.map(card => ({...card, slot: undefined}));
 
+const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
+  function startReading() {
+  setDeckOrder(makeDeck());
+  setStarted(true);
+  setReading(false);
+  setMode(0);
+  setZoomCard(null);
+}
   const baseSpread = spreads.find(s => s.id === spread)!;
   const current = spread === 3
     ? {...baseSpread, subtitle: threeCardVariants[threeCardVariant].label, positions: threeCardVariants[threeCardVariant].positions}
