@@ -425,14 +425,20 @@ export default function Home(){
   }
 
   return <main className="appShell">
-    <header className="topbar">
-      <div className="headerBrandRow">
-        <a className="brandNameLink" href="#inicio" aria-label="Tarot Aluzca, inicio">TAROT ALUZCA</a>
-        <div className="brandSignature" aria-label="AO, anna oriol">
-          <img src="/ao-logo.png" alt="AO" />
-          <span>anna oriol</span>
-        </div>
-      </div>
+    <div className="headerBrandRow">
+  <a
+    className="brandNameLink"
+    href="#inicio"
+    aria-label="Tarot Aluzca, inicio"
+  >
+    TAROT ALUZCA
+  </a>
+
+  <div className="brandSignature" aria-label="Anna Oriol">
+    <img src="/ao-logo.png" alt="AO" />
+    <span>ANNA ORIOL</span>
+  </div>
+</div>
       <div className="headerRight">
         <div className="headerMeta">TAROT INTERACTIVO · 78 CARTAS</div>
         <div className="headerSubmeta">VIDA · SALUD · AUTOCONOCIMIENTO · PSICOLOGÍA</div>
