@@ -879,194 +879,206 @@ h1 span{color:var(--cyan-dark)}
 }
 
 
-/* ==========================================
-   TAROT ALUZCA · PALETA CÁLIDA
-   Teja + rosado · Cajas y botones
-   ========================================== */
+
+/* TAROT ALUZCA · PALETA CIAN UNIFICADA */
 
 :root {
-  --rose: #C47C70;
-  --rose2: #98574F;
-  --roseSoft: #F7E8E3;
+  --paper: #F5FAFA;
+  --paper2: #FFFFFF;
+  --paper3: #DCEFF0;
 
-  --sage: #C47C70;
-  --sage2: #98574F;
-  --sageSoft: #F7E8E3;
+  --ink: #183B45;
+  --soft: #55747B;
+  --muted: #78949A;
 
-  --line: #E8C9C0;
-  --gold: #B78363;
+  --line: #C6DFE2;
+  --line2: #8DBCC4;
 
-  --warm-bg: #FCF5F1;
-  --warm-card: #F7E8E3;
-  --warm-card-hover: #F1D9D2;
-  --warm-border: #E8C9C0;
-  --warm-dark: #98574F;
-  --warm-text: #573D3A;
+  --rose: #0F6878;
+  --rose2: #0B5665;
+  --roseSoft: #DCEFF0;
+
+  --sage: #8DBCC4;
+  --sage2: #0F6878;
+  --sageSoft: #DCEFF0;
+
+  --gold: #0F6878;
+  --white: #FFFFFF;
+
+  --shadow: 0 12px 32px rgba(15, 104, 120, .09);
 }
 
-/* Fondo general de las cajas */
+/* Fondo y texto */
+
+body {
+  background: linear-gradient(
+    180deg,
+    #F5FAFA 0%,
+    #EDF6F7 55%,
+    #E4F0F2 100%
+  );
+  color: var(--ink);
+}
+
+/* Cajas, opciones y tiradas */
+
+.qoption,
+.spread,
+.threeVariant,
+.tarot,
+.drawSlot,
 .expertCard,
-.mainSynthesis,
-.questionCard,
-.panel,
-.cardBox,
-.readingCard,
-.interpretationCard,
 .deepQuestion,
 .readingBadge {
-  background: var(--warm-card) !important;
-  border-color: var(--warm-border) !important;
-  color: var(--warm-text);
+  border-color: var(--line);
 }
 
-/* Cajas destacadas */
-.expertCard.mainSynthesis,
-.mainSynthesis {
-  background: #F1D9D2 !important;
-  border-color: #DDB4AA !important;
+.qoption:hover,
+.qoption.active,
+.spread:hover,
+.spread.active,
+.threeVariant.active {
+  background: var(--paper3);
+  border-color: var(--sage2);
+  color: var(--ink);
 }
 
-/* Cajas de preguntas y opciones */
-.questionCard,
-.spreadOption,
-.categoryOption,
-.optionCard,
-.selectCard {
-  background: var(--warm-bg) !important;
-  border-color: var(--warm-border) !important;
-}
+/* Todos los botones */
 
-/* Hover de cajas */
-.questionCard:hover,
-.spreadOption:hover,
-.categoryOption:hover,
-.optionCard:hover,
-.selectCard:hover {
-  background: var(--warm-card-hover) !important;
-  border-color: var(--rose) !important;
-}
-
-/* Botones: estilo cálido */
 button,
-.btn,
-.button,
-.actionButton {
-  background-color: var(--warm-card);
-  border-color: var(--warm-border);
-  color: var(--warm-text);
-  transition:
-    background-color .2s ease,
-    border-color .2s ease,
-    transform .2s ease;
+.primary,
+.secondary {
+  border-color: var(--line2);
 }
 
-/* Hover de botones */
-button:hover,
-.btn:hover,
-.button:hover,
-.actionButton:hover {
-  background-color: var(--warm-card-hover);
+.primary,
+.category.active,
+.category:hover {
+  background: var(--rose);
   border-color: var(--rose);
+  color: #FFFFFF;
 }
 
-/* Botones principales y activos */
-button.primary,
-button.active,
-button.selected,
-.btn-primary,
-.btn.active,
-.btn.selected,
-.button.primary,
-.actionButton.primary {
-  background: var(--warm-dark) !important;
-  border-color: var(--warm-dark) !important;
-  color: #FFFFFF !important;
+.primary:not(:disabled):hover {
+  background: var(--rose2);
 }
 
-/* Hover de botones principales */
-button.primary:hover,
-button.active:hover,
-.btn-primary:hover,
-.button.primary:hover,
-.actionButton.primary:hover {
-  background: #81463F !important;
-  border-color: #81463F !important;
+.secondary {
+  background: var(--paper2);
+  color: var(--rose);
 }
 
-/* Botones de compartir */
-.shareButton,
-.share-button,
-.whatsappButton,
-.emailButton,
-.shareActions button {
-  background: #F7E8E3 !important;
-  border: 1px solid #DDB4AA !important;
-  color: #81463F !important;
-  border-radius: 12px;
-}
-
-.shareButton:hover,
-.share-button:hover,
-.whatsappButton:hover,
-.emailButton:hover,
-.shareActions button:hover {
-  background: #EBCFC6 !important;
-  border-color: #C47C70 !important;
-}
-
-/* Insignias y etiquetas */
-.readingBadge,
-.deepQuestion,
-.pickedMark {
-  background: var(--warm-dark) !important;
-  color: #FFFFFF !important;
-  border-color: var(--warm-dark) !important;
+.secondary:hover {
+  background: var(--paper3);
+  border-color: var(--rose);
+  color: var(--rose2);
 }
 
 /* Selección de cartas */
-.tarot:hover {
-  border-color: var(--rose) !important;
+
+.tarot:hover,
+.tarot.picked,
+.drawSlot.filled .drawCard {
+  border-color: var(--rose);
 }
 
 .tarot.picked {
-  border-color: var(--warm-dark) !important;
-  box-shadow: 0 8px 20px rgba(152, 87, 79, .2);
+  box-shadow: 0 8px 20px rgba(15, 104, 120, .14);
 }
 
-/* Casillas de la tirada */
-.drawSlot.filled .drawCard {
-  border-color: var(--rose) !important;
-  background: var(--warm-bg);
+.pickedMark {
+  background: var(--rose);
 }
 
-/* Inputs, selectores y campos */
-input,
-textarea,
-select {
-  background: #FFFAF7;
-  border-color: var(--warm-border);
-  color: var(--warm-text);
+/* Lectura y resaltados */
+
+.readingBadge,
+.deepQuestion {
+  background: var(--roseSoft);
+  color: var(--rose2);
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: var(--rose);
-  outline-color: var(--rose);
+.expertCard.mainSynthesis {
+  background: var(--paper3);
+  border-color: var(--line);
 }
 
-/* Líneas y separadores */
-hr,
-.divider {
-  border-color: var(--warm-border);
+/* Foco accesible, también en cian */
+
+.qoption:focus-visible,
+.category:focus-visible,
+.spread:focus-visible,
+.threeVariant:focus-visible,
+.tarot:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
 }
 
-/* Adaptación móvil */
-@media (max-width: 560px) {
-  .shareButton,
-  .share-button,
-  .whatsappButton,
-  .emailButton {
-    width: 100%;
+/* Modo oscuro */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #102D34;
+    --paper2: #173A42;
+    --paper3: #214A54;
+
+    --ink: #E6F4F5;
+    --soft: #B5D2D6;
+    --muted: #91B5BB;
+
+    --line: #37636C;
+    --line2: #5B929C;
+
+    --rose: #69B9C5;
+    --rose2: #8ACDD5;
+    --roseSoft: #214A54;
+
+    --sage: #5B929C;
+    --sage2: #69B9C5;
+    --sageSoft: #214A54;
+
+    --gold: #69B9C5;
+    --white: #173A42;
+  }
+
+  body {
+    background: linear-gradient(
+      180deg,
+      #102D34 0%,
+      #153740 55%,
+      #1B424B 100%
+    );
+    color: var(--ink);
+  }
+
+  .qoption,
+  .spread,
+  .threeVariant,
+  .tarot,
+  .drawSlot,
+  .expertCard {
+    background: var(--paper2);
+    color: var(--ink);
+    border-color: var(--line);
+  }
+
+  .qoption:hover,
+  .qoption.active,
+  .spread:hover,
+  .spread.active,
+  .threeVariant.active {
+    background: var(--paper3);
+    color: var(--ink);
+  }
+
+  .secondary {
+    background: var(--paper2);
+    color: var(--rose);
+  }
+
+  .expertCard.mainSynthesis {
+    background: var(--paper3);
+    border-color: var(--line);
   }
 }
