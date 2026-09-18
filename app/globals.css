@@ -1,7 +1,694 @@
-/* TAROT ALUZCA — pegar AL FINAL de app/globals.css
-   Mantiene intactas la portada y la función de compartir. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Marca editorial inspirada en la tipografía de ALUMBRA */
+:root{--paper:#f5eee3;--paper2:#fcf8f1;--paper3:#e9dece;--ink:#2b2925;--soft:#625d55;--muted:#817a70;--line:#d8ccbb;--line2:#bda991;--rose:#bf7770;--rose2:#a85e58;--roseSoft:#ead1cb;--sage:#82927d;--sage2:#647461;--sageSoft:#dce5d9;--gold:#ae884d;--white:#fffdf9;--shadow:0 16px 36px rgba(63,49,35,.11);--radius:18px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--paper)}
+body{margin:0;min-width:320px;background:radial-gradient(circle at 12% 5%,rgba(255,255,255,.8),transparent 28rem),radial-gradient(circle at 92% 18%,rgba(234,209,203,.35),transparent 30rem),linear-gradient(180deg,#faf4e9 0%,var(--paper) 46%,#f0e5d5 100%);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.12;background-image:radial-gradient(rgba(89,69,48,.18) .55px,transparent .55px);background-size:7px 7px;mix-blend-mode:multiply}
+button,textarea{font:inherit}button{color:inherit}
+.appShell{width:min(1440px,calc(100% - 64px));margin:0 auto;padding:26px 0 70px}
+.topbar{display:flex;align-items:flex-end;justify-content:space-between;padding:4px 2px 28px;border-bottom:1px solid var(--line)}
+.logo{font-size:27px;line-height:1;letter-spacing:.27em;font-weight:700}.headerMeta{font-size:10px;letter-spacing:.17em;color:var(--muted);font-weight:600}
+.sectionBlock{padding:74px 0;border-bottom:1px solid var(--line)}
+.eyebrow{margin-bottom:13px;color:var(--rose2);font-size:11px;line-height:1;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+h1,h2,h3{margin:0;color:var(--ink);letter-spacing:-.045em}h1{font-size:clamp(48px,6.2vw,92px);line-height:.98;font-weight:600;max-width:1000px}h1 span{color:var(--rose2)}h2{font-size:clamp(32px,4vw,56px);line-height:1.04;font-weight:600}h3{font-size:23px;line-height:1.1}.hero{position:relative;overflow:hidden}.heroCopy{position:relative;z-index:2;max-width:820px}.heroArtwork{position:absolute;right:0;top:25px;width:min(390px,31vw);pointer-events:none}.heroArtwork img{display:block;width:100%;height:auto;object-fit:contain}.heroIntro{max-width:700px;margin:25px 0 30px;color:var(--soft);font-size:18px}
+.categories{display:flex;flex-wrap:wrap;gap:9px;margin:28px 0 25px}.category,.qoption,.spread,.mode{border:1px solid var(--line);background:rgba(255,253,248,.55);cursor:pointer;transition:.18s ease}.category{border-radius:999px;padding:10px 17px;color:var(--soft);font-size:13px}.category:hover,.category.active{background:var(--rose);border-color:var(--rose);color:white}
+.questionPanel{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(290px,.6fr);gap:28px;padding:27px;border:1px solid var(--line);background:rgba(255,253,248,.55);border-radius:var(--radius)}.label{font-size:10px;text-transform:uppercase;letter-spacing:.16em;font-weight:700;color:var(--muted);margin-bottom:12px}.questionList{display:flex;flex-direction:column;gap:8px}.qoption{text-align:left;border-radius:11px;padding:13px 15px;color:var(--soft);line-height:1.4}.qoption:hover,.qoption.active{border-color:var(--rose);background:var(--roseSoft);color:var(--ink)}.customQuestion{border-left:1px solid var(--line);padding-left:28px}.customQuestion .label span{font-weight:400}.customQuestion textarea{display:block;width:100%;min-height:122px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:var(--paper2);padding:14px;color:var(--ink);outline:none}.customQuestion textarea:focus{border-color:var(--rose)}.questionEcho{margin-top:20px;color:var(--rose2);font-size:17px;font-weight:500}
+.sectionHeading{display:flex;justify-content:space-between;align-items:end;margin-bottom:25px}.sectionHeading p,.pickHeader p{margin:10px 0 0;color:var(--muted)}.spreads{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.spread{min-height:94px;border-radius:14px;padding:16px;text-align:left;display:flex;flex-direction:column;justify-content:space-between}.spread strong{font-size:16px}.spread span{font-size:11px;color:var(--muted);line-height:1.35}.spread:hover,.spread.active{border-color:var(--rose);box-shadow:inset 0 0 0 1px var(--rose);background:var(--roseSoft)}.spread.active span{color:var(--rose2)}.recommend{margin-top:15px;padding:12px 15px;background:var(--sageSoft);color:var(--sage2);font-size:13px;border-radius:10px}
+.pickHeader{display:flex;align-items:end;justify-content:space-between;gap:25px}.counter{display:flex;align-items:baseline;gap:3px;white-space:nowrap}.counter b{font-size:30px;color:var(--rose2)}.counter span{font-size:14px;color:var(--muted)}
+.selectedSpread{display:grid;grid-template-columns:repeat(7,minmax(92px,1fr));gap:14px;margin:32px 0 42px}.drawSlot{min-width:0}.drawTop{min-height:38px;display:flex;flex-direction:column;gap:2px;margin-bottom:8px}.drawTop span{font-size:9px;letter-spacing:.16em;color:var(--rose2);font-weight:700}.drawTop b{font-size:11px;color:var(--soft);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drawCard{aspect-ratio:2/3;border-radius:9px;overflow:hidden;background:var(--paper3);box-shadow:var(--shadow-soft,0 5px 16px rgba(68,55,39,.08));border:1px solid var(--line);position:relative}.drawCard img{width:100%;height:100%;object-fit:cover;display:block}.emptyBack{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;background:linear-gradient(145deg,#d9cbb9,#eee3d3);color:#8c7b65}.emptyBack span{font-size:8px;letter-spacing:.18em;font-weight:700}.emptyBack i{font-style:normal;font-size:24px;color:var(--gold)}.drawSlot.filled .drawCard{border-color:var(--rose);box-shadow:0 10px 25px rgba(125,75,68,.15)}.drawName{font-size:11px;text-align:center;margin-top:8px;color:var(--soft);font-weight:600;min-height:17px}
+.deckToolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-top:17px;border-top:1px solid var(--line);font-size:10px;letter-spacing:.16em;color:var(--muted);font-weight:700}.deckToolbar small{font-size:11px;letter-spacing:0;color:var(--sage2);font-weight:500}.deck{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px}
+.tarot{position:relative;border:1px solid var(--line);padding:0;background:transparent;border-radius:8px;overflow:hidden;cursor:pointer;aspect-ratio:2/3;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.tarot:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--rose)}
+.tarot.picked{border:2px solid var(--rose);box-shadow:0 8px 20px rgba(113,71,65,.18);transform:translateY(-3px)}
+.cardBack{position:absolute;inset:0;display:block;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(174,136,77,.13),transparent 25%),linear-gradient(145deg,#fbf6ec 0%,#f2e7d6 100%)}
+.backFrame{position:absolute;pointer-events:none;border:1px solid var(--gold);border-radius:7px}
+.backFrameOuter{inset:5px}
+.backFrameInner{inset:9px;border-color:rgba(174,136,77,.55);border-radius:5px}
+.backGarland{position:absolute;top:10%;bottom:10%;width:42%;border-top:1px solid rgba(130,146,125,.8);border-bottom:1px solid rgba(191,119,112,.72);border-radius:50%}
+.backGarlandLeft{left:-9%;transform:rotate(16deg)}
+.backGarlandRight{right:-9%;transform:rotate(-16deg)}
+.backGarland::before,.backGarland::after{content:"";position:absolute;width:7px;height:11px;border:1px solid var(--sage);border-radius:80% 20% 80% 20%}
+.backGarland::before{top:22%;right:8%;transform:rotate(35deg)}
+.backGarland::after{bottom:20%;left:8%;transform:rotate(215deg)}
+.backMedallion{position:absolute;left:50%;top:50%;width:38%;aspect-ratio:1;transform:translate(-50%,-50%);display:grid;place-items:center;border:1px solid var(--gold);border-radius:50%;background:#fbf6ec;box-shadow:0 0 0 4px rgba(174,136,77,.07)}
+.backMedallion::before{content:"";position:absolute;width:58%;height:58%;border:1px solid var(--gold);transform:rotate(45deg)}
+.backStar{position:relative;z-index:2;color:var(--gold);font-size:clamp(11px,1.2vw,21px)}
+.pickedMark{position:absolute;right:5px;top:5px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:var(--rose2);color:#fff;font-size:11px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:28px}.primary,.secondary,.textButton{border-radius:999px;padding:12px 19px;cursor:pointer;border:1px solid transparent}.primary{background:var(--rose2);color:#fff;font-weight:700}.primary:disabled{opacity:.38;cursor:not-allowed}.primary:not(:disabled):hover{background:#914d48}.secondary{background:var(--paper2);border-color:var(--line);color:var(--soft)}.secondary:hover{border-color:var(--rose);color:var(--rose2)}.textButton{background:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.readingSection{border-bottom:0}.readingIntro{display:flex;justify-content:space-between;align-items:end;gap:25px}.readingQuestion{margin:14px 0 0;color:var(--rose2);font-size:16px}.readingBadge{padding:9px 13px;border-radius:999px;background:var(--sageSoft);color:var(--sage2);font-size:11px;font-weight:700}.readingModes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:30px 0}.mode{border-radius:13px;text-align:left;padding:15px;display:flex;flex-direction:column;gap:5px}.mode b{font-size:13px}.mode span{font-size:11px;color:var(--muted);line-height:1.35}.mode.active{background:var(--sageSoft);border-color:var(--sage)}
+.expertGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:15px;margin-bottom:44px}.expertCard,.storyBlock,.deepQuestion{border:1px solid var(--line);background:rgba(255,253,248,.58);border-radius:var(--radius);padding:26px}.expertCard.mainSynthesis{background:var(--roseSoft);border-color:#dfbbb4}.expertCard p,.storyBlock p,.deepQuestion p{font-size:16px;line-height:1.72;margin:0;color:var(--soft)}
+.positionReadings{margin-top:20px}.readingLabel{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:14px}.positionReading{display:grid;grid-template-columns:48px 220px minmax(0,1fr);gap:24px;padding:25px 0;border-top:1px solid var(--line)}.positionNumber{font-size:11px;color:var(--rose2);font-weight:700;letter-spacing:.12em;padding-top:4px}.positionInfo span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin-bottom:8px}.positionInfo h3{margin-bottom:7px}.positionInfo small{color:var(--sage2);font-size:11px}.positionText p{margin:0;color:var(--soft);line-height:1.72}.lightShadow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}.lightShadow span{font-size:12px;color:var(--muted)}.lightShadow b{color:var(--rose2);margin-right:4px}.storyBlock{margin-top:35px}.deepQuestion{margin-top:15px;background:var(--sageSoft);border-color:#c6d2c2}.deepQuestion p{color:var(--sage2);font-weight:500}
+
+/* V9 — cartas seleccionadas, zoom y lectura */
+.drawCard{width:100%;aspect-ratio:2/3;border-radius:9px;overflow:hidden;background:var(--paper3);box-shadow:0 5px 16px rgba(68,55,39,.08);border:1px solid var(--line);position:relative;padding:0;cursor:zoom-in;display:block}
+.drawCard:disabled{cursor:default}
+.drawCard img{width:100%;height:100%;object-fit:cover;display:block}
+.zoomHint{position:absolute;right:7px;bottom:7px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:rgba(255,253,248,.94);color:var(--ink);box-shadow:0 2px 7px rgba(50,40,30,.16);font-size:16px}
+.changeCard{display:block;margin:5px auto 0;border:0;background:none;color:var(--rose2);font-size:9px;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.readingCardThumb{position:relative;width:100%;max-width:150px;aspect-ratio:2/3;padding:0;border:0;background:none;border-radius:9px;overflow:hidden;cursor:zoom-in;box-shadow:var(--shadow)}
+.readingCardThumb img{display:block;width:100%;height:100%;object-fit:cover}
+.positionReading{grid-template-columns:42px 150px 200px minmax(0,1fr)}
+.jointReading{margin-top:30px;padding:28px;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper2)}
+.jointReading h3{margin:0 0 10px;font-size:25px}
+.jointReading p{margin:0;max-width:900px;color:var(--soft);line-height:1.75}
+.cardZoomOverlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(43,37,31,.72);backdrop-filter:blur(5px)}
+.cardZoomPanel{position:relative;max-width:min(520px,92vw);max-height:92vh;padding:12px;border-radius:15px;background:var(--paper2);box-shadow:0 24px 70px rgba(20,15,10,.38)}
+.cardZoomPanel img{display:block;max-width:100%;max-height:calc(92vh - 60px);width:auto;height:auto;border-radius:9px}
+.cardZoomClose{position:absolute;top:-12px;right:-12px;width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--paper2);color:var(--ink);cursor:pointer;box-shadow:0 4px 12px rgba(40,30,20,.2);font-size:23px}
+.zoomCaption{text-align:center;padding:8px 0 2px;font-size:12px;color:var(--soft);font-weight:600}
+.shuffleButton::before{content:"↻";margin-right:7px;color:var(--gold);font-size:17px}
+
+footer{padding:32px 0 0;color:var(--muted);font-size:11px;text-align:center}
+
+@media (max-width:1180px){.appShell{width:min(100% - 42px,1100px)}.deck{grid-template-columns:repeat(10,minmax(0,1fr))}.spreads{grid-template-columns:repeat(3,1fr)}.selectedSpread{grid-template-columns:repeat(7,minmax(75px,1fr));gap:10px}}
+@media (max-width:820px){.appShell{width:min(100% - 30px,720px)}.sectionBlock{padding:52px 0}.topbar{padding-bottom:20px}.headerMeta{font-size:8px}.questionPanel{grid-template-columns:1fr;gap:22px}.customQuestion{border-left:0;border-top:1px solid var(--line);padding:22px 0 0}.selectedSpread{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:26px}.selectedSpread .drawSlot:nth-child(n+5){grid-column:span 1}.deck{grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}.readingIntro{align-items:flex-start;flex-direction:column}.readingModes{grid-template-columns:repeat(2,1fr)}.expertGrid{grid-template-columns:1fr}.positionReading{grid-template-columns:40px 180px minmax(0,1fr);gap:16px}}
+@media (max-width:560px){body{font-size:15px}.appShell{width:calc(100% - 22px);padding-top:15px}.topbar{align-items:center}.logo{font-size:22px}.headerMeta{display:none}.sectionBlock{padding:40px 0}.hero{padding-top:46px}h1{font-size:clamp(40px,13vw,58px);line-height:1}.heroIntro{font-size:16px;margin:20px 0 24px}.categories{gap:7px}.category{padding:8px 12px;font-size:11px}.questionPanel{padding:18px}.qoption{font-size:13px;padding:11px 12px}.questionEcho{font-size:14px}.spreads{grid-template-columns:repeat(2,1fr);gap:8px}.spread{min-height:84px;padding:13px}.spread strong{font-size:14px}.spread span{font-size:10px}.pickHeader{align-items:flex-start}.pickHeader p{font-size:13px}.counter b{font-size:25px}.selectedSpread{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:25px 0 30px}.drawTop{min-height:33px}.drawTop b{font-size:9px}.drawName{font-size:9px}.deckToolbar{font-size:8px}.deckToolbar small{font-size:9px}.deck{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.tarot{border-radius:5px}.pickedMark{width:19px;height:19px;font-size:9px;right:3px;top:3px}.actions{display:grid;grid-template-columns:1fr;gap:8px}.primary,.secondary,.textButton{width:100%;padding:12px 15px}.readingIntro h2{font-size:38px}.readingBadge{align-self:flex-start}.readingModes{grid-template-columns:1fr;gap:7px}.mode{padding:12px}.expertCard,.storyBlock,.deepQuestion{padding:20px}.expertCard p,.storyBlock p,.deepQuestion p{font-size:14px;line-height:1.65}.positionReading{grid-template-columns:30px 1fr;gap:10px;padding:21px 0}.positionText{grid-column:2}.positionInfo h3{font-size:20px}.lightShadow{grid-template-columns:1fr;gap:8px}.positionNumber{font-size:9px}.readingLabel{margin-bottom:4px}}
+@media (max-width:370px){.deck{grid-template-columns:repeat(4,minmax(0,1fr))}.selectedSpread{grid-template-columns:repeat(3,minmax(0,1fr))}.drawTop b{font-size:8px}.drawName{font-size:8px}}
+
+@media (max-width:1180px){
+  .heroArtwork{width:min(330px,29vw)}
+  .deck{grid-template-columns:repeat(10,minmax(0,1fr))}
+  .positionReading{grid-template-columns:38px 130px 180px minmax(0,1fr)}
+}
+@media (max-width:820px){
+  .heroArtwork{position:relative;right:auto;top:auto;width:min(360px,80%);margin:25px auto 0}
+  .heroCopy{max-width:none}
+  .deck{grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}
+  .positionReading{grid-template-columns:36px 110px minmax(0,1fr);gap:15px}
+  .positionReading .positionText{grid-column:3}
+}
+@media (max-width:560px){
+  .heroArtwork{width:min(330px,94%);margin:20px auto 0}
+  .deck{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  .positionReading{grid-template-columns:28px 86px minmax(0,1fr);gap:10px}
+  .positionReading .positionText{grid-column:3}
+  .readingCardThumb{max-width:86px}
+  .jointReading{padding:20px}
+}
+@media (max-width:370px){
+  .deck{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+
+/* V11 — hero Reina de Oros */
+.heroArtwork{
+  display:block;
+  position:absolute;
+  right:2%;
+  top:20px;
+  width:min(420px,34vw);
+  max-height:620px;
+  z-index:1;
+  opacity:1;
+  pointer-events:none;
+}
+.heroArtwork img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:620px;
+  object-fit:contain;
+}
+.heroCopy,
+.categories,
+.questionPanel,
+.questionEcho{
+  position:relative;
+  z-index:2;
+}
+@media(max-width:820px){
+  .heroArtwork{
+    position:relative;
+    right:auto;
+    top:auto;
+    width:min(360px,92%);
+    max-height:none;
+    margin:18px auto 8px;
+  }
+  .heroArtwork img{max-height:none}
+}
+
+/* V12 — una sola tirada de 3 cartas con tres versiones */
+.threeVariants{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+.threeVariant{
+  min-height:58px;
+  padding:12px 15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--paper2);
+  color:var(--ink);
+  text-align:left;
+  cursor:pointer;
+  transition:all .16s ease;
+}
+.threeVariant span{
+  display:inline-grid;
+  place-items:center;
+  width:22px;height:22px;
+  margin-right:8px;
+  border-radius:50%;
+  background:rgba(185,120,118,.10);
+  color:var(--rose2);
+  font-size:10px;
+  font-weight:700;
+}
+.threeVariant b{
+  font-size:13px;
+  font-weight:600;
+}
+.threeVariant.active{
+  border-color:var(--rose);
+  background:rgba(185,120,118,.10);
+  box-shadow:0 4px 14px rgba(113,71,65,.08);
+}
+.threeVariant:hover{
+  border-color:var(--rose);
+  transform:translateY(-1px);
+}
+@media(max-width:680px){
+  .threeVariants{grid-template-columns:1fr;gap:8px}
+  .threeVariant{min-height:50px}
+}
+
+
+/* V14 — portada Reina de Oros en /cards y visibilidad reforzada */
+.heroArtwork{
+  display:block;
+  position:absolute;
+  right:1%;
+  top:0;
+  width:min(400px,34vw);
+  max-height:650px;
+  z-index:1;
+  opacity:1;
+  pointer-events:none;
+}
+.heroArtwork img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:650px;
+  object-fit:contain;
+}
+.hero{min-height:560px;}
+@media(max-width:820px){
+  .hero{min-height:0;}
+  .heroArtwork{
+    position:relative;
+    right:auto;
+    top:auto;
+    width:min(360px,92%);
+    max-height:none;
+    margin:20px auto 10px;
+  }
+  .heroArtwork img{max-height:none;}
+}
+
+/* V15 — 3 cartas integradas + giro de carta al elegir */
+.spreads{grid-template-columns:repeat(5,minmax(0,1fr));}
+.spread:nth-child(3){grid-column:auto;}
+.threeVariants{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(255,253,248,.42);
+}
+.threeVariant{
+  min-height:64px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--paper2);
+  color:var(--ink);
+  text-align:left;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.threeVariant span{
+  flex:0 0 25px;
+  width:25px;height:25px;
+  display:grid;place-items:center;
+  margin:0;
+  border-radius:50%;
+  background:var(--roseSoft);
+  color:var(--rose2);
+  font-size:10px;
+  font-weight:700;
+}
+.threeVariant b{font-size:12px;font-weight:600;line-height:1.35;text-transform:lowercase;}
+.threeVariant.active{border-color:var(--rose);background:var(--roseSoft);box-shadow:0 4px 14px rgba(113,71,65,.08);}
+.threeVariant:hover{border-color:var(--rose);transform:translateY(-1px);}
+
+/* Baraja: la carta empieza boca abajo y se gira al seleccionarla */
+.tarot{perspective:900px;transform-style:preserve-3d;}
+.tarotFlip{position:absolute;inset:0;display:block;transform-style:preserve-3d;transition:transform .62s cubic-bezier(.2,.7,.2,1);}
+.tarot.picked .tarotFlip{transform:rotateY(180deg);}
+.cardFace{position:absolute;inset:0;display:block;overflow:hidden;border-radius:inherit;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+.cardFaceBack{background:radial-gradient(circle at 50% 50%,rgba(174,136,77,.13),transparent 25%),linear-gradient(145deg,#fbf6ec 0%,#f2e7d6 100%);}
+.cardFaceFront{transform:rotateY(180deg);background:var(--paper2);}
+.cardFaceFront img{display:block;width:100%;height:100%;object-fit:cover;}
+.tarot.picked{transform:translateY(-3px);}
+
+/* Portada: la Reina de Oros queda visible sin tapar el texto */
+.heroArtwork{display:block;position:absolute;right:0;top:0;width:min(430px,34vw);z-index:1;opacity:1;}
+.heroArtwork img{display:block;width:100%;height:auto;max-height:650px;object-fit:contain;}
+@media(max-width:1180px){
+  .spreads{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .heroArtwork{width:min(360px,31vw);}
+}
+@media(max-width:820px){
+  .threeVariants{grid-template-columns:1fr;}
+  .heroArtwork{position:relative;right:auto;top:auto;width:min(360px,88%);margin:20px auto 0;}
+}
+@media(max-width:560px){
+  .spreads{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .threeVariants{padding:8px;gap:7px;}
+  .threeVariant{min-height:54px;padding:10px 11px;}
+  .threeVariant b{font-size:11px;}
+  .heroArtwork{width:min(330px,94%);margin:18px auto 0;}
+}
+
+/* V15b — el selector de 3 cartas vive dentro de su propia tarjeta */
+.spreads{align-items:start;}
+.spreadGroup{min-width:0;border:1px solid transparent;border-radius:16px;}
+.spreadGroup > .spread{width:100%;}
+.spreadGroup.active{border-color:var(--rose);background:rgba(234,209,203,.28);padding:0 0 10px;box-shadow:0 8px 22px rgba(113,71,65,.06);}
+.spreadGroup.active > .spread{border-color:transparent;box-shadow:none;background:var(--roseSoft);border-radius:14px 14px 8px 8px;}
+.spreadGroup .threeVariants{margin:8px 8px 0;padding:0;border:0;background:transparent;display:flex;flex-direction:column;gap:5px;}
+.spreadGroup .threeVariant{min-height:42px;padding:8px 9px;border-radius:9px;background:rgba(255,253,248,.76);gap:8px;}
+.spreadGroup .threeVariant span{width:20px;height:20px;flex-basis:20px;font-size:9px;}
+.spreadGroup .threeVariant b{font-size:10px;line-height:1.25;}
+.spreadGroup .threeVariant.active{background:var(--white);border-color:var(--rose);box-shadow:none;}
+@media(max-width:1180px){.spreadGroup{grid-column:auto;}}
+@media(max-width:680px){
+  .spreadGroup .threeVariants{display:flex;}
+  .spreadGroup .threeVariant{min-height:44px;}
+}
+
+
+/* V17 — las 3 opciones de "3 cartas" van en horizontal debajo del botón */
+.spreadGroup{display:contents;}
+.spreadGroup .threeVariants{
+  grid-column:3 / span 3;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+}
+.spreadGroup .threeVariant{
+  min-height:58px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--paper2);
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-align:left;
+}
+.spreadGroup .threeVariant b{
+  font-size:12px;
+  line-height:1.25;
+  text-transform:lowercase;
+}
+.spreadGroup .threeVariant span{
+  flex:0 0 24px;
+  width:24px;height:24px;
+  margin:0;
+}
+@media(max-width:1180px){
+  .spreadGroup .threeVariants{grid-column:1 / -1;}
+}
+@media(max-width:680px){
+  .spreadGroup .threeVariants{
+    grid-column:1 / -1;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:6px;
+  }
+  .spreadGroup .threeVariant{
+    min-height:64px;
+    padding:9px 8px;
+    gap:5px;
+  }
+  .spreadGroup .threeVariant span{flex-basis:20px;width:20px;height:20px;font-size:9px;}
+  .spreadGroup .threeVariant b{font-size:10px;}
+}
+
+/* V18 — preguntas sin espacio en blanco y en horizontal */
+.questionPanel{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;
+  padding:27px;
+}
+.questionPanel > .label{
+  grid-column:1 / -1;
+  margin-bottom:14px;
+}
+.questionList{
+  grid-column:1 / -1;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.qoption{
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  text-align:left;
+}
+.customQuestion{
+  grid-column:1 / -1;
+  border-left:0;
+  border-top:1px solid var(--line);
+  padding:22px 0 0;
+  margin-top:22px;
+}
+.customQuestion textarea{min-height:100px}
+@media(max-width:820px){
+  .questionList{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:560px){
+  .questionPanel{padding:18px}
+  .questionList{grid-template-columns:1fr;gap:8px}
+  .qoption{min-height:56px}
+  .customQuestion{margin-top:18px;padding-top:18px}
+}
+
+
+/* V23 — ajuste limpio final: variantes horizontales, cerca de la mesa y preguntas compactas */
+.questionPanel{display:block;}
+.questionPanel > .label{margin-bottom:12px;}
+.questionList{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;}
+.customQuestion{margin-top:18px;border-left:0;border-top:1px solid var(--line);padding:18px 0 0;}
+
+.spreadSection{padding-bottom:34px;}
+.spreads{grid-template-columns:repeat(5,minmax(0,1fr));align-items:start;gap:10px;}
+.spreadGroup{min-width:0;}
+.spreadGroup > .spread{width:100%;}
+.threeVariants{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:7px 0 0;padding:0;}
+.threeVariant{min-height:54px;padding:10px 11px;border-radius:10px;background:rgba(255,253,248,.8);display:flex;align-items:center;gap:8px;}
+.threeVariant span{flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--roseSoft);color:var(--rose2);font-size:9px;font-weight:700;}
+.threeVariant b{font-size:10px;line-height:1.25;text-transform:lowercase;}
+.threeVariant.active{border-color:var(--rose);background:var(--roseSoft);box-shadow:none;}
+.recommend{margin-top:9px;}
+
+/* Mantiene las opciones físicamente próximas al resultado de la tirada */
+.tableSection{padding-top:42px;}
+.tableSection .pickHeader{margin-bottom:10px;}
+.selectedSpread{margin-top:20px;}
+
+/* La carta seleccionada gira: reverso antes del clic, cara después del clic. */
+.tarot{perspective:1000px;transform-style:preserve-3d;}
+.tarotFlip{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .62s cubic-bezier(.2,.7,.2,1);}
+.tarot.picked .tarotFlip{transform:rotateY(180deg);}
+.cardFace{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+.cardFaceFront{transform:rotateY(180deg);}
+.cardFaceFront img{width:100%;height:100%;object-fit:cover;display:block;}
+
+@media(max-width:820px){
+  .questionList{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .spreads{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .spreadGroup{grid-column:span 1;}
+  .threeVariants{grid-column:1/-1;grid-template-columns:1fr;gap:6px;}
+  .threeVariant{min-height:48px;}
+}
+@media(max-width:560px){
+  .questionList{grid-template-columns:1fr;}
+  .spreads{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .spreadGroup{grid-column:span 2;}
+  .threeVariants{grid-template-columns:1fr;}
+  .tableSection{padding-top:32px;}
+}
+
+
+/* V24 — layout limpio y único para tirada, mesa y acciones */
+.spreadGroup{display:flex;flex-direction:column;min-width:0}
+.spreadGroup > .spread{width:100%}
+.threeVariants{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:8px !important;
+  margin:8px 0 0 !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+}
+.threeVariant{
+  min-width:0;
+  min-height:58px;
+  padding:11px 13px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--paper2);
+  color:var(--soft);
+  text-align:left;
+  cursor:pointer;
+}
+.threeVariant b{
+  display:block;
+  font-size:12px;
+  line-height:1.3;
+  font-weight:650;
+  text-transform:lowercase;
+}
+.threeVariant span{
+  display:inline-grid;
+  place-items:center;
+  width:20px;height:20px;
+  margin-bottom:6px;
+  border-radius:50%;
+  background:#eee3d8;
+  color:var(--rose2);
+  font-size:9px;font-weight:700;
+}
+.threeVariant.active{
+  border-color:var(--rose);
+  background:#ead4cf;
+  color:#3f3530;
+}
+
+.selectionRow{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:24px;
+  align-items:end;
+  margin:28px 0 36px;
+}
+.selectionRow .selectedSpread{
+  margin:0;
+  min-width:0;
+}
+.selectionRow .actions{
+  margin:0 0 1px;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:8px;
+  width:178px;
+}
+.selectionRow .actions button{
+  white-space:nowrap;
+}
+.tarot .cardFace{
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+.tarot.picked .tarotFlip{transform:rotateY(180deg)}
+
+@media (max-width:1180px){
+  .selectionRow{grid-template-columns:minmax(0,1fr) 160px;gap:18px}
+  .selectionRow .actions{width:160px}
+}
+@media (max-width:820px){
+  .selectionRow{grid-template-columns:1fr;gap:18px}
+  .selectionRow .actions{
+    width:100%;
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .selectionRow .actions button{flex:1 1 180px}
+  .threeVariants{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+}
+@media (max-width:560px){
+  .threeVariants{grid-template-columns:1fr !important}
+  .selectionRow .actions{display:grid;grid-template-columns:1fr 1fr}
+  .selectionRow .actions .textButton{grid-column:1/-1}
+}
+
+
+/* V26 — tirada limpia */
+.spreadGroup{display:contents}
+.threeVariants{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:8px !important;
+  width:100% !important;
+  margin:10px 0 0 !important;
+}
+.threeVariant{min-height:58px !important}
+.selectionArea{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin:28px 0 36px;
+}
+.selectionArea .selectedSpread{
+  width:100%;
+  display:flex;
+  justify-content:flex-start;
+  gap:16px;
+  margin:0;
+}
+.selectionArea .actionsCentered{
+  width:100%;
+  max-width:820px;
+  margin:18px auto 0 !important;
+  display:flex !important;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.selectionArea .actionsCentered button{white-space:nowrap}
+@media(max-width:820px){
+  .threeVariants{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+  .selectionArea .selectedSpread{justify-content:flex-start;overflow-x:auto;padding-bottom:4px}
+}
+@media(max-width:560px){
+  .threeVariants{grid-template-columns:1fr !important}
+  .selectionArea .actionsCentered{display:grid !important;grid-template-columns:1fr 1fr;max-width:100%}
+  .selectionArea .actionsCentered .textButton{grid-column:1/-1}
+}
+
+/* V27 — la mesa de selección usa una medida fija y moderada.
+   Así 3 cartas no se estiran para llenar toda la pantalla. */
+.selectedSpread{
+  display:flex !important;
+  flex-wrap:wrap;
+  justify-content:center !important;
+  align-items:flex-start;
+  gap:24px !important;
+}
+.selectedSpread .drawSlot{
+  flex:0 0 clamp(112px,13vw,180px) !important;
+  width:clamp(112px,13vw,180px) !important;
+}
+.selectedSpread .drawCard{
+  width:100% !important;
+}
+@media (max-width:820px){
+  .selectedSpread{gap:14px !important;}
+  .selectedSpread .drawSlot{flex-basis:clamp(92px,27vw,150px) !important;width:clamp(92px,27vw,150px) !important;}
+}
+@media (max-width:560px){
+  .selectedSpread{gap:9px !important;}
+  .selectedSpread .drawSlot{flex-basis:calc((100vw - 52px)/3) !important;width:calc((100vw - 52px)/3) !important;}
+}
+
+
+/* ALUMBRA · CREACIÓN AO — identidad visual sobre la base v31 */
+:root {
+  --paper: #f5eee3;
+  --paper2: #fcf8f1;
+  --paper3: #e9dece;
+  --ink: #172e3c;
+  --soft: #52636a;
+  --muted: #7c8581;
+  --line: #d9cdb9;
+  --line2: #c7b18b;
+  --rose: #c58e82;
+  --rose2: #a96f65;
+  --roseSoft: #f0ddd4;
+  --sage: #929d86;
+  --sage2: #647565;
+  --sageSoft: #e0e6d9;
+  --gold: #bd9858;
+  --white: #fffdf8;
+  --shadow: 0 16px 36px rgba(35, 48, 49, .10);
+  --radius: 18px;
+}
+
+body {
+  background:
+    radial-gradient(circle at 83% 7%, rgba(210, 231, 222, .56), transparent 31rem),
+    radial-gradient(circle at 8% 42%, rgba(240, 221, 212, .35), transparent 28rem),
+    linear-gradient(180deg, #fcf8f1 0%, #f5eee3 55%, #eee3d5 100%);
+  color: var(--ink);
+}
+
+.topbar { align-items: center; padding: 12px 2px 24px; }
+.brand { display:flex; align-items:center; gap:13px; color:var(--ink); text-decoration:none; }
+.brandMark {
+  display:grid; place-items:center; width:48px; height:48px; flex:0 0 48px;
+  border:1px solid #5bbdcc; border-radius:50%; color:#35aebe;
+  font-family:Georgia,serif; font-size:18px; letter-spacing:-.09em;
+  box-shadow:0 0 0 4px rgba(53,174,190,.08), inset 0 0 18px rgba(53,174,190,.08);
+}
+.brandText { display:flex; flex-direction:column; gap:6px; }
+.brandName { font-family:Georgia,"Times New Roman",serif; font-size:clamp(25px,3vw,37px); font-weight:400; letter-spacing:.16em; line-height:1; }
+.brandByline { color:var(--muted); font-size:9px; letter-spacing:.35em; }
+.headerRight { display:flex; flex-direction:column; align-items:flex-end; gap:7px; text-align:right; }
+.headerMeta { font-size:9px; letter-spacing:.17em; color:var(--muted); font-weight:700; }
+.headerSubmeta { font-size:8px; letter-spacing:.11em; color:var(--sage2); }
+.hero { min-height:560px; }
+.eyebrow { color:var(--gold); }
+h1 span { color:var(--sage2); }
+.heroIntro { max-width:640px; color:var(--soft); line-height:1.8; }
+.heroArtwork img { filter:saturate(.91); }
+.category:hover,.category.active { background:var(--sage2); border-color:var(--sage2); color:#fff; }
+.qoption:hover,.qoption.active { border-color:var(--sage); background:var(--sageSoft); color:var(--ink); }
+.qoption:focus-visible,.category:focus-visible,.spread:focus-visible,.threeVariant:focus-visible,.tarot:focus-visible,button:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+.spread:hover,.spread.active { border-color:var(--sage); background:var(--sageSoft); box-shadow:inset 0 0 0 1px var(--sage); }
+.spread.active span,.counter b,.questionEcho,.readingQuestion { color:var(--sage2); }
+.threeVariant.active { border-color:var(--sage); background:var(--sageSoft); }
+.primary { background:var(--sage2); }
+.primary:not(:disabled):hover { background:#4f6253; }
+.secondary:hover { border-color:var(--sage); color:var(--sage2); }
+.tarot:hover { border-color:var(--gold); }
+.tarot.picked { border-color:var(--gold); box-shadow:0 8px 20px rgba(113,91,54,.18); }
+.pickedMark { background:var(--sage2); }
+.drawSlot.filled .drawCard { border-color:var(--gold); }
+.readingBadge,.deepQuestion { background:var(--sageSoft); color:var(--sage2); }
+.expertCard.mainSynthesis { background:#f0e3d5; border-color:#dfcdb5; }
+@media(max-width:820px) {
+  .hero { min-height:0; }
+  .headerRight { max-width:48%; }
+  .headerSubmeta { line-height:1.5; }
+}
+@media(max-width:560px) {
+  .topbar { align-items:center; }
+  .brand { gap:9px; }
+  .brandMark { width:38px; height:38px; flex-basis:38px; font-size:15px; }
+  .brandName { font-size:22px; }
+  .brandByline { font-size:8px; letter-spacing:.25em; }
+  .headerRight { display:none; }
+}
+
+
+/* =========================================================
+   TAROT ALUZCA — CORRECCIÓN DE MARCA Y COLECCIÓN
+   Añadido al CSS completo original.
+   ========================================================= */
+
+/* Cabecera: tipografía editorial inspirada en ALUMBRA */
 .brand { gap: 16px; }
 .brandMark {
   display: flex !important;
@@ -18,7 +705,8 @@
   font-family: Georgia, "Times New Roman", serif !important;
   font-size: 21px !important;
   letter-spacing: -.12em !important;
-  box-shadow: 0 0 0 4px rgba(8,127,145,.08), inset 0 0 16px rgba(8,127,145,.07) !important;
+  box-shadow: 0 0 0 4px rgba(8,127,145,.08),
+              inset 0 0 16px rgba(8,127,145,.07) !important;
 }
 .brandMark span { display: inline-block; }
 .brandName {
@@ -36,8 +724,9 @@
   color: #5b6874 !important;
 }
 
-/* Antes de iniciar: colección de cartas boca arriba.
-   Al iniciar: las no elegidas quedan boca abajo; al elegir, giran. */
+/* Colección contemplativa: las cartas se ven de frente antes de iniciar.
+   Después de iniciar, las cartas sin elegir muestran el reverso.
+   Al seleccionar, la carta gira y muestra la ilustración. */
 .tarot.contemplative .tarotFlip {
   transform: rotateY(180deg) !important;
 }
@@ -46,4 +735,23 @@
 }
 .tarot.picked .tarotFlip {
   transform: rotateY(180deg);
+}
+
+/* Ajustes del sello y del título en pantallas pequeñas */
+@media (max-width: 560px) {
+  .brand { gap: 9px; }
+  .brandMark {
+    width: 40px !important;
+    height: 40px !important;
+    flex-basis: 40px !important;
+    font-size: 15px !important;
+  }
+  .brandName {
+    font-size: 22px !important;
+    letter-spacing: .09em !important;
+  }
+  .brandByline {
+    font-size: 8px !important;
+    letter-spacing: .25em !important;
+  }
 }
