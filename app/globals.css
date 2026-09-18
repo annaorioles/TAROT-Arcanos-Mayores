@@ -877,3 +877,118 @@ h1 span{color:var(--cyan-dark)}
   .brandMark{width:32px;height:32px;flex-basis:32px}
   .brandByline{font-size:18px;letter-spacing:.03em}
 }
+/* =========================================
+   TAROT ALUZCA · PALETA TEJA
+   Ajuste de color — sin modificar estructura
+   ========================================= */
+
+:root {
+  --rose: #B96F5B;
+  --rose2: #8F4D3D;
+  --roseSoft: #F3E3DC;
+
+  --sage: #B96F5B;
+  --sage2: #8F4D3D;
+  --sageSoft: #F3E3DC;
+
+  --line: #E3C8BA;
+  --gold: #B78363;
+}
+
+/* Cajas y superficies claras */
+.expertCard,
+.mainSynthesis,
+.readingBadge,
+.deepQuestion,
+.questionCard,
+.panel,
+.cardBox {
+  background-color: #F8EEE8;
+  border-color: #E3C8BA;
+}
+
+/* Cajas destacadas */
+.expertCard.mainSynthesis {
+  background: #F1DDD2;
+  border-color: #D9B5A5;
+}
+
+/* Botones: teja oscuro */
+button,
+.btn,
+.button,
+.actionButton {
+  border-color: #B96F5B;
+}
+
+/* Botones activos y selección */
+button.active,
+button.selected,
+.btn.active,
+.btn.selected,
+.tarot.picked,
+.drawSlot.filled .drawCard {
+  border-color: #8F4D3D;
+}
+
+/* Acentos oscuros */
+.pickedMark,
+.readingBadge,
+.deepQuestion {
+  background-color: #8F4D3D;
+  color: #FFFFFF;
+}
+
+/* Cajas claras de selección */
+.questionCard,
+.spreadOption,
+.categoryOption {
+  background-color: #F8EEE8;
+  border-color: #E3C8BA;
+}
+
+/* Hover: teja suave */
+button:hover,
+.btn:hover,
+.button:hover {
+  background-color: #F1DDD2;
+  border-color: #B96F5B;
+}
+
+/* Baraja y dorso */
+.cardBack {
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(183, 131, 99, 0.12),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      #FBF5F0 0%,
+      #F0DED3 100%
+    );
+}
+
+.backFrame {
+  border-color: #B78363;
+}
+
+.backMedallion {
+  background: #FBF5F0;
+  border-color: #B78363;
+}
+
+.backStar {
+  color: #B78363;
+}
+
+/* Selección de cartas */
+.tarot:hover {
+  border-color: #B96F5B;
+}
+
+.tarot.picked {
+  border-color: #8F4D3D;
+  box-shadow: 0 8px 20px rgba(143, 77, 61, 0.18);
+}
