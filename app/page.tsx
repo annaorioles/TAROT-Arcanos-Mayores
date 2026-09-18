@@ -104,13 +104,13 @@ function imageSources(card: Card){
     );
   }
   if (card.id === "44") {
-    sources.push(
-      "/cards/44-nueve-de-espadas.png", "/44-nueve-de-espadas.png",
-      "/cards/9-de-espadas.png", "/9-de-espadas.png",
-      "/cards/nueve-de-espadas.png", "/nueve-de-espadas.png",
-      "/cards/44-nueve-de-espadas.jpg", "/44-nueve-de-espadas.jpg"
-    );
-  }
+  sources.push(
+    "/cards/44-nueve-de-espada.png",
+    "/44-nueve-de-espada.png",
+    "/cards/nueve-de-espada.png",
+    "/nueve-de-espada.png"
+  );
+}
   if (card.id === "29") {
     sources.push("/cards/ocho-de-copas.png", "/ocho-de-copas.png");
     sources.push("/cards/29-ocho-de-copas.jpg", "/29-ocho-de-copas.jpg");
