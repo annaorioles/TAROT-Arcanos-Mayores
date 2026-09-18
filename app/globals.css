@@ -729,3 +729,94 @@ h1 span { color:var(--sage2); }
 .deck .tarot:not(.preStart) .cardFaceFront {
   backface-visibility: hidden;
 }
+
+
+/* TAROT ALUZCA — ajuste de marca, cara frontal y acciones de compartir */
+.topbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+}
+.headerBrandRow {
+  display:flex;
+  align-items:center;
+  gap:26px;
+  min-width:0;
+}
+.brandNameLink {
+  color:var(--ink);
+  text-decoration:none;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(25px,3vw,37px);
+  font-weight:700;
+  letter-spacing:.12em;
+  line-height:1.05;
+  white-space:nowrap;
+}
+.brandSignature {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  flex:0 0 auto;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:lowercase;
+}
+.brandSignature img {
+  display:block;
+  width:54px;
+  height:54px;
+  object-fit:contain;
+}
+.shareActions {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.deck .tarot.preStart {
+  cursor:default;
+  pointer-events:none;
+}
+.deck .tarot.preStart .tarotFlip {
+  transform:none !important;
+  transform-style:flat;
+}
+.deck .tarot.preStart .cardFaceBack {
+  display:none !important;
+}
+.deck .tarot.preStart .cardFaceFront {
+  display:block !important;
+  position:absolute !important;
+  inset:0 !important;
+  transform:none !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  backface-visibility:visible !important;
+  -webkit-backface-visibility:visible !important;
+}
+.deck .tarot.preStart .cardFaceFront img {
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  opacity:1 !important;
+  visibility:visible !important;
+}
+@media(max-width:820px) {
+  .topbar {align-items:flex-start;}
+  .headerBrandRow {gap:15px;flex-wrap:wrap;}
+  .brandSignature img {width:46px;height:46px;}
+  .headerRight {display:none;}
+}
+@media(max-width:560px) {
+  .brandNameLink {font-size:clamp(20px,6vw,29px);letter-spacing:.08em;}
+  .brandSignature img {width:40px;height:40px;}
+  .brandSignature {font-size:9px;}
+  .shareActions {width:100%;}
+  .shareActions button {flex:1 1 130px;}
+}
