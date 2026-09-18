@@ -397,9 +397,9 @@ export default function Home(){
   return <main className="appShell">
     <header className="topbar">
       <a className="brand" href="#inicio" aria-label="Tarot Aluzca, inicio">
-        <span className="brandMark" aria-hidden="true">AO</span>
+        <span className="brandMark" aria-hidden="true"><span>A</span><span>O</span></span>
         <span className="brandText">
-          <span className="brandName">ALUZCA</span>
+          <span className="brandName">TAROT <em>ALUZCA</em></span>
           <span className="brandByline">ANNA ORIOL</span>
         </span>
       </a>
