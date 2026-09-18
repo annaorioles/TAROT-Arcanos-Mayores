@@ -394,7 +394,7 @@ export default function Home(){
       </div>
       <div className="heroArtwork" aria-hidden="true">
         <img
-          src="/cards/76-reina-de-oros.png"
+          src="/cards/src="/portada.png""
           alt=""
           onError={(e) => {
             const img = e.currentTarget;
