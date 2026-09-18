@@ -394,7 +394,7 @@ export default function Home(){
       </div>
       <div className="heroArtwork" aria-hidden="true">
         <img
-          src="/cards/src="/portada.png""
+         src="/portada.png""
           alt=""
           onError={(e) => {
             const img = e.currentTarget;
