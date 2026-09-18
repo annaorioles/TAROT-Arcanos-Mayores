@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root{--paper:#f5eee3;--paper2:#fcf8f1;--paper3:#e9dece;--ink:#2b2925;--soft:#625d55;--muted:#817a70;--line:#d8ccbb;--line2:#bda991;--rose:#bf7770;--rose2:#a85e58;--roseSoft:#ead1cb;--sage:#82927d;--sage2:#647461;--sageSoft:#dce5d9;--gold:#ae884d;--white:#fffdf9;--shadow:0 16px 36px rgba(63,49,35,.11);--radius:18px}
@@ -731,167 +732,148 @@ h1 span { color:var(--sage2); }
 }
 
 
-/* =========================================================
-   TAROT ALUZCA · Identidad tipográfica y paleta cian
-   Para usar Anurati exacta, coloca el archivo de fuente en
-   public/fonts/Anurati.otf (o ajusta la ruta abajo).
-   ========================================================= */
-@font-face {
-  font-family: "Anurati";
-  src: url("/fonts/Anurati.otf") format("opentype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
+/* TAROT ALUZCA — cabecera y paleta cian contemporánea */
 
-:root {
-  --aluzca-cyan: #087f91;
-  --aluzca-cyan-dark: #075563;
-  --aluzca-cyan-light: #d9f2f3;
-  --aluzca-cyan-pale: #effafa;
-  --aluzca-ink: #173344;
-  --aluzca-line: #b8dfe2;
+:root{
+  --ink:#173344;
+  --soft:#526c78;
+  --muted:#7c9199;
+  --line:#c7e0e5;
+  --line2:#83c5d0;
+  --cyan-dark:#176b7b;
+  --cyan:#35aabd;
+  --cyan-light:#dff4f6;
+  --cyan-pale:#f0fbfc;
+  --sage:#6f9a9b;
+  --sage2:#236d78;
+  --sageSoft:#dff2f4;
+  --rose:#35aabd;
+  --rose2:#176b7b;
+  --roseSoft:#dff4f6;
+  --gold:#b99b62;
+  --paper:#f6f8f5;
+  --paper2:#ffffff;
+  --paper3:#e8f2f3;
 }
-
-/* La referencia usa letras geométricas, abiertas y sin remates. */
-.brandNameLink {
-  display: inline-block;
-  font-family: "Anurati", "Century Gothic", "Avenir Next", "Helvetica Neue", sans-serif !important;
-  font-size: clamp(27px, 3.2vw, 44px) !important;
-  font-weight: 400 !important;
-  letter-spacing: .16em !important;
-  line-height: 1.08 !important;
-  text-transform: uppercase;
-  color: var(--aluzca-ink) !important;
-  text-decoration: none;
-  white-space: nowrap;
+.brand{
+  display:flex;
+  align-items:center;
+  gap:clamp(12px,2vw,28px);
+  flex-wrap:nowrap;
+  min-width:0;
 }
-
-.headerBrandRow {
-  display: flex;
-  align-items: center;
-  gap: clamp(16px, 2.2vw, 30px);
-  min-width: 0;
+.brandName{
+  font-family:"Amatic SC",sans-serif;
+  font-size:clamp(38px,5vw,64px);
+  line-height:.9;
+  letter-spacing:.075em;
+  font-weight:700;
+  white-space:nowrap;
+  color:var(--ink);
 }
-
-.brandSignature {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  flex: 0 0 auto;
+.brandSignature{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:0 0 auto;
 }
-
-.brandSignature img {
-  display: block;
-  width: 54px;
-  height: 54px;
-  object-fit: contain;
+.brandMark{
+  width:48px;height:48px;flex:0 0 48px;
+  overflow:hidden;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid var(--cyan);
+  background:#092333;
+  box-shadow:0 0 0 4px rgba(53,170,189,.12);
 }
-
-.brandSignature span {
-  font-family: "Anurati", "Century Gothic", "Avenir Next", "Helvetica Neue", sans-serif !important;
-  font-size: 10px !important;
-  font-weight: 400 !important;
-  letter-spacing: .15em !important;
-  line-height: 1.25;
-  text-transform: uppercase !important;
-  white-space: nowrap;
-  color: var(--aluzca-ink) !important;
+.brandMark img{width:100%;height:100%;object-fit:contain;display:block}
+.brandByline{
+  font-family:"Amatic SC",sans-serif;
+  font-size:clamp(20px,2.2vw,29px);
+  font-weight:400;
+  line-height:1;
+  letter-spacing:.08em;
+  white-space:nowrap;
+  color:var(--ink);
 }
-
-/* Sustituye los verdes de selección por una gama cian moderna. */
-.category.active,
-.qoption.active,
-.spread.active,
-.threeVariant.active,
-.mode.active {
-  background: var(--aluzca-cyan-light) !important;
-  border-color: var(--aluzca-cyan) !important;
-  color: var(--aluzca-cyan-dark) !important;
+.headerMeta,.headerSubmeta{color:var(--cyan-dark)}
+.category:hover,.category.active,
+.primary,.tarot.picked .pickedMark{
+  background:var(--cyan-dark);
+  border-color:var(--cyan-dark);
+  color:#fff;
 }
-
-.primary,
-.whatsappButton {
-  background: var(--aluzca-cyan-dark) !important;
-  border-color: var(--aluzca-cyan-dark) !important;
-  color: #fff !important;
+.category,.qoption,.spread,.mode,.threeVariant,.expertCard,.storyBlock,.deepQuestion,
+.questionPanel,.drawCard,.readingBadge,.recommend{
+  border-color:var(--line);
 }
-
-.secondary,
-.emailButton,
-.spread,
-.threeVariant,
-.category,
-.qoption,
-.mode {
-  border-color: var(--aluzca-line) !important;
+.qoption:hover,.qoption.active,.spread:hover,.spread.active,
+.threeVariant.active,.mode.active{
+  border-color:var(--cyan);
+  background:var(--cyan-light);
+  color:var(--ink);
 }
-
-.secondary:hover,
-.emailButton:hover,
-.spread:hover,
-.threeVariant:hover,
-.category:hover,
-.qoption:hover,
-.mode:hover {
-  background: var(--aluzca-cyan-pale) !important;
-  border-color: var(--aluzca-cyan) !important;
+.readingBadge,.recommend,.deepQuestion,.expertCard.mainSynthesis{
+  background:var(--cyan-light);
+  border-color:#b6e1e7;
+  color:var(--cyan-dark);
 }
-
-.counter b,
-.eyebrow,
-.readingLabel,
-.positionNumber {
-  color: var(--aluzca-cyan-dark) !important;
+.primary:hover{background:#105665}
+.secondary:hover,.textButton:hover{border-color:var(--cyan);color:var(--cyan-dark)}
+.eyebrow,.counter b,.drawTop span,.positionNumber{color:var(--cyan-dark)}
+h1 span{color:var(--cyan-dark)}
+.drawSlot.filled .drawCard{border-color:var(--cyan);box-shadow:0 10px 25px rgba(23,107,123,.16)}
+.pickedMark{background:var(--cyan-dark)}
+.backFrame{border-color:var(--cyan-dark)}
+.backMedallion{border-color:var(--cyan)}
+.backMedallion::before{border-color:var(--cyan)}
+.backStar{color:var(--cyan-dark)}
+.cardFaceBack{
+  background:radial-gradient(circle at 50% 50%,rgba(53,170,189,.16),transparent 30%),
+    linear-gradient(145deg,#f3fcfd 0%,#cfe9ed 100%);
 }
-
-/* Compartir: botones en cajas coherentes con el lenguaje de la app. */
-.readingShare {
-  display: flex;
-  justify-content: flex-start;
-  align-items: stretch;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin: 34px 0 8px;
-  padding-top: 24px;
-  border-top: 1px solid var(--aluzca-line);
+.preStartFace{position:absolute;inset:0;display:block;overflow:hidden}
+.preStartFace img{display:block;width:100%;height:100%;object-fit:cover}
+.tarot.preStart{cursor:default}
+.tarot.preStart:hover{transform:none;box-shadow:none;border-color:var(--line)}
+.readingShare{
+  margin-top:26px;
+  padding:22px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:linear-gradient(135deg,var(--cyan-pale),#fff);
 }
-
-.shareButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 13px 20px;
-  border: 1px solid var(--aluzca-line);
-  border-radius: 14px;
-  font: 500 14px "Avenir Next", "Helvetica Neue", Arial, sans-serif;
-  cursor: pointer;
-  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+.shareButtons{display:flex;flex-wrap:wrap;gap:12px}
+.shareButton{
+  appearance:none;
+  border:1px solid #acd8df;
+  border-radius:13px;
+  padding:13px 18px;
+  min-height:48px;
+  background:#fff;
+  color:var(--cyan-dark);
+  font:600 14px/1.25 Inter,system-ui,sans-serif;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(23,107,123,.07);
+  transition:transform .16s ease,background .16s ease,border-color .16s ease;
 }
-
-.shareButton:hover {
-  transform: translateY(-1px);
+.shareButton:hover{transform:translateY(-2px);background:var(--cyan-light);border-color:var(--cyan)}
+.shareButton.whatsapp{background:var(--cyan-dark);color:#fff;border-color:var(--cyan-dark)}
+.shareButton.whatsapp:hover{background:#105665}
+.shareButton.email{background:var(--cyan-light)}
+@media(max-width:760px){
+  .topbar{align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .brand{gap:12px}
+  .brandName{font-size:clamp(34px,9vw,48px)}
+  .brandMark{width:39px;height:39px;flex-basis:39px}
+  .brandByline{font-size:22px}
+  .headerRight{margin-left:auto}
+  .shareButtons{display:grid;grid-template-columns:1fr}
+  .shareButton{width:100%}
 }
-
-.emailButton {
-  background: var(--aluzca-cyan-light);
-  color: var(--aluzca-cyan-dark);
-}
-
-@media (max-width: 760px) {
-  .headerBrandRow { gap: 12px; flex-wrap: wrap; }
-  .brandNameLink {
-    font-size: clamp(20px, 5.5vw, 30px) !important;
-    letter-spacing: .09em !important;
-  }
-  .brandSignature { gap: 7px; }
-  .brandSignature img { width: 42px; height: 42px; }
-  .brandSignature span { font-size: 8px !important; letter-spacing: .11em !important; }
-}
-
-@media (max-width: 520px) {
-  .readingShare { flex-direction: column; }
-  .shareButton { width: 100%; }
+@media(max-width:430px){
+  .brand{gap:8px}
+  .brandName{font-size:32px;letter-spacing:.035em}
+  .brandSignature{gap:6px}
+  .brandMark{width:32px;height:32px;flex-basis:32px}
+  .brandByline{font-size:18px;letter-spacing:.03em}
 }
