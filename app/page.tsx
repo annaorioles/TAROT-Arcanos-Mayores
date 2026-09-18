@@ -94,31 +94,24 @@ function imageSources(card: Card){
     `/${card.file}`,
   ];
 
-  // Fallbacks for the two filenames that have caused path/name mismatches.
+  // Rutas alternativas para nombres con/sin tilde o numeración distinta.
   if (card.id === "09") {
     sources.push(
-      "/cards/09-el-ermitaño.png",
-      "/09-el-ermitaño.png",
-      "/cards/09-el-ermitano.png",
-      "/09-el-ermitano.png",
-      "/cards/el-ermitaño.png",
-      "/el-ermitaño.png",
-      "/cards/el-ermitano.png",
-      "/el-ermitano.png"
+      "/cards/09-el-ermitaño.png", "/09-el-ermitaño.png",
+      "/cards/09-el-ermitano.png", "/09-el-ermitano.png",
+      "/cards/el-ermitaño.png", "/el-ermitaño.png",
+      "/cards/el-ermitano.png", "/el-ermitano.png",
+      "/cards/9-el-ermitaño.png", "/9-el-ermitaño.png"
     );
   }
   if (card.id === "44") {
     sources.push(
-      "/cards/44-nueve-de-espadas.png",
-      "/44-nueve-de-espadas.png",
-      "/cards/09-de-espadas.png",
-      "/09-de-espadas.png",
-      "/cards/nueve-de-espadas.png",
-      "/nueve-de-espadas.png",
-      "/cards/9-de-espadas.png",
-      "/9-de-espadas.png",
-      "/cards/44-nueve-de-espadas.jpg",
-      "/44-nueve-de-espadas.jpg"
+      "/cards/44-nueve-de-espadas.png", "/44-nueve-de-espadas.png",
+      "/cards/44-9-de-espadas.png", "/44-9-de-espadas.png",
+      "/cards/09-de-espadas.png", "/09-de-espadas.png",
+      "/cards/9-de-espadas.png", "/9-de-espadas.png",
+      "/cards/nueve-de-espadas.png", "/nueve-de-espadas.png",
+      "/cards/nueve-de-espadas.jpg", "/nueve-de-espadas.jpg"
     );
   }
   if (card.id === "29") {
@@ -365,7 +358,9 @@ export default function Home(){
       `Posiciones: ${current.positions.join(" · ")}`,
       "",
       ...selected.map((card, i) =>
-        `${i + 1}. ${current.positions[i]} — ${card.name}\\n${contextualReading(card, i)}\\nLuz: ${card.light}\\nSombra: ${card.shadow}`
+        `${i + 1}. ${current.positions[i]} — ${card.name}\\n` +
+        `${contextualReading(card, i)}\\n` +
+        `Luz: ${card.light}\\nSombra: ${card.shadow}`
       ),
       "",
       "Lectura simbólica para la reflexión personal."
@@ -443,7 +438,7 @@ export default function Home(){
         <a className="brandNameLink" href="#inicio" aria-label="Tarot Aluzca, inicio">
           TAROT ALUZCA
         </a>
-        <div className="brandSignature" aria-label="AO, Anna Oriol">
+        <div className="brandSignature" aria-label="AO · Anna Oriol">
           <img src="/ao-logo.png" alt="AO" />
           <span>ANNA ORIOL</span>
         </div>
