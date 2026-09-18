@@ -682,76 +682,12 @@ h1 span { color:var(--sage2); }
   .headerRight { display:none; }
 }
 
-
-/* =========================================================
-   TAROT ALUZCA — CORRECCIÓN DE MARCA Y COLECCIÓN
-   Añadido al CSS completo original.
-   ========================================================= */
-
-/* Cabecera: tipografía editorial inspirada en ALUMBRA */
-.brand { gap: 16px; }
-.brandMark {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  width: 58px !important;
-  height: 58px !important;
-  flex: 0 0 58px !important;
-  border: 1.5px solid #087f91 !important;
-  border-radius: 50%;
-  color: #087f91 !important;
-  background: rgba(255,255,255,.16);
-  font-family: Georgia, "Times New Roman", serif !important;
-  font-size: 21px !important;
-  letter-spacing: -.12em !important;
-  box-shadow: 0 0 0 4px rgba(8,127,145,.08),
-              inset 0 0 16px rgba(8,127,145,.07) !important;
-}
-.brandMark span { display: inline-block; }
-.brandName {
-  font-family: Georgia, "Times New Roman", serif !important;
-  font-size: clamp(27px, 3.2vw, 42px) !important;
-  font-weight: 400 !important;
-  letter-spacing: .13em !important;
-  line-height: 1 !important;
-  color: #152b43 !important;
-}
-.brandName em { font-style: normal; font-weight: 400; }
-.brandByline {
-  font-size: 9px !important;
-  letter-spacing: .38em !important;
-  color: #5b6874 !important;
-}
-
-/* Colección contemplativa: las cartas se ven de frente antes de iniciar.
-   Después de iniciar, las cartas sin elegir muestran el reverso.
-   Al seleccionar, la carta gira y muestra la ilustración. */
-.tarot.contemplative .tarotFlip {
-  transform: rotateY(180deg) !important;
-}
-.tarot:not(.contemplative):not(.picked) .tarotFlip {
-  transform: rotateY(0deg) !important;
-}
-.tarot.picked .tarotFlip {
-  transform: rotateY(180deg);
-}
-
-/* Ajustes del sello y del título en pantallas pequeñas */
-@media (max-width: 560px) {
-  .brand { gap: 9px; }
-  .brandMark {
-    width: 40px !important;
-    height: 40px !important;
-    flex-basis: 40px !important;
-    font-size: 15px !important;
-  }
-  .brandName {
-    font-size: 22px !important;
-    letter-spacing: .09em !important;
-  }
-  .brandByline {
-    font-size: 8px !important;
-    letter-spacing: .25em !important;
-  }
-}
+/* ===== TAROT ALUZCA: MARCA / LOGO AO ORIGINAL ===== */
+.brand { display:flex; align-items:center; gap:16px; }
+.brandMark { width:62px; height:62px; flex:0 0 62px; display:flex; align-items:center; justify-content:center; border:1.5px solid #087f91; border-radius:50%; background:rgba(255,255,255,.22); box-shadow:0 0 0 4px rgba(8,127,145,.08); overflow:hidden; }
+.brandMark img { display:block; width:92%; height:92%; object-fit:contain; }
+.brandText { display:flex; flex-direction:column; gap:7px; }
+.brandName { font-family: Inter, Arial, sans-serif !important; font-size:clamp(25px,3vw,39px) !important; font-weight:700 !important; letter-spacing:.105em !important; line-height:1.02 !important; color:#152b43 !important; white-space:nowrap; }
+.brandName em { font-style:normal; font-weight:700; }
+.brandByline { font-family:Inter,Arial,sans-serif !important; font-size:9px !important; letter-spacing:.38em !important; color:#596b76 !important; }
+@media(max-width:560px) { .brand {gap:9px;} .brandMark {width:44px;height:44px;flex-basis:44px;} .brandName {font-size:clamp(17px,5vw,24px) !important;letter-spacing:.07em !important;} .brandByline {font-size:8px !important;letter-spacing:.22em !important;} }
