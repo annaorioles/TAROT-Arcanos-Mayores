@@ -1082,3 +1082,13 @@ button:focus-visible {
     border-color: var(--line);
   }
 }
+
+/* Mesa: reverso de las cartas vacías en cian oscuro */
+.emptyBack {
+  background: linear-gradient(145deg, #0F6878 0%, #0B5665 100%);
+  color: #FFFFFF;
+}
+
+.emptyBack i {
+  color: #FFFFFF;
+}
