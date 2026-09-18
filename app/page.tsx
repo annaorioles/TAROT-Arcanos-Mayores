@@ -393,6 +393,11 @@ export default function Home(){
         <p className="heroIntro">Un espacio de tarot simbólico para explorar la vida cotidiana, el bienestar, el autoconocimiento y la psicología desde nuevas perspectivas.</p>
       </div>
       <div className="heroArtwork" aria-hidden="true">
+  <img
+    src="/portada.png"
+    alt=""
+  />
+</div>
         <img
          src="/portada.png""
           alt=""
