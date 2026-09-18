@@ -94,24 +94,21 @@ function imageSources(card: Card){
     `/${card.file}`,
   ];
 
-  // Rutas alternativas para nombres con/sin tilde o numeración distinta.
+  // Fallbacks for the two filenames that have caused path/name mismatches.
   if (card.id === "09") {
     sources.push(
-      "/cards/09-el-ermitaño.png", "/09-el-ermitaño.png",
       "/cards/09-el-ermitano.png", "/09-el-ermitano.png",
-      "/cards/el-ermitaño.png", "/el-ermitaño.png",
+      "/cards/09-el-ermitaño.png", "/09-el-ermitaño.png",
       "/cards/el-ermitano.png", "/el-ermitano.png",
-      "/cards/9-el-ermitaño.png", "/9-el-ermitaño.png"
+      "/cards/el-ermitaño.png", "/el-ermitaño.png"
     );
   }
   if (card.id === "44") {
     sources.push(
       "/cards/44-nueve-de-espadas.png", "/44-nueve-de-espadas.png",
-      "/cards/44-9-de-espadas.png", "/44-9-de-espadas.png",
-      "/cards/09-de-espadas.png", "/09-de-espadas.png",
       "/cards/9-de-espadas.png", "/9-de-espadas.png",
       "/cards/nueve-de-espadas.png", "/nueve-de-espadas.png",
-      "/cards/nueve-de-espadas.jpg", "/nueve-de-espadas.jpg"
+      "/cards/44-nueve-de-espadas.jpg", "/44-nueve-de-espadas.jpg"
     );
   }
   if (card.id === "29") {
@@ -351,36 +348,22 @@ export default function Home(){
 
   function shareText(){
     return [
-      "TAROT ALUZCA · ANNA ORIOL",
-      "",
+      "Tarot Aluzca · anna oriol",
       `Pregunta: ${effectiveQuestion}`,
-      `Tirada: ${current.name}`,
-      `Posiciones: ${current.positions.join(" · ")}`,
-      "",
-      ...selected.map((card, i) =>
-        `${i + 1}. ${current.positions[i]} — ${card.name}\\n` +
-        `${contextualReading(card, i)}\\n` +
-        `Luz: ${card.light}\\nSombra: ${card.shadow}`
-      ),
+      `Tirada: ${current.name} — ${current.positions.join(" / ")}`,
+      ...selected.map((card, i) => `${i+1}. ${current.positions[i]} · ${card.name}: ${contextualReading(card, i)}`),
       "",
       "Lectura simbólica para la reflexión personal."
     ].join("\\n");
   }
 
-  function shareWhatsApp(){
+  async function shareReading(){
     const text = shareText();
-    window.open(
-      `https://wa.me/?text=${encodeURIComponent(text)}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
-  }
-
-  function shareEmail(){
-    const subject = "Mi lectura · Tarot Aluzca";
-    const body = shareText();
-    window.location.href =
-      `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try { await navigator.share({title:"Tarot Aluzca · Mi tirada", text}); return; }
+      catch (error) { if (error instanceof Error && error.name === "AbortError") return; }
+    }
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   }
 
   function cardArea(c:Card){
@@ -434,15 +417,13 @@ export default function Home(){
 
   return <main className="appShell">
     <header className="topbar">
-      <div className="headerBrandRow">
-        <a className="brandNameLink" href="#inicio" aria-label="Tarot Aluzca, inicio">
-          TAROT ALUZCA
-        </a>
-        <div className="brandSignature" aria-label="AO · Anna Oriol">
-          <img src="/ao-logo.png" alt="AO" />
-          <span>ANNA ORIOL</span>
-        </div>
-      </div>
+      <a className="brand" href="#inicio" aria-label="Tarot Aluzca, Anna Oriol, inicio">
+        <span className="brandName">TAROT ALUZCA</span>
+        <span className="brandSignature">
+          <span className="brandMark"><img src="/ao-logo.png" alt="AO" /></span>
+          <span className="brandByline">ANNA ORIOL</span>
+        </span>
+      </a>
       <div className="headerRight">
         <div className="headerMeta">TAROT INTERACTIVO · 78 CARTAS</div>
         <div className="headerSubmeta">VIDA · SALUD · AUTOCONOCIMIENTO · PSICOLOGÍA</div>
@@ -592,20 +573,26 @@ export default function Home(){
               aria-label={!started ? c.name : isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
               title={!started ? c.name : isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
             >
-              <span className="tarotFlip">
-                {started && <span className="cardFace cardFaceBack">
-                  <span className="backFrame backFrameOuter"></span>
-                  <span className="backFrame backFrameInner"></span>
-                  <span className="backGarland backGarlandLeft"></span>
-                  <span className="backGarland backGarlandRight"></span>
-                  <span className="backMedallion">
-                    <span className="backStar">✦</span>
-                  </span>
-                </span>}
-                <span className="cardFace cardFaceFront">
+              {!started ? (
+                <span className="preStartFace">
                   <CardImage card={c} alt={c.name}/>
                 </span>
-              </span>
+              ) : (
+                <span className="tarotFlip">
+                  <span className="cardFace cardFaceBack">
+                    <span className="backFrame backFrameOuter"></span>
+                    <span className="backFrame backFrameInner"></span>
+                    <span className="backGarland backGarlandLeft"></span>
+                    <span className="backGarland backGarlandRight"></span>
+                    <span className="backMedallion">
+                      <span className="backStar">✦</span>
+                    </span>
+                  </span>
+                  <span className="cardFace cardFaceFront">
+                    <CardImage card={c} alt={c.name}/>
+                  </span>
+                </span>
+              )}
               {isPicked && <span className="pickedMark">{pickNumber + 1}</span>}
             </button>
           );
@@ -647,13 +634,20 @@ export default function Home(){
       <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
       <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
 
-      <div className="readingShare" aria-label="Compartir lectura">
-        <button className="shareButton whatsappButton" type="button" onClick={shareWhatsApp}>
-          Compartir por WhatsApp
-        </button>
-        <button className="shareButton emailButton" type="button" onClick={shareEmail}>
-          Compartir por email
-        </button>
+      <div className="readingShare">
+        <div className="label">Guardar o compartir esta lectura</div>
+        <div className="shareButtons">
+          <button className="shareButton whatsapp" type="button" onClick={() => {
+            const text = shareText();
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+          }}>Compartir por WhatsApp</button>
+          <button className="shareButton email" type="button" onClick={() => {
+            const subject = encodeURIComponent("Mi tirada · Tarot Aluzca");
+            const body = encodeURIComponent(shareText());
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+          }}>Compartir por email</button>
+          <button className="shareButton other" type="button" onClick={shareReading}>Otras opciones</button>
+        </div>
       </div>
     </section>}
 
