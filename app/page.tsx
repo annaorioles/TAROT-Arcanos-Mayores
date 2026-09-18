@@ -513,12 +513,7 @@ export default function Home(){
     </section>
 
     <section className="sectionBlock tableSection" id="mesa">
-      <div className="eyebrow">03 · La mesa</div>
-      <div className="pickHeader">
-        <div><h2>{started ? "Elige tus cartas." : "Contempla la baraja."}</h2><p>{started ? "Toca una carta para incorporarla a la tirada. Puedes cambiar una elección antes de revelar la lectura." : "Las 78 cartas se muestran de cara. Cuando pulses Iniciar tirada, se mezclarán y podrás elegir."}</p></div>
-        <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
-      </div>
-
+     
       <div className="selectionArea">
       <div className="selectedSpread" aria-label="Tu tirada">
         {current.positions.map((position,i) => {
@@ -538,7 +533,7 @@ export default function Home(){
                   <span className="zoomHint" aria-hidden="true">⌕</span>
                 </>
               ) : (
-                <div className="emptyBack"><span>Elige una carta</span><i>✦</i></div>
+                <div className="emptyBack"><i>✦</i></div>
               )}
             </button>
             <div className="drawName">
@@ -548,7 +543,11 @@ export default function Home(){
           </div>;
         })}
       </div>
-
+ <div className="eyebrow">03 · La mesa</div>
+      <div className="pickHeader">
+        <div><h2>{started ? "Elige tus cartas." : "Contempla la baraja."}</h2><p>{started ? "Toca una carta para incorporarla a la tirada. Puedes cambiar una elección antes de revelar la lectura." : "Las 78 cartas se muestran de cara. Cuando pulses Iniciar tirada, se mezclarán y podrás elegir."}</p></div>
+        <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
+      </div>
         <div className="actions actionsCentered">
           {!started && <button className="primary" type="button" onClick={startReading}>Iniciar tirada</button>}
           <button className="secondary shuffleButton" onClick={startReading}>Mezclar</button>
