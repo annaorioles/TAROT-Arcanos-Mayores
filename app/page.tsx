@@ -103,6 +103,18 @@ function imageSources(card: Card){
     sources.push("/cards/ocho-de-copas.png", "/ocho-de-copas.png");
     sources.push("/cards/29-ocho-de-copas.jpg", "/29-ocho-de-copas.jpg");
   }
+  if (card.id === "44") {
+    sources.push(
+      "/cards/44-nueve-de-espadas.png",
+      "/44-nueve-de-espadas.png",
+      "/cards/9-de-espadas.png",
+      "/9-de-espadas.png",
+      "/cards/nueve-de-espadas.png",
+      "/nueve-de-espadas.png",
+      "/cards/44-nueve-de-espadas.jpg",
+      "/44-nueve-de-espadas.jpg"
+    );
+  }
 
   return [...new Set(sources)];
 }
@@ -342,15 +354,24 @@ export default function Home(){
       ...selected.map((card, i) => `${i+1}. ${current.positions[i]} · ${card.name}: ${contextualReading(card, i)}`),
       "",
       "Lectura simbólica para la reflexión personal."
-    ].join("\\n");
+    ].join("\n");
   }
 
   async function shareReading(){
     const text = shareText();
     if (typeof navigator !== "undefined" && navigator.share) {
-      try { await navigator.share({title:"Tarot Aluzca · Mi tirada", text}); return; }
-      catch (error) { if (error instanceof Error && error.name === "AbortError") return; }
+      try {
+        await navigator.share({title:"Tarot Aluzca · Mi tirada", text});
+        return;
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") return;
+      }
     }
+    shareWhatsApp();
+  }
+
+  function shareWhatsApp(){
+    const text = shareText();
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   }
 
@@ -405,13 +426,13 @@ export default function Home(){
 
   return <main className="appShell">
     <header className="topbar">
-      <a className="brand" href="#inicio" aria-label="Tarot Aluzca, inicio">
-        <span className="brandMark"><img src="/ao-logo.png" alt="AO" /></span>
-        <span className="brandText">
-          <span className="brandName">TAROT ALUZCA</span>
-          <span className="brandByline">anna oriol</span>
-        </span>
-      </a>
+      <div className="headerBrandRow">
+        <a className="brandNameLink" href="#inicio" aria-label="Tarot Aluzca, inicio">TAROT ALUZCA</a>
+        <div className="brandSignature" aria-label="AO, anna oriol">
+          <img src="/ao-logo.png" alt="AO" />
+          <span>anna oriol</span>
+        </div>
+      </div>
       <div className="headerRight">
         <div className="headerMeta">TAROT INTERACTIVO · 78 CARTAS</div>
         <div className="headerSubmeta">VIDA · SALUD · AUTOCONOCIMIENTO · PSICOLOGÍA</div>
@@ -589,7 +610,10 @@ export default function Home(){
       <div className="readingIntro">
         <div><h2>Ahora mira la historia.</h2><p className="readingQuestion">“{effectiveQuestion}”</p></div>
         <div className="readingBadge">Lectura {current.name}</div>
-        <button className="secondary" type="button" onClick={shareReading}>Compartir tirada</button>
+        <div className="shareActions">
+          <button className="secondary" type="button" onClick={shareWhatsApp}>WhatsApp</button>
+          <button className="secondary" type="button" onClick={shareReading}>Compartir…</button>
+        </div>
       </div>
 
       <div className="readingModes">
