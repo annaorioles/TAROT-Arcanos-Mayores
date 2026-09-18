@@ -201,7 +201,7 @@ export default function Home(){
   const makeDeck = () =>
     shuffleCards().map(card => ({...card, slot: undefined}));
 
-  const [deckOrder, setDeckOrder] = useState<Card[]>(() => cards.map(card => ({ ...card, slot: undefined })));
+  const [deckOrder, setDeckOrder] = useState<Card[]>(() => cards.map(card => ({...card, slot: undefined})));
 
   const baseSpread = spreads.find(s => s.id === spread)!;
   const current = spread === 3
@@ -236,7 +236,7 @@ export default function Home(){
   }
 
   function resetDeck(){
-    setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));
+    setDeckOrder(cards.map(card => ({...card, slot: undefined})));
     setReading(false);
     setStarted(false);
     setMode(0);
@@ -257,7 +257,7 @@ export default function Home(){
     setCustomQuestion("");
     setSpread(categories[i].recommended);
     setThreeCardVariant(i === 0 ? 1 : 0);
-    setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));
+    setDeckOrder(cards.map(card => ({...card, slot: undefined})));
     setReading(false);
     setStarted(false);
     setMode(0);
@@ -334,17 +334,24 @@ export default function Home(){
     }
   }
 
-  function shareReading(){
-    const lines = [
-      "Tarot Aluzca · Anna Oriol",
+  function shareText(){
+    return [
+      "Tarot Aluzca · anna oriol",
       `Pregunta: ${effectiveQuestion}`,
-      `Tirada: ${current.name} (${current.positions.join(" / ")})`,
-      ...selected.map((card, i) => `${i+1}. ${current.positions[i]} — ${card.name}: ${contextualReading(card, i)}`),
+      `Tirada: ${current.name} — ${current.positions.join(" / ")}`,
+      ...selected.map((card, i) => `${i+1}. ${current.positions[i]} · ${card.name}: ${contextualReading(card, i)}`),
       "",
       "Lectura simbólica para la reflexión personal."
-    ];
-    const message = lines.join("\n");
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    ].join("\\n");
+  }
+
+  async function shareReading(){
+    const text = shareText();
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try { await navigator.share({title:"Tarot Aluzca · Mi tirada", text}); return; }
+      catch (error) { if (error instanceof Error && error.name === "AbortError") return; }
+    }
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   }
 
   function cardArea(c:Card){
@@ -402,7 +409,7 @@ export default function Home(){
         <span className="brandMark"><img src="/ao-logo.png" alt="AO" /></span>
         <span className="brandText">
           <span className="brandName">TAROT ALUZCA</span>
-          <span className="brandByline">ANNA ORIOL</span>
+          <span className="brandByline">anna oriol</span>
         </span>
       </a>
       <div className="headerRight">
@@ -435,13 +442,13 @@ export default function Home(){
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
     setSpread(3);
     setThreeCardVariant(2);
-    setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));
+    setDeckOrder(cards.map(card => ({...card, slot: undefined})));
     setReading(false);
     setStarted(false);
   } else if (cat === 0) {
     setSpread(3);
     setThreeCardVariant(1);
-    setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));
+    setDeckOrder(cards.map(card => ({...card, slot: undefined})));
     setReading(false);
     setStarted(false);
   }
@@ -463,14 +470,14 @@ export default function Home(){
           <button
             key={s.id}
             className={spread===3 ? "spread active" : "spread"}
-            onClick={()=>{setSpread(3);setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));setReading(false);setStarted(false);setZoomCard(null);}}
+            onClick={()=>{setSpread(3);setDeckOrder(cards.map(card => ({...card, slot: undefined})));setReading(false);setStarted(false);setZoomCard(null);}}
             type="button"
           >
             <strong>3 cartas</strong>
             <span>elige una de las tres formas de mirar</span>
           </button>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));setReading(false);setStarted(false);setZoomCard(null);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(cards.map(card => ({...card, slot: undefined})));setReading(false);setStarted(false);setZoomCard(null);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -483,7 +490,7 @@ export default function Home(){
               type="button"
               key={v.id}
               className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));setReading(false);setStarted(false);setZoomCard(null);}}
+              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(cards.map(card => ({...card, slot: undefined})));setReading(false);setStarted(false);setZoomCard(null);}}
             >
               <span>{v.id+1}</span>
               <b>{v.label}</b>
@@ -496,7 +503,7 @@ export default function Home(){
     <section className="sectionBlock tableSection" id="mesa">
       <div className="eyebrow">03 · La mesa</div>
       <div className="pickHeader">
-        <div><h2>{started ? "Elige tus cartas." : "Contempla la baraja."}</h2><p>{started ? "Toca las cartas boca abajo para incorporarlas a la tirada. Puedes cambiar una elección antes de revelar la lectura." : "Las 78 cartas están aquí, de cara, para que puedas contemplarlas. Cuando estés preparada, inicia la tirada y la baraja se mezclará."}</p></div>
+        <div><h2>{started ? "Elige tus cartas." : "Contempla la baraja."}</h2><p>{started ? "Toca una carta para incorporarla a la tirada. Puedes cambiar una elección antes de revelar la lectura." : "Las 78 cartas se muestran de cara. Cuando pulses Iniciar tirada, se mezclarán y podrás elegir."}</p></div>
         <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
       </div>
 
@@ -582,7 +589,7 @@ export default function Home(){
       <div className="readingIntro">
         <div><h2>Ahora mira la historia.</h2><p className="readingQuestion">“{effectiveQuestion}”</p></div>
         <div className="readingBadge">Lectura {current.name}</div>
-        <button className="secondary" type="button" onClick={shareReading}>Compartir por WhatsApp</button>
+        <button className="secondary" type="button" onClick={shareReading}>Compartir tirada</button>
       </div>
 
       <div className="readingModes">
