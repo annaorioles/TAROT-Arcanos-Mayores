@@ -397,13 +397,9 @@ export default function Home(){
       </div>
       <div className="heroArtwork" aria-hidden="true">
         <img
-          src="/cards/76-reina-de-oros.png"
-          alt=""
-          onError={(e) => {
-            const img = e.currentTarget;
-            if (img.src.endsWith("/cards/76-reina-de-oros.png")) img.src = "/76-reina-de-oros.png";
-          }}
-        />
+  src="/portada.png"
+  alt=""
+/>
       </div>
 
       <div className="categories" role="tablist" aria-label="Temas">
