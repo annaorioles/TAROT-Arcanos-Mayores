@@ -195,12 +195,13 @@ export default function Home(){
   // la posición exacta que ocupan en la tirada.
   // La mesa superior, las marcas de la baraja y la lectura nacen de este mismo estado.
   const [reading, setReading] = useState(false);
+  const [started, setStarted] = useState(false);
   const [mode, setMode] = useState(0);
 
   const makeDeck = () =>
     shuffleCards().map(card => ({...card, slot: undefined}));
 
-  const [deckOrder, setDeckOrder] = useState<Card[]>(makeDeck);
+  const [deckOrder, setDeckOrder] = useState<Card[]>(() => cards.map(card => ({ ...card, slot: undefined })));
 
   const baseSpread = spreads.find(s => s.id === spread)!;
   const current = spread === 3
@@ -235,7 +236,16 @@ export default function Home(){
   }
 
   function resetDeck(){
-    setDeckOrder(freshDeck());
+    setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));
+    setReading(false);
+    setStarted(false);
+    setMode(0);
+    setZoomCard(null);
+  }
+
+  function startReading(){
+    setDeckOrder(makeDeck());
+    setStarted(true);
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -247,8 +257,9 @@ export default function Home(){
     setCustomQuestion("");
     setSpread(categories[i].recommended);
     setThreeCardVariant(i === 0 ? 1 : 0);
-    setDeckOrder(freshDeck());
+    setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));
     setReading(false);
+    setStarted(false);
     setMode(0);
     setZoomCard(null);
   }
@@ -310,6 +321,7 @@ export default function Home(){
       slot: index < count ? index + 1 : undefined
     }));
     setDeckOrder(order);
+    setStarted(true);
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -320,6 +332,19 @@ export default function Home(){
       setReading(true);
       requestAnimationFrame(() => document.getElementById("lectura")?.scrollIntoView({behavior:"smooth", block:"start"}));
     }
+  }
+
+  function shareReading(){
+    const lines = [
+      "Tarot Aluzca · Anna Oriol",
+      `Pregunta: ${effectiveQuestion}`,
+      `Tirada: ${current.name} (${current.positions.join(" / ")})`,
+      ...selected.map((card, i) => `${i+1}. ${current.positions[i]} — ${card.name}: ${contextualReading(card, i)}`),
+      "",
+      "Lectura simbólica para la reflexión personal."
+    ];
+    const message = lines.join("\n");
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   }
 
   function cardArea(c:Card){
@@ -373,11 +398,11 @@ export default function Home(){
 
   return <main className="appShell">
     <header className="topbar">
-      <a className="brand" href="#inicio" aria-label="Alumbra, inicio">
-        <span className="brandMark" aria-hidden="true">AO</span>
+      <a className="brand" href="#inicio" aria-label="Tarot Aluzca, inicio">
+        <span className="brandMark"><img src="/ao-logo.png" alt="AO" /></span>
         <span className="brandText">
-          <span className="brandName">ALUMBRA</span>
-          <span className="brandByline">CREACIÓN AO</span>
+          <span className="brandName">TAROT ALUZCA</span>
+          <span className="brandByline">ANNA ORIOL</span>
         </span>
       </a>
       <div className="headerRight">
@@ -388,7 +413,7 @@ export default function Home(){
 
     <section className="hero sectionBlock" id="inicio">
       <div className="heroCopy">
-        <div className="eyebrow">ALUMBRA · UN ESPACIO PARA MIRARTE</div>
+        <div className="eyebrow">TAROT ALUZCA · UN ESPACIO PARA MIRARTE</div>
         <h1>Preguntas que<br/><span>iluminan tu camino.</span></h1>
         <p className="heroIntro">Un espacio de tarot simbólico para explorar la vida cotidiana, el bienestar, el autoconocimiento y la psicología desde nuevas perspectivas.</p>
       </div>
@@ -410,13 +435,15 @@ export default function Home(){
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
     setSpread(3);
     setThreeCardVariant(2);
-    setDeckOrder(freshDeck());
+    setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));
     setReading(false);
+    setStarted(false);
   } else if (cat === 0) {
     setSpread(3);
     setThreeCardVariant(1);
-    setDeckOrder(freshDeck());
+    setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));
     setReading(false);
+    setStarted(false);
   }
 }} key={q}>{q}</button>)}
         </div>
@@ -436,14 +463,14 @@ export default function Home(){
           <button
             key={s.id}
             className={spread===3 ? "spread active" : "spread"}
-            onClick={()=>{setSpread(3);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
+            onClick={()=>{setSpread(3);setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));setReading(false);setStarted(false);setZoomCard(null);}}
             type="button"
           >
             <strong>3 cartas</strong>
             <span>elige una de las tres formas de mirar</span>
           </button>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));setReading(false);setStarted(false);setZoomCard(null);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -456,7 +483,7 @@ export default function Home(){
               type="button"
               key={v.id}
               className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
+              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(cards.map(card => ({ ...card, slot: undefined })));setReading(false);setStarted(false);setZoomCard(null);}}
             >
               <span>{v.id+1}</span>
               <b>{v.label}</b>
@@ -469,7 +496,7 @@ export default function Home(){
     <section className="sectionBlock tableSection" id="mesa">
       <div className="eyebrow">03 · La mesa</div>
       <div className="pickHeader">
-        <div><h2>Elige tus cartas.</h2><p>Toca una carta para incorporarla a la tirada. Puedes cambiar una elección antes de revelar la lectura.</p></div>
+        <div><h2>{started ? "Elige tus cartas." : "Contempla la baraja."}</h2><p>{started ? "Toca las cartas boca abajo para incorporarlas a la tirada. Puedes cambiar una elección antes de revelar la lectura." : "Las 78 cartas están aquí, de cara, para que puedas contemplarlas. Cuando estés preparada, inicia la tirada y la baraja se mezclará."}</p></div>
         <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
       </div>
 
@@ -504,29 +531,31 @@ export default function Home(){
       </div>
 
         <div className="actions actionsCentered">
-          <button className="secondary shuffleButton" onClick={resetDeck}>Mezclar</button>
+          {!started && <button className="primary" type="button" onClick={startReading}>Iniciar tirada</button>}
+          <button className="secondary shuffleButton" onClick={startReading}>Mezclar</button>
           <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
           <button className="secondary" onClick={random}>Tirada al Azar</button>
           <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
         </div>
       </div>
 
-      <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
+      <div className="deckToolbar"><span>{started ? "78 CARTAS · BARAJADAS" : "78 CARTAS · VISTA CONTEMPLATIVA"}</span><small>{!started ? "Inicia la tirada para elegir" : picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
         {deckOrder.map((c) => {
           const pickNumber = c.slot != null ? c.slot - 1 : -1;
           const isPicked = pickNumber !== -1;
           return (
             <button
-              className={isPicked ? "tarot picked" : "tarot"}
+              className={`${isPicked ? "tarot picked" : "tarot"} ${!started ? "preStart" : ""}`}
               key={`${c.id}-${c.slot ?? 0}`}
               type="button"
-              onClick={() => choose(c)}
-              aria-label={isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
-              title={isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
+              onClick={() => started && choose(c)}
+              disabled={!started}
+              aria-label={!started ? c.name : isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
+              title={!started ? c.name : isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
             >
               <span className="tarotFlip">
-                <span className="cardFace cardFaceBack">
+                {started && <span className="cardFace cardFaceBack">
                   <span className="backFrame backFrameOuter"></span>
                   <span className="backFrame backFrameInner"></span>
                   <span className="backGarland backGarlandLeft"></span>
@@ -534,7 +563,7 @@ export default function Home(){
                   <span className="backMedallion">
                     <span className="backStar">✦</span>
                   </span>
-                </span>
+                </span>}
                 <span className="cardFace cardFaceFront">
                   <CardImage card={c} alt={c.name}/>
                 </span>
@@ -553,6 +582,7 @@ export default function Home(){
       <div className="readingIntro">
         <div><h2>Ahora mira la historia.</h2><p className="readingQuestion">“{effectiveQuestion}”</p></div>
         <div className="readingBadge">Lectura {current.name}</div>
+        <button className="secondary" type="button" onClick={shareReading}>Compartir por WhatsApp</button>
       </div>
 
       <div className="readingModes">
@@ -577,11 +607,6 @@ export default function Home(){
         </article> : null)}
       </div>
 
-      <div className="jointReading">
-        <div className="label">La narración conjunta</div>
-        <h3>Cómo hablan las cartas entre sí</h3>
-        <p>{narrative()}</p>
-      </div>
       <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
       <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
     </section>}
