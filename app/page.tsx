@@ -96,24 +96,34 @@ function imageSources(card: Card){
 
   // Fallbacks for the two filenames that have caused path/name mismatches.
   if (card.id === "09") {
-    sources.push("/cards/09-el-ermitano.png", "/09-el-ermitano.png");
-    sources.push("/cards/el-ermitaño.png", "/el-ermitaño.png");
-  }
-  if (card.id === "29") {
-    sources.push("/cards/ocho-de-copas.png", "/ocho-de-copas.png");
-    sources.push("/cards/29-ocho-de-copas.jpg", "/29-ocho-de-copas.jpg");
+    sources.push(
+      "/cards/09-el-ermitaño.png",
+      "/09-el-ermitaño.png",
+      "/cards/09-el-ermitano.png",
+      "/09-el-ermitano.png",
+      "/cards/el-ermitaño.png",
+      "/el-ermitaño.png",
+      "/cards/el-ermitano.png",
+      "/el-ermitano.png"
+    );
   }
   if (card.id === "44") {
     sources.push(
       "/cards/44-nueve-de-espadas.png",
       "/44-nueve-de-espadas.png",
-      "/cards/9-de-espadas.png",
-      "/9-de-espadas.png",
+      "/cards/09-de-espadas.png",
+      "/09-de-espadas.png",
       "/cards/nueve-de-espadas.png",
       "/nueve-de-espadas.png",
+      "/cards/9-de-espadas.png",
+      "/9-de-espadas.png",
       "/cards/44-nueve-de-espadas.jpg",
       "/44-nueve-de-espadas.jpg"
     );
+  }
+  if (card.id === "29") {
+    sources.push("/cards/ocho-de-copas.png", "/ocho-de-copas.png");
+    sources.push("/cards/29-ocho-de-copas.jpg", "/29-ocho-de-copas.jpg");
   }
 
   return [...new Set(sources)];
@@ -348,31 +358,34 @@ export default function Home(){
 
   function shareText(){
     return [
-      "Tarot Aluzca · anna oriol",
+      "TAROT ALUZCA · ANNA ORIOL",
+      "",
       `Pregunta: ${effectiveQuestion}`,
-      `Tirada: ${current.name} — ${current.positions.join(" / ")}`,
-      ...selected.map((card, i) => `${i+1}. ${current.positions[i]} · ${card.name}: ${contextualReading(card, i)}`),
+      `Tirada: ${current.name}`,
+      `Posiciones: ${current.positions.join(" · ")}`,
+      "",
+      ...selected.map((card, i) =>
+        `${i + 1}. ${current.positions[i]} — ${card.name}\\n${contextualReading(card, i)}\\nLuz: ${card.light}\\nSombra: ${card.shadow}`
+      ),
       "",
       "Lectura simbólica para la reflexión personal."
-    ].join("\n");
-  }
-
-  async function shareReading(){
-    const text = shareText();
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({title:"Tarot Aluzca · Mi tirada", text});
-        return;
-      } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") return;
-      }
-    }
-    shareWhatsApp();
+    ].join("\\n");
   }
 
   function shareWhatsApp(){
     const text = shareText();
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(text)}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
+  function shareEmail(){
+    const subject = "Mi lectura · Tarot Aluzca";
+    const body = shareText();
+    window.location.href =
+      `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
   function cardArea(c:Card){
@@ -425,20 +438,16 @@ export default function Home(){
   }
 
   return <main className="appShell">
-    <div className="headerBrandRow">
-  <a
-    className="brandNameLink"
-    href="#inicio"
-    aria-label="Tarot Aluzca, inicio"
-  >
-    TAROT ALUZCA
-  </a>
-
-  <div className="brandSignature" aria-label="Anna Oriol">
-    <img src="/ao-logo.png" alt="AO" />
-    <span>ANNA ORIOL</span>
-  </div>
-</div>
+    <header className="topbar">
+      <div className="headerBrandRow">
+        <a className="brandNameLink" href="#inicio" aria-label="Tarot Aluzca, inicio">
+          TAROT ALUZCA
+        </a>
+        <div className="brandSignature" aria-label="AO, Anna Oriol">
+          <img src="/ao-logo.png" alt="AO" />
+          <span>ANNA ORIOL</span>
+        </div>
+      </div>
       <div className="headerRight">
         <div className="headerMeta">TAROT INTERACTIVO · 78 CARTAS</div>
         <div className="headerSubmeta">VIDA · SALUD · AUTOCONOCIMIENTO · PSICOLOGÍA</div>
@@ -616,10 +625,6 @@ export default function Home(){
       <div className="readingIntro">
         <div><h2>Ahora mira la historia.</h2><p className="readingQuestion">“{effectiveQuestion}”</p></div>
         <div className="readingBadge">Lectura {current.name}</div>
-        <div className="shareActions">
-          <button className="secondary" type="button" onClick={shareWhatsApp}>WhatsApp</button>
-          <button className="secondary" type="button" onClick={shareReading}>Compartir…</button>
-        </div>
       </div>
 
       <div className="readingModes">
@@ -646,6 +651,15 @@ export default function Home(){
 
       <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
       <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
+
+      <div className="readingShare" aria-label="Compartir lectura">
+        <button className="shareButton whatsappButton" type="button" onClick={shareWhatsApp}>
+          Compartir por WhatsApp
+        </button>
+        <button className="shareButton emailButton" type="button" onClick={shareEmail}>
+          Compartir por email
+        </button>
+      </div>
     </section>}
 
     {zoomCard && (
