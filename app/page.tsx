@@ -195,23 +195,17 @@ export default function Home(){
   // la posición exacta que ocupan en la tirada.
   // La mesa superior, las marcas de la baraja y la lectura nacen de este mismo estado.
   const [reading, setReading] = useState(false);
-const [started, setStarted] = useState(false);
-const [mode, setMode] = useState(0);
+  const [started, setStarted] = useState(false);
+  const [clarificationMode, setClarificationMode] = useState(false);
+  const [mode, setMode] = useState(0);
 
-const makeDeck = () =>
-  shuffleCards().map(card => ({...card, slot: undefined}));
+  const makeDeck = () =>
+    shuffleCards().map(card => ({...card, slot: undefined}));
+  const contemplativeDeck = () =>
+    cards.map(card => ({...card, slot: undefined}));
 
-const contemplativeDeck = () =>
-  cards.map(card => ({...card, slot: undefined}));
+  const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
 
-const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
-  function startReading() {
-  setDeckOrder(makeDeck());
-  setStarted(true);
-  setReading(false);
-  setMode(0);
-  setZoomCard(null);
-}
   const baseSpread = spreads.find(s => s.id === spread)!;
   const current = spread === 3
     ? {...baseSpread, subtitle: threeCardVariants[threeCardVariant].label, positions: threeCardVariants[threeCardVariant].positions}
@@ -221,9 +215,9 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
 
   // Las cartas elegidas se leen DIRECTAMENTE del mismo deckOrder.
   const selected = deckOrder
-    .filter(card => card.slot != null)
-    .sort((a,b) => (a.slot as number) - (b.slot as number))
-    .slice(0, count);
+    .filter(card => card.slot != null && card.slot <= count)
+    .sort((a,b) => (a.slot as number) - (b.slot as number));
+  const clarificationCard = deckOrder.find(card => card.slot === count + 1);
 
   // Invariante de producto: una posición solo puede pertenecer a una carta
   // y una carta solo puede tener una posición. Si este estado se rompe,
@@ -244,8 +238,19 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
     return makeDeck();
   }
 
-  function resetDeck(){
+  function startReading(){
     setDeckOrder(freshDeck());
+    setStarted(true);
+    setClarificationMode(false);
+    setReading(false);
+    setMode(0);
+    setZoomCard(null);
+  }
+
+  function resetDeck(){
+    setDeckOrder(contemplativeDeck());
+    setStarted(false);
+    setClarificationMode(false);
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -257,7 +262,9 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
     setCustomQuestion("");
     setSpread(categories[i].recommended);
     setThreeCardVariant(i === 0 ? 1 : 0);
-    setDeckOrder(freshDeck());
+    setDeckOrder(contemplativeDeck());
+    setStarted(false);
+    setClarificationMode(false);
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -267,7 +274,7 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
   // La carta pulsada conserva su posición dentro de la baraja y recibe un slot.
   // La misma carta/slot alimenta arriba, abajo y la lectura.
   function choose(card:Card){
-    if(reading) return;
+    if(!started || reading) return;
 
     setDeckOrder(order => {
       const clicked = order.find(item => item.id === card.id);
@@ -275,6 +282,7 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
 
       // Si ya está girada, la quitamos y compactamos las posiciones.
       if(clicked.slot != null){
+        if(clicked.slot === count + 1) return order.map(item => item.id === card.id ? {...item, slot: undefined} : item);
         const removedSlot = clicked.slot;
         return order.map(item => {
           if(item.id === card.id) return {...item, slot: undefined};
@@ -286,9 +294,12 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
       }
 
       // Si aún quedan posiciones libres, esta carta ocupa la siguiente.
-      const selectedCount = order.filter(item => item.slot != null).length;
+      if(clarificationMode){
+        if(order.some(item => item.slot === count + 1)) return order;
+        return order.map(item => item.id === card.id ? {...item, slot: count + 1} : item);
+      }
+      const selectedCount = order.filter(item => item.slot != null && item.slot <= count).length;
       if(selectedCount >= count) return order;
-
       const nextSlot = selectedCount + 1;
 
       return order.map(item =>
@@ -320,6 +331,8 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
       slot: index < count ? index + 1 : undefined
     }));
     setDeckOrder(order);
+    setStarted(true);
+    setClarificationMode(false);
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -383,11 +396,11 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
 
   return <main className="appShell">
     <header className="topbar">
-      <a className="brand" href="#inicio" aria-label="Alumbra, inicio">
+      <a className="brand" href="#inicio" aria-label="Tarot Aluzca, inicio">
         <span className="brandMark" aria-hidden="true">AO</span>
         <span className="brandText">
-          <span className="brandName">ALUMBRA</span>
-          <span className="brandByline">CREACIÓN AO</span>
+          <span className="brandName">ALUZCA</span>
+          <span className="brandByline">ANNA ORIOL</span>
         </span>
       </a>
       <div className="headerRight">
@@ -398,24 +411,12 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
 
     <section className="hero sectionBlock" id="inicio">
       <div className="heroCopy">
-        <div className="eyebrow">ALUMBRA · UN ESPACIO PARA MIRARTE</div>
+        <div className="eyebrow">ALUZCA · UN ESPACIO PARA MIRARTE</div>
         <h1>Preguntas que<br/><span>iluminan tu camino.</span></h1>
         <p className="heroIntro">Un espacio de tarot simbólico para explorar la vida cotidiana, el bienestar, el autoconocimiento y la psicología desde nuevas perspectivas.</p>
       </div>
       <div className="heroArtwork" aria-hidden="true">
-  <img
-    src="/portada.png"
-    alt=""
-  />
-</div>
-        <img
-         src="/portada.png""
-          alt=""
-          onError={(e) => {
-            const img = e.currentTarget;
-            if (img.src.endsWith("/cards/76-reina-de-oros.png")) img.src = "/76-reina-de-oros.png";
-          }}
-        />
+        <img src="/portada.png" alt="" />
       </div>
 
       <div className="categories" role="tablist" aria-label="Temas">
@@ -432,12 +433,16 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
     setSpread(3);
     setThreeCardVariant(2);
-    setDeckOrder(freshDeck());
+    setDeckOrder(contemplativeDeck());
+    setStarted(false);
+    setClarificationMode(false);
     setReading(false);
   } else if (cat === 0) {
     setSpread(3);
     setThreeCardVariant(1);
-    setDeckOrder(freshDeck());
+    setDeckOrder(contemplativeDeck());
+    setStarted(false);
+    setClarificationMode(false);
     setReading(false);
   }
 }} key={q}>{q}</button>)}
@@ -458,14 +463,14 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
           <button
             key={s.id}
             className={spread===3 ? "spread active" : "spread"}
-            onClick={()=>{setSpread(3);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
+            onClick={()=>{setSpread(3);setDeckOrder(contemplativeDeck());setStarted(false);setClarificationMode(false);setReading(false);setZoomCard(null);}}
             type="button"
           >
             <strong>3 cartas</strong>
             <span>elige una de las tres formas de mirar</span>
           </button>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(contemplativeDeck());setStarted(false);setClarificationMode(false);setReading(false);setZoomCard(null);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -478,7 +483,7 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
               type="button"
               key={v.id}
               className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
+              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(contemplativeDeck());setStarted(false);setClarificationMode(false);setReading(false);setZoomCard(null);}}
             >
               <span>{v.id+1}</span>
               <b>{v.label}</b>
@@ -526,26 +531,33 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
       </div>
 
         <div className="actions actionsCentered">
-          <button className="secondary shuffleButton" onClick={resetDeck}>Mezclar</button>
-          <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
-          <button className="secondary" onClick={random}>Tirada al Azar</button>
-          <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
+          {!started ? (
+            <button className="primary" onClick={startReading}>Iniciar tirada</button>
+          ) : (
+            <>
+              <button className="secondary shuffleButton" onClick={resetDeck}>Volver a contemplar</button>
+              <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
+              <button className="secondary" onClick={random}>Tirada al Azar</button>
+              <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
+      <div className="deckToolbar"><span>{started ? "78 CARTAS · ELIGE TUS CARTAS" : "78 CARTAS · CONTEMPLA ANTES DE EMPEZAR"}</span><small>{!started ? "Pulsa Iniciar tirada" : picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
         {deckOrder.map((c) => {
           const pickNumber = c.slot != null ? c.slot - 1 : -1;
           const isPicked = pickNumber !== -1;
           return (
             <button
-              className={isPicked ? "tarot picked" : "tarot"}
+              className={["tarot", !started ? "contemplative" : "", isPicked ? "picked" : ""].filter(Boolean).join(" ")}
+              disabled={!started || reading}
               key={`${c.id}-${c.slot ?? 0}`}
               type="button"
               onClick={() => choose(c)}
-              aria-label={isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
-              title={isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
+              aria-label={!started ? c.name : isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
+              title={!started ? c.name : isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
             >
               <span className="tarotFlip">
                 <span className="cardFace cardFaceBack">
@@ -567,6 +579,15 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
         })}
       </div>
 
+      {started && picked.length === count && !reading && (
+        <div className="clarificationPanel">
+          <p>{clarificationCard ? `Carta de aclaración: ${clarificationCard.name}` : "¿Quieres añadir una carta de aclaración?"}</p>
+          <button type="button" className="secondary" onClick={() => setClarificationMode(value => !value)}>
+            {clarificationMode ? "Cancelar aclaración" : clarificationCard ? "Elegir otra aclaración" : "Añadir aclaración"}
+          </button>
+          {clarificationMode && <small>Elige una carta de la baraja para aclarar la tirada.</small>}
+        </div>
+      )}
 
     </section>
 
@@ -599,12 +620,18 @@ const [deckOrder, setDeckOrder] = useState<Card[]>(contemplativeDeck);
         </article> : null)}
       </div>
 
-      <div className="jointReading">
-        <div className="label">La narración conjunta</div>
-        <h3>Cómo hablan las cartas entre sí</h3>
-        <p>{narrative()}</p>
+      {clarificationCard && (
+        <div className="expertCard clarificationReading">
+          <div className="label">Carta de aclaración · {clarificationCard.name}</div>
+          <p>Esta carta amplía la lectura principal desde {clarificationCard.essence}. Su recurso es {clarificationCard.light}; el aspecto a observar es {clarificationCard.shadow}. Úsala como una pregunta complementaria y contrástala con tu experiencia.</p>
+        </div>
+      )}
+      <div className="readingShare">
+        <button type="button" className="primary" onClick={() => {
+          const lines = [`Tarot Aluzca · Anna Oriol`, `Pregunta: ${effectiveQuestion}`, `Tirada: ${current.name}`, ...selected.map((c,i) => `${i+1}. ${current.positions[i]}: ${c.name} — ${contextualReading(c,i)}`), ...(clarificationCard ? [`Aclaración: ${clarificationCard.name} — ${clarificationCard.essence}`] : []), `Síntesis: ${synthesis()}`, `Lectura simbólica para la reflexión personal.`];
+          window.open(`https://wa.me/?text=${encodeURIComponent(lines.join("\n\n"))}`, "_blank", "noopener,noreferrer");
+        }}>Compartir consulta por WhatsApp</button>
       </div>
-      <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
       <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
     </section>}
 
