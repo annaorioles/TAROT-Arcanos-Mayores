@@ -346,39 +346,6 @@ export default function Home(){
     }
   }
 
-  function shareText(){
-    const lines = [
-      "Tarot AO · Anna Oriol",
-      `Pregunta: ${effectiveQuestion}`,
-      `Tirada: ${current.name} — ${current.positions.join(" / ")}`,
-      `Modalidad: ${modes[mode][0]}`,
-      "",
-      "CARTAS Y POSICIONES",
-      ...selected.map((card, i) => `${i+1}. ${current.positions[i]}: ${card.name}`),
-      "",
-      "LECTURA CARTA A CARTA",
-      ...selected.map((card, i) => `${i+1}. ${current.positions[i]} · ${card.name}\n${contextualReading(card, i)}`),
-      "",
-      "LECTURA CONJUNTA",
-      narrative(),
-      "",
-      "CLAVE PARA LLEVARLO A TU VIDA",
-      practicalKey(),
-      "",
-      "Lectura simbólica para la reflexión personal."
-    ];
-    return lines.join("\n");
-  }
-
-  async function shareReading(){
-    const text = shareText();
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try { await navigator.share({title:"Tarot AO · Mi tirada", text}); return; }
-      catch (error) { if (error instanceof Error && error.name === "AbortError") return; }
-    }
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
-  }
-
   function cardArea(c:Card){
     if(c.id.length && Number(c.id) < 22) return "Arcano Mayor";
     const n = Number(c.id);
