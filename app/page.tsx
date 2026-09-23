@@ -182,10 +182,10 @@ const categories: Category[] = [
 ];
 
 const modes = [
-  ["Lectura profunda","La dinámica emocional, interna y simbólica de la tirada."],
-  ["Relacional","Cómo dialogan las cartas entre sí y qué ocurre en el vínculo."],
-  ["Proceso","La evolución de la primera carta hasta la síntesis final."],
-  ["Práctica","Qué preguntas y movimientos concretos sugiere la lectura."]
+  ["Práctica","Qué observar y qué paso concreto puedes dar."],
+  ["Proceso","Cómo evoluciona la situación de una carta a otra."],
+  ["Relacional","Cómo se influyen las cartas y qué dinámica aparece."],
+  ["Lectura profunda","Qué necesidad, tensión o aprendizaje puede haber en el fondo."]
 ];
 
 export default function Home(){
@@ -347,14 +347,27 @@ export default function Home(){
   }
 
   function shareText(){
-    return [
-      "Tarot Aluzca · anna oriol",
+    const lines = [
+      "Tarot Aluzca · Anna Oriol",
       `Pregunta: ${effectiveQuestion}`,
       `Tirada: ${current.name} — ${current.positions.join(" / ")}`,
-      ...selected.map((card, i) => `${i+1}. ${current.positions[i]} · ${card.name}: ${contextualReading(card, i)}`),
+      `Modalidad: ${modes[mode][0]}`,
+      "",
+      "CARTAS Y POSICIONES",
+      ...selected.map((card, i) => `${i+1}. ${current.positions[i]}: ${card.name}`),
+      "",
+      "LECTURA CARTA A CARTA",
+      ...selected.map((card, i) => `${i+1}. ${current.positions[i]} · ${card.name}\n${contextualReading(card, i)}`),
+      "",
+      "LECTURA CONJUNTA",
+      narrative(),
+      "",
+      "CLAVE PARA LLEVARLO A TU VIDA",
+      practicalKey(),
       "",
       "Lectura simbólica para la reflexión personal."
-    ].join("\\n");
+    ];
+    return lines.join("\n");
   }
 
   async function shareReading(){
@@ -377,92 +390,68 @@ export default function Home(){
 
   function contextualReading(c:Card, i:number){
     const position = current.positions[i];
-    const previous = selected[i - 1];
-    const next = selected[i + 1];
+    const previous = selected[i-1];
+    const next = selected[i+1];
+    const question = effectiveQuestion.toLowerCase();
+    const isRelationship = cat === 0 || question.includes("relación") || question.includes("vínculo") || question.includes("nosotros") || question.includes("persona");
 
-    if (spread === 1) {
-      return `${c.name} pone el foco en ${c.essence}. Mira dónde aparece esto en tu situación y qué pequeño paso puedes dar a partir de ahí.`;
+    if (mode === 0) {
+      const action = c.light.charAt(0).toUpperCase() + c.light.slice(1);
+      return `En «${position}», ${c.name} te invita a ${c.light}. En esta consulta, observa dónde puedes ponerlo en práctica y qué cambia cuando lo haces. Una acción posible: ${action}.`;
     }
-    if (spread === 2) {
-      return i === 0
-        ? `La situación parte de ${c.essence}. Identifica qué está pasando ahora, con hechos concretos.`
-        : `Como orientación, ${c.name} propone ${c.light}. Llévalo a la práctica mediante una acción clara y realista.`;
+    if (mode === 1) {
+      const from = previous ? `Recoge lo que abrió ${previous.name}` : "Abre el recorrido";
+      const toward = next ? `y prepara el paso hacia ${next.name}` : "y deja la pregunta en este punto";
+      return `En «${position}», ${c.name} representa ${c.essence}. ${from} ${toward}. El movimiento que propone es ${c.light}.`;
     }
-    if (spread === 3 && threeCardVariant === 1) {
-      if (i === 0) return `Tu lugar en el vínculo: ${c.essence}. Observa qué necesitas, qué expresas y qué puedes elegir tú.`;
-      if (i === 1) return `La dinámica de la otra parte: ${c.essence}. Tómalo como una hipótesis para contrastar con sus palabras y actos, no como una certeza sobre su mundo interior.`;
-      return `Lo que ocurre entre ambos: ${c.essence}. Fíjate en qué os acerca, qué os distancia y qué conversación ayudaría.`;
+    if (mode === 2) {
+      if (isRelationship) {
+        if (i === 0) return `En «${position}», ${c.name} pone el foco en tu lugar: ${c.essence}. Mira qué necesitas, expresas y eliges dentro del vínculo.`;
+        if (i === 1) return `En «${position}», ${c.name} sirve como espejo simbólico de lo que percibes en la otra parte: ${c.essence}. Contrástalo con sus actos y una conversación directa; la carta no confirma lo que siente o piensa.`;
+        return `En «${position}», ${c.name} señala la dinámica que se crea entre ambos: ${c.essence}. Observa qué se repite entre tu posición y la respuesta del otro.`;
+      }
+      return `En «${position}», ${c.name} aporta ${c.essence}. Su relación con ${previous?.name ?? next?.name ?? "el conjunto"} ayuda a ver qué se complementa y qué necesita un ajuste.`;
     }
-    if (spread === 3 && threeCardVariant === 2) {
-      if (i === 0) return `Sobre lo que siente: ${c.essence}. Es una lectura simbólica; contrástala con lo que expresa y hace esa persona.`;
-      if (i === 1) return `Sobre lo que piensa: ${c.essence}. Observa qué ideas aparecen en la conversación y qué hechos las sostienen.`;
-      return `Sobre sus intenciones: ${c.essence}. Mira qué acciones concretas acompañan sus palabras.`;
-    }
-    if (spread === 3) {
-      if (i === 0) return `El origen: ${c.essence}. ¿Qué experiencia o decisión anterior sigue influyendo hoy?`;
-      if (i === 1) return `El presente: ${c.essence}. Esto es lo que merece tu atención ahora.`;
-      return `La tendencia: ${c.essence}. Es una posibilidad, no un destino; puede cambiar según lo que hagas.`;
-    }
-    if (spread === 5) {
-      const prompts = [
-        `La dinámica actual: ${c.essence}.`,
-        `Lo que está en juego: ${c.essence}.`,
-        `Lo que quizá cuesta nombrar: ${c.essence}.`,
-        `Una dirección posible: ${c.light}.`,
-        `La clave para integrar la lectura: ${c.light}.`
-      ];
-      return `${prompts[i] || `${position}: ${c.essence}.`} ${i >= 3 ? "Elige un paso pequeño que puedas sostener." : "Busca un ejemplo concreto en tu día a día."}`;
-    }
-    const prompts = [
-      `El contexto: ${c.essence}. ¿Qué hechos describen la situación?`,
-      `La tensión: ${c.essence}. ¿Dónde se concentra la dificultad?`,
-      `El deseo: ${c.essence}. ¿Qué te gustaría que ocurriera?`,
-      `El miedo: ${c.essence}. ¿Qué preocupación necesita ser escuchada?`,
-      `El camino: ${c.light}. ¿Qué paso está a tu alcance?`,
-      `La clave: ${c.light}. ¿Qué puedes aplicar desde hoy?`,
-      `La síntesis: ${c.essence}. ¿Qué idea reúne mejor lo que has visto?`
-    ];
-    const link = previous && next
-      ? ` Conecta ${previous.name} con ${next.name}.`
-      : previous ? ` Se entiende en relación con ${previous.name}.`
-      : next ? ` Abre el tema que continúa con ${next.name}.` : "";
-    return `${prompts[i] || `${position}: ${c.essence}.`}${link}`;
+    const tension = c.shadow;
+    return `En «${position}», ${c.name} lleva la mirada a ${c.essence}. Puede señalar una necesidad de ${c.light}; conviene revisar si aparece ${tension} y qué experiencia concreta te ayuda a distinguirlo.`;
   }
 
   function synthesis(){
-    const majorsCount = selectedFilled.filter(c => Number(c.id) < 22).length;
-    const areas = selectedFilled.map(cardArea);
-    const repeated = areas.find(a => areas.filter(x => x === a).length > 1);
-    const sequence = selectedFilled.map(c => c.name).join(" → ");
+    if (!selected.length) return "Elige las cartas para construir tu lectura.";
+    const names = selected.map(c => c.name).join(" → ");
+    const areas = selected.map(cardArea);
+    const repeated = [...new Set(areas)].find(a => areas.filter(x => x === a).length > 1);
     const focus = repeated
-      ? `Se repite el tema de ${repeated.toLowerCase()}. Mira qué está pasando ahí con más atención.`
-      : "Aparecen varios ámbitos; relaciónalos con una situación concreta.";
-    const majorNote = majorsCount >= 2
-      ? " Hay varios Arcanos Mayores: puede ser útil mirar qué cambio o aprendizaje atraviesa la pregunta."
-      : "";
-    return `Tu tirada reúne ${sequence}. ${focus}${majorNote} Quédate con lo que reconoces en tu vida y úsalo para formular una pregunta o un paso concreto.`;
+      ? `Se repite el territorio de ${repeated.toLowerCase()}, así que merece atención especial.`
+      : `Las cartas recorren ${[...new Set(areas)].join(", ").toLowerCase()}, conectando distintas partes de la situación.`;
+    const majorsCount = selected.filter(c => Number(c.id) < 22).length;
+    const majorNote = majorsCount >= 2 ? " Hay varios Arcanos Mayores: la pregunta toca un aprendizaje o cambio importante para ti." : "";
+    return `${names}. ${focus}${majorNote} La clave es leerlas juntas y comprobar qué parte encaja con lo que estás viviendo.`;
   }
 
   function narrative(){
-    if(spread === 1) {
-      return `La carta señala un tema central: ${selectedFilled[0]?.essence || "una cuestión que merece atención"}. Piensa en un ejemplo real y decide qué te gustaría aclarar.`;
+    if (!selected.length) return "Cuando elijas las cartas, aquí aparecerá la lectura conjunta.";
+    const names = selected.map(c => c.name).join(" → ");
+    const first = selected[0];
+    const last = selected[selected.length-1];
+    if (mode === 0) {
+      return `La tirada reúne ${names}. En conjunto, te propone empezar por ${first.light} y llevar esa idea hacia ${last.light}. Para tu pregunta («${effectiveQuestion}»), elige un gesto pequeño y observable que te permita comprobar si esta orientación te ayuda.`;
     }
-    if(spread === 2) {
-      return "La primera carta describe la situación; la segunda propone una forma de responder. Compara ambas con lo que ocurre y elige una acción posible.";
+    if (mode === 1) {
+      if (selected.length === 1) return `${first.name} concentra el punto de partida: ${first.essence}. La evolución dependerá de cómo respondas a esta situación y de lo que observes después.`;
+      return `${names}. El recorrido comienza con ${first.essence}; las cartas intermedias muestran los matices que aparecen en el camino y ${last.name} cierra con ${last.essence}. Es una posibilidad de evolución, no un destino fijo: tus decisiones y las circunstancias también cuentan.`;
     }
-    if(spread === 3 && threeCardVariant === 1) {
-      return "La tirada mira tu lugar, la dinámica de la otra parte y lo que ocurre entre ambos. Distingue lo que depende de ti, lo que necesitas conversar y lo que puedes observar.";
+    if (mode === 2) {
+      return `${names}. La primera carta sitúa ${current.positions[0]}, y las siguientes muestran cómo esa posición se encuentra con ${current.positions.slice(1).join(" y ")}. Mira qué gesto acerca, qué respuesta genera y qué patrón se repite. Si la consulta es sobre otra persona, contrasta las hipótesis con hechos y diálogo.`;
     }
-    if(spread === 3 && threeCardVariant === 2) {
-      return "Las cartas abordan sentimientos, pensamientos e intenciones como planos simbólicos. Contrasta cada idea con conversaciones y conductas reales: la tirada no confirma el mundo interior de otra persona.";
-    }
-    if(spread === 3) {
-      return "La primera carta mira el origen, la segunda el presente y la tercera una tendencia posible. Esa tendencia puede cambiar con tus decisiones y con lo que ocurra.";
-    }
-    if(spread === 5) {
-      return "La tirada recorre la situación, lo que está en juego, lo que cuesta nombrar, una dirección posible y una clave práctica. Busca el hilo que une esos cinco puntos.";
-    }
-    return "La tirada recorre contexto, tensión, deseo, miedo, camino, clave y síntesis. Separa los hechos de tus temores y deseos; después identifica el paso que sí está en tus manos.";
+    return `${names}. En el fondo, la tirada pone en conversación ${first.essence} con ${last.essence}. La tensión que conviene explorar es la distancia entre ${first.light} y ${last.shadow}. Pregúntate qué necesidad hay detrás de esa tensión y qué experiencia real puede ayudarte a comprenderla, sin tomar el símbolo como una certeza.`;
+  }
+
+  function practicalKey(){
+    const lead = selected[0];
+    const end = selected[selected.length-1];
+    if (!lead || !end) return "Elige las cartas para obtener una clave práctica.";
+    return `Pregunta para llevarte: ¿qué situación concreta te permitiría practicar «${lead.light}» y comprobar si te acerca a «${end.light}»? Empieza por un paso pequeño, observa qué ocurre y ajusta desde ahí.`;
   }
 
   return <main className="appShell">
@@ -663,12 +652,12 @@ export default function Home(){
       </div>
 
       <div className="expertGrid">
-        <div className="expertCard mainSynthesis"><div className="label">Resumen de la tirada</div><p>{synthesis()}</p></div>
-        <div className="expertCard"><div className="label">Cómo se relacionan</div><p>{narrative()}</p></div>
+        <div className="expertCard mainSynthesis"><div className="label">La idea central</div><p>{synthesis()}</p></div>
+        <div className="expertCard"><div className="label">La lectura · {modes[mode][0]}</div><p>{narrative()}</p></div>
       </div>
 
       <div className="positionReadings">
-        <div className="readingLabel">Cada carta en su posición</div>
+        <div className="readingLabel">Lectura carta a carta</div>
         {selected.map((c,i)=> c ? <article className="positionReading" key={`${c.id}-${i}`}>
           <div className="positionNumber">{String(i+1).padStart(2,"0")}</div>
           <button className="readingCardThumb" type="button" onClick={() => setZoomCard(c)} aria-label={`Ampliar ${c.name}`}>
@@ -676,20 +665,17 @@ export default function Home(){
             <span className="zoomHint" aria-hidden="true">⌕</span>
           </button>
           <div className="positionInfo"><span>{current.positions[i]}</span><h3>{c.name}</h3><small>{cardArea(c)}</small></div>
-          <div className="positionText"><p>{contextualReading(c,i)}</p><div className="lightShadow"><span><b>Recurso</b> {c.light}</span><span><b>A vigilar</b> {c.shadow}</span></div></div>
+          <div className="positionText"><p>{contextualReading(c,i)}</p></div>
         </article> : null)}
       </div>
 
-      <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
-      <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte reconoces en tu vida? ¿Qué hecho o conversación te ayudaría a aclararla?</p></div>
+      <div className="storyBlock"><div className="label">Una clave para tu vida</div><p>{practicalKey()}</p></div>
+      <div className="deepQuestion"><div className="label">Para comprobarlo en tu realidad</div><p>¿Qué hecho, conversación o pequeño paso te ayudaría a saber si esta interpretación encaja con lo que estás viviendo?</p></div>
 
       <div className="readingShare">
         <div className="label">Guardar o compartir esta lectura</div>
         <div className="shareButtons">
-          <button className="shareButton whatsapp" type="button" onClick={() => {
-            const text = shareText();
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
-          }}>Compartir por WhatsApp</button>
+          <button className="shareButton whatsapp" type="button" onClick={shareReading}>Compartir por WhatsApp</button>
           <button className="shareButton email" type="button" onClick={() => {
             const subject = encodeURIComponent("Mi tirada · Tarot Aluzca");
             const body = encodeURIComponent(shareText());
