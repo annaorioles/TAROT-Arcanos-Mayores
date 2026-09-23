@@ -571,7 +571,7 @@ export default function Home(){
               className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
               onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(cards.map(card => ({...card, slot: undefined})));setReading(false);setStarted(false);setZoomCard(null);}}
             >
-              <span>{v.id+1}</span>
+             <span className="variantNumber">{v.id+1}</span>
               <b>{v.label}</b>
             </button>
           ))}
