@@ -605,7 +605,6 @@ export default function Home(){
             </button>
             <div className="drawName">
               {card ? card.name : ""}
-              {card && <button className="changeCard" type="button" onClick={() => changeCardAt(i)}>Cambiar</button>}
             </div>
           </div>;
         })}
