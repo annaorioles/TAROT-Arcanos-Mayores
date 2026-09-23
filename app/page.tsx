@@ -35,7 +35,7 @@ const majors: Card[] = [
   ["06","Los Enamorados","06-los-enamorados.png","elección, vínculo y coherencia","elegir desde los valores","indecisión o elegir por miedo a perder"],
   ["07","El Carro","07-el-carro.png","dirección, voluntad y avance","tomar las riendas","forzar o correr sin integrar fuerzas opuestas"],
   ["08","La Fuerza","08-la-fuerza.png","coraje sereno e integración del impulso","firmeza sin violencia","contención excesiva o lucha interna"],
-  ["09","El Ermitaño","09-el-ermitano.png","discernimiento, retiro fértil y búsqueda","escuchar la propia verdad","aislamiento o postergar indefinidamente"],
+  ["09","El Ermitaño","09-el-ermitaño.png","discernimiento, retiro fértil y búsqueda","escuchar la propia verdad","aislamiento o postergar indefinidamente"],
   ["10","La Rueda de la Fortuna","10-la-rueda-de-la-fortuna.png","cambio de ciclo y factores no controlables","adaptarse al movimiento","pasividad ante el cambio"],
   ["11","La Justicia","11-la-justicia.png","hechos, límites y responsabilidad","claridad y decisiones sostenibles","juicio frío o autoexigencia"],
   ["12","El Colgado","12-el-colgado.png","pausa, perspectiva y renuncia a forzar","ver de otra manera","estancamiento o sacrificio sin sentido"],
@@ -78,7 +78,7 @@ const minors: Card[] = suitData.flatMap(suit =>
   suit.names.map((name,i) => ({
     id:String(suit.start+i).padStart(2,"0"),
     name,
-    file:(suit.start+i) === 44 ? "44-nueve-de-espada.png" : `${String(suit.start+i).padStart(2,"0")}-${suit.files[i]}.png`,
+    file:`${String(suit.start+i).padStart(2,"0")}-${suit.files[i]}.png`,
     essence:`${rankEssence[i]}, en el ámbito de ${suit.area}`,
     light:i===0?"abrir una posibilidad y darle espacio":i<10?"integrar la experiencia y actuar con conciencia":i===10?"explorar y aprender con apertura":i===11?"llevar la energía hacia una experiencia":i===12?"encarnar la cualidad del palo con autonomía":"dirigir recursos con visión y responsabilidad",
     shadow:i<4?"no reconocer o no canalizar el potencial":i<10?"dispersar la energía o avanzar sin revisar":i===10?"inmadurez o falta de continuidad":i===11?"precipitación o dificultad para sostener el rumbo":i===12?"exceso de entrega o necesidad de demostrar":"rigidez, control o identificación excesiva con el poder"
@@ -96,18 +96,24 @@ function imageSources(card: Card){
 
   // Fallbacks for the two filenames that have caused path/name mismatches.
   if (card.id === "09") {
-    sources.push("/cards/09-el-ermitano.png", "/09-el-ermitano.png");
-    sources.push("/cards/09-el-ermitaño.png", "/09-el-ermitaño.png");
-    sources.push("/cards/el-ermitaño.png", "/el-ermitaño.png");
-  }
-  if (card.id === "29") {
-    sources.push("/cards/29-ocho-de-copas.png", "/29-ocho-de-copas.png");
-    sources.push("/cards/ocho-de-copas.png", "/ocho-de-copas.png");
-    sources.push("/cards/29-ocho-de-copas.jpg", "/29-ocho-de-copas.jpg");
+    sources.push(
+      "/cards/09-el-ermitano.png", "/09-el-ermitano.png",
+      "/cards/09-el-ermitaño.png", "/09-el-ermitaño.png",
+      "/cards/el-ermitano.png", "/el-ermitano.png",
+      "/cards/el-ermitaño.png", "/el-ermitaño.png"
+    );
   }
   if (card.id === "44") {
-    sources.push("/cards/44-nueve-de-espada.png", "/44-nueve-de-espada.png");
-    sources.push("/cards/44-nueve-de-espadas.png", "/44-nueve-de-espadas.png");
+  sources.push(
+    "/cards/44-nueve-de-espada.png",
+    "/44-nueve-de-espada.png",
+    "/cards/nueve-de-espada.png",
+    "/nueve-de-espada.png"
+  );
+}
+  if (card.id === "29") {
+    sources.push("/cards/ocho-de-copas.png", "/ocho-de-copas.png");
+    sources.push("/cards/29-ocho-de-copas.jpg", "/29-ocho-de-copas.jpg");
   }
 
   return [...new Set(sources)];
@@ -115,21 +121,15 @@ function imageSources(card: Card){
 
 function CardImage({card, className, alt}:{card:Card; className?:string; alt:string}){
   const sources = imageSources(card);
+  const [sourceIndex, setSourceIndex] = useState(0);
 
   return (
     <img
       className={className}
-      src={sources[0]}
+      src={sources[sourceIndex]}
       alt={alt}
-      onError={(e) => {
-        const img = e.currentTarget;
-        const currentIndex = Number(img.dataset.sourceIndex || "0");
-        const nextIndex = currentIndex + 1;
-
-        if (nextIndex < sources.length) {
-          img.dataset.sourceIndex = String(nextIndex);
-          img.src = sources[nextIndex];
-        }
+      onError={() => {
+        setSourceIndex(index => Math.min(index + 1, sources.length - 1));
       }}
     />
   );
@@ -207,12 +207,13 @@ export default function Home(){
   // la posición exacta que ocupan en la tirada.
   // La mesa superior, las marcas de la baraja y la lectura nacen de este mismo estado.
   const [reading, setReading] = useState(false);
+  const [started, setStarted] = useState(false);
   const [mode, setMode] = useState(0);
 
   const makeDeck = () =>
     shuffleCards().map(card => ({...card, slot: undefined}));
 
-  const [deckOrder, setDeckOrder] = useState<Card[]>(makeDeck);
+  const [deckOrder, setDeckOrder] = useState<Card[]>(() => cards.map(card => ({...card, slot: undefined})));
 
   const baseSpread = spreads.find(s => s.id === spread)!;
   const current = spread === 3
@@ -247,7 +248,16 @@ export default function Home(){
   }
 
   function resetDeck(){
-    setDeckOrder(freshDeck());
+    setDeckOrder(cards.map(card => ({...card, slot: undefined})));
+    setReading(false);
+    setStarted(false);
+    setMode(0);
+    setZoomCard(null);
+  }
+
+  function startReading(){
+    setDeckOrder(makeDeck());
+    setStarted(true);
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -259,8 +269,9 @@ export default function Home(){
     setCustomQuestion("");
     setSpread(categories[i].recommended);
     setThreeCardVariant(i === 0 ? 1 : 0);
-    setDeckOrder(freshDeck());
+    setDeckOrder(cards.map(card => ({...card, slot: undefined})));
     setReading(false);
+    setStarted(false);
     setMode(0);
     setZoomCard(null);
   }
@@ -322,6 +333,7 @@ export default function Home(){
       slot: index < count ? index + 1 : undefined
     }));
     setDeckOrder(order);
+    setStarted(true);
     setReading(false);
     setMode(0);
     setZoomCard(null);
@@ -332,6 +344,26 @@ export default function Home(){
       setReading(true);
       requestAnimationFrame(() => document.getElementById("lectura")?.scrollIntoView({behavior:"smooth", block:"start"}));
     }
+  }
+
+  function shareText(){
+    return [
+      "Tarot Aluzca · anna oriol",
+      `Pregunta: ${effectiveQuestion}`,
+      `Tirada: ${current.name} — ${current.positions.join(" / ")}`,
+      ...selected.map((card, i) => `${i+1}. ${current.positions[i]} · ${card.name}: ${contextualReading(card, i)}`),
+      "",
+      "Lectura simbólica para la reflexión personal."
+    ].join("\\n");
+  }
+
+  async function shareReading(){
+    const text = shareText();
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try { await navigator.share({title:"Tarot Aluzca · Mi tirada", text}); return; }
+      catch (error) { if (error instanceof Error && error.name === "AbortError") return; }
+    }
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
   }
 
   function cardArea(c:Card){
@@ -385,21 +417,27 @@ export default function Home(){
 
   return <main className="appShell">
     <header className="topbar">
-      <div className="logo">CARTAS</div>
-      <div className="headerMeta">TAROT INTERACTIVO · 78 CARTAS</div>
+      <a className="brand" href="#inicio" aria-label="Tarot Aluzca, Anna Oriol, inicio">
+        <span className="brandName">TAROT ALUZCA</span>
+        <span className="brandSignature">
+          <span className="brandMark"><img src="/ao-logo.png" alt="AO" /></span>
+          <span className="brandByline">ANNA ORIOL</span>
+        </span>
+      </a>
+      <div className="headerRight">
+        <div className="headerMeta">TAROT INTERACTIVO · 78 CARTAS</div>
+        <div className="headerSubmeta">VIDA · SALUD · AUTOCONOCIMIENTO · PSICOLOGÍA</div>
+      </div>
     </header>
 
-    <section className="hero sectionBlock">
+    <section className="hero sectionBlock" id="inicio">
       <div className="heroCopy">
-        <div className="eyebrow">01 · La pregunta</div>
-        <h1>Empieza por lo que<br/><span>quieres comprender.</span></h1>
-        <p className="heroIntro">Elige un tema, formula tu propia pregunta y deja que la tirada organice aquello que quieres mirar.</p>
+        <div className="eyebrow">TAROT ALUZCA · UN ESPACIO PARA MIRARTE</div>
+        <h1>Preguntas que<br/><span>iluminan tu camino.</span></h1>
+        <p className="heroIntro">Un espacio de tarot simbólico para explorar la vida cotidiana, el bienestar, el autoconocimiento y la psicología desde nuevas perspectivas.</p>
       </div>
       <div className="heroArtwork" aria-hidden="true">
-        <img
-  src="/portada.png"
-  alt=""
-/>
+        <img src="/portada.png" alt="" />
       </div>
 
       <div className="categories" role="tablist" aria-label="Temas">
@@ -416,13 +454,15 @@ export default function Home(){
   if(nq.includes("siente") || nq.includes("piensa") || nq.includes("intenciones")) {
     setSpread(3);
     setThreeCardVariant(2);
-    setDeckOrder(freshDeck());
+    setDeckOrder(cards.map(card => ({...card, slot: undefined})));
     setReading(false);
+    setStarted(false);
   } else if (cat === 0) {
     setSpread(3);
     setThreeCardVariant(1);
-    setDeckOrder(freshDeck());
+    setDeckOrder(cards.map(card => ({...card, slot: undefined})));
     setReading(false);
+    setStarted(false);
   }
 }} key={q}>{q}</button>)}
         </div>
@@ -442,14 +482,14 @@ export default function Home(){
           <button
             key={s.id}
             className={spread===3 ? "spread active" : "spread"}
-            onClick={()=>{setSpread(3);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
+            onClick={()=>{setSpread(3);setDeckOrder(cards.map(card => ({...card, slot: undefined})));setReading(false);setStarted(false);setZoomCard(null);}}
             type="button"
           >
             <strong>3 cartas</strong>
             <span>elige una de las tres formas de mirar</span>
           </button>
         ) : (
-          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}} key={s.id} type="button">
+          <button className={spread===s.id ? "spread active" : "spread"} onClick={()=>{setSpread(s.id);setDeckOrder(cards.map(card => ({...card, slot: undefined})));setReading(false);setStarted(false);setZoomCard(null);}} key={s.id} type="button">
             <strong>{s.name}</strong>
             <span>{s.subtitle}</span>
           </button>
@@ -462,7 +502,7 @@ export default function Home(){
               type="button"
               key={v.id}
               className={threeCardVariant===v.id ? "threeVariant active" : "threeVariant"}
-              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(freshDeck());setReading(false);setZoomCard(null);}}
+              onClick={()=>{setThreeCardVariant(v.id);setDeckOrder(cards.map(card => ({...card, slot: undefined})));setReading(false);setStarted(false);setZoomCard(null);}}
             >
               <span>{v.id+1}</span>
               <b>{v.label}</b>
@@ -473,12 +513,7 @@ export default function Home(){
     </section>
 
     <section className="sectionBlock tableSection" id="mesa">
-      <div className="eyebrow">03 · La mesa</div>
-      <div className="pickHeader">
-        <div><h2>Elige tus cartas.</h2><p>Toca una carta para incorporarla a la tirada. Puedes cambiar una elección antes de revelar la lectura.</p></div>
-        <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
-      </div>
-
+     
       <div className="selectionArea">
       <div className="selectedSpread" aria-label="Tu tirada">
         {current.positions.map((position,i) => {
@@ -498,53 +533,65 @@ export default function Home(){
                   <span className="zoomHint" aria-hidden="true">⌕</span>
                 </>
               ) : (
-                <div className="emptyBack"><span>Elige una carta</span><i>✦</i></div>
+                <div className="emptyBack"><i>✦</i></div>
               )}
             </button>
             <div className="drawName">
-              {card ? card.name : "Elige una carta"}
+              {card ? card.name : ""}
               {card && <button className="changeCard" type="button" onClick={() => changeCardAt(i)}>Cambiar</button>}
             </div>
           </div>;
         })}
       </div>
-
+ <div className="eyebrow">03 · La mesa</div>
+      <div className="pickHeader">
+        <div><h2>{started ? "Elige tus cartas." : "Contempla la baraja."}</h2><p>{started ? "Toca una carta para incorporarla a la tirada. Puedes cambiar una elección antes de revelar la lectura." : "Las 78 cartas se muestran de cara. Cuando pulses Iniciar tirada, se mezclarán y podrás elegir."}</p></div>
+        <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
+      </div>
         <div className="actions actionsCentered">
-          <button className="secondary shuffleButton" onClick={resetDeck}>Mezclar</button>
+          {!started && <button className="primary" type="button" onClick={startReading}>Iniciar tirada</button>}
+          <button className="secondary shuffleButton" onClick={startReading}>Mezclar</button>
           <button className="primary" disabled={picked.length!==count} onClick={interpret}>Ver mi lectura</button>
           <button className="secondary" onClick={random}>Tirada al Azar</button>
           <button className="textButton" onClick={resetDeck}>Nueva lectura</button>
         </div>
       </div>
 
-      <div className="deckToolbar"><span>78 CARTAS · TODAS VISIBLES</span><small>{picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
+      <div className="deckToolbar"><span>{started ? "78 CARTAS · BARAJADAS" : "78 CARTAS · VISTA CONTEMPLATIVA"}</span><small>{!started ? "Inicia la tirada para elegir" : picked.length===count ? "Tirada completa" : `Faltan ${count-picked.length}`}</small></div>
       <div className="deck" aria-label="Baraja de 78 cartas">
         {deckOrder.map((c) => {
           const pickNumber = c.slot != null ? c.slot - 1 : -1;
           const isPicked = pickNumber !== -1;
           return (
             <button
-              className={isPicked ? "tarot picked" : "tarot"}
+              className={`${isPicked ? "tarot picked" : "tarot"} ${!started ? "preStart" : ""}`}
               key={`${c.id}-${c.slot ?? 0}`}
               type="button"
-              onClick={() => choose(c)}
-              aria-label={isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
-              title={isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
+              onClick={() => started && choose(c)}
+              disabled={!started}
+              aria-label={!started ? c.name : isPicked ? `${c.name}, posición ${pickNumber + 1}` : "Carta boca abajo"}
+              title={!started ? c.name : isPicked ? `Seleccionada · posición ${pickNumber + 1}` : "Toca para elegir esta carta"}
             >
-              <span className="tarotFlip">
-                <span className="cardFace cardFaceBack">
-                  <span className="backFrame backFrameOuter"></span>
-                  <span className="backFrame backFrameInner"></span>
-                  <span className="backGarland backGarlandLeft"></span>
-                  <span className="backGarland backGarlandRight"></span>
-                  <span className="backMedallion">
-                    <span className="backStar">✦</span>
-                  </span>
-                </span>
-                <span className="cardFace cardFaceFront">
+              {!started ? (
+                <span className="preStartFace">
                   <CardImage card={c} alt={c.name}/>
                 </span>
-              </span>
+              ) : (
+                <span className="tarotFlip">
+                  <span className="cardFace cardFaceBack">
+                    <span className="backFrame backFrameOuter"></span>
+                    <span className="backFrame backFrameInner"></span>
+                    <span className="backGarland backGarlandLeft"></span>
+                    <span className="backGarland backGarlandRight"></span>
+                    <span className="backMedallion">
+                      <span className="backStar">✦</span>
+                    </span>
+                  </span>
+                  <span className="cardFace cardFaceFront">
+                    <CardImage card={c} alt={c.name}/>
+                  </span>
+                </span>
+              )}
               {isPicked && <span className="pickedMark">{pickNumber + 1}</span>}
             </button>
           );
@@ -583,13 +630,24 @@ export default function Home(){
         </article> : null)}
       </div>
 
-      <div className="jointReading">
-        <div className="label">La narración conjunta</div>
-        <h3>Cómo hablan las cartas entre sí</h3>
-        <p>{narrative()}</p>
-      </div>
       <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
       <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
+
+      <div className="readingShare">
+        <div className="label">Guardar o compartir esta lectura</div>
+        <div className="shareButtons">
+          <button className="shareButton whatsapp" type="button" onClick={() => {
+            const text = shareText();
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+          }}>Compartir por WhatsApp</button>
+          <button className="shareButton email" type="button" onClick={() => {
+            const subject = encodeURIComponent("Mi tirada · Tarot Aluzca");
+            const body = encodeURIComponent(shareText());
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+          }}>Compartir por email</button>
+          <button className="shareButton other" type="button" onClick={shareReading}>Otras opciones</button>
+        </div>
+      </div>
     </section>}
 
     {zoomCard && (

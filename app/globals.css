@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root{--paper:#f5eee3;--paper2:#fcf8f1;--paper3:#e9dece;--ink:#2b2925;--soft:#625d55;--muted:#817a70;--line:#d8ccbb;--line2:#bda991;--rose:#bf7770;--rose2:#a85e58;--roseSoft:#ead1cb;--sage:#82927d;--sage2:#647461;--sageSoft:#dce5d9;--gold:#ae884d;--white:#fffdf9;--shadow:0 16px 36px rgba(63,49,35,.11);--radius:18px}
@@ -601,4 +602,493 @@ footer{padding:32px 0 0;color:var(--muted);font-size:11px;text-align:center}
 @media (max-width:560px){
   .selectedSpread{gap:9px !important;}
   .selectedSpread .drawSlot{flex-basis:calc((100vw - 52px)/3) !important;width:calc((100vw - 52px)/3) !important;}
+}
+
+
+/* ALUMBRA · CREACIÓN AO — identidad visual sobre la base v31 */
+:root {
+  --paper: #f5eee3;
+  --paper2: #fcf8f1;
+  --paper3: #e9dece;
+  --ink: #172e3c;
+  --soft: #52636a;
+  --muted: #7c8581;
+  --line: #d9cdb9;
+  --line2: #c7b18b;
+  --rose: #c58e82;
+  --rose2: #a96f65;
+  --roseSoft: #f0ddd4;
+  --sage: #929d86;
+  --sage2: #647565;
+  --sageSoft: #e0e6d9;
+  --gold: #bd9858;
+  --white: #fffdf8;
+  --shadow: 0 16px 36px rgba(35, 48, 49, .10);
+  --radius: 18px;
+}
+
+body {
+  background:
+    radial-gradient(circle at 83% 7%, rgba(210, 231, 222, .56), transparent 31rem),
+    radial-gradient(circle at 8% 42%, rgba(240, 221, 212, .35), transparent 28rem),
+    linear-gradient(180deg, #fcf8f1 0%, #f5eee3 55%, #eee3d5 100%);
+  color: var(--ink);
+}
+
+.topbar { align-items: center; padding: 12px 2px 24px; }
+.brand { display:flex; align-items:center; gap:13px; color:var(--ink); text-decoration:none; }
+.brandMark {
+  display:grid; place-items:center; width:48px; height:48px; flex:0 0 48px;
+  border:1px solid #5bbdcc; border-radius:50%; color:#35aebe;
+  font-family:Georgia,serif; font-size:18px; letter-spacing:-.09em;
+  box-shadow:0 0 0 4px rgba(53,174,190,.08), inset 0 0 18px rgba(53,174,190,.08);
+}
+.brandText { display:flex; flex-direction:column; gap:6px; }
+.brandName { font-family:Georgia,"Times New Roman",serif; font-size:clamp(25px,3vw,37px); font-weight:400; letter-spacing:.16em; line-height:1; }
+.brandByline { color:var(--muted); font-size:9px; letter-spacing:.35em; }
+.headerRight { display:flex; flex-direction:column; align-items:flex-end; gap:7px; text-align:right; }
+.headerMeta { font-size:9px; letter-spacing:.17em; color:var(--muted); font-weight:700; }
+.headerSubmeta { font-size:8px; letter-spacing:.11em; color:var(--sage2); }
+.hero { min-height:560px; }
+.eyebrow { color:var(--gold); }
+h1 span { color:var(--sage2); }
+.heroIntro { max-width:640px; color:var(--soft); line-height:1.8; }
+.heroArtwork img { filter:saturate(.91); }
+.category:hover,.category.active { background:var(--sage2); border-color:var(--sage2); color:#fff; }
+.qoption:hover,.qoption.active { border-color:var(--sage); background:var(--sageSoft); color:var(--ink); }
+.qoption:focus-visible,.category:focus-visible,.spread:focus-visible,.threeVariant:focus-visible,.tarot:focus-visible,button:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+.spread:hover,.spread.active { border-color:var(--sage); background:var(--sageSoft); box-shadow:inset 0 0 0 1px var(--sage); }
+.spread.active span,.counter b,.questionEcho,.readingQuestion { color:var(--sage2); }
+.threeVariant.active { border-color:var(--sage); background:var(--sageSoft); }
+.primary { background:var(--sage2); }
+.primary:not(:disabled):hover { background:#4f6253; }
+.secondary:hover { border-color:var(--sage); color:var(--sage2); }
+.tarot:hover { border-color:var(--gold); }
+.tarot.picked { border-color:var(--gold); box-shadow:0 8px 20px rgba(113,91,54,.18); }
+.pickedMark { background:var(--sage2); }
+.drawSlot.filled .drawCard { border-color:var(--gold); }
+.readingBadge,.deepQuestion { background:var(--sageSoft); color:var(--sage2); }
+.expertCard.mainSynthesis { background:#f0e3d5; border-color:#dfcdb5; }
+@media(max-width:820px) {
+  .hero { min-height:0; }
+  .headerRight { max-width:48%; }
+  .headerSubmeta { line-height:1.5; }
+}
+@media(max-width:560px) {
+  .topbar { align-items:center; }
+  .brand { gap:9px; }
+  .brandMark { width:38px; height:38px; flex-basis:38px; font-size:15px; }
+  .brandName { font-size:22px; }
+  .brandByline { font-size:8px; letter-spacing:.25em; }
+  .headerRight { display:none; }
+}
+
+/* ===== TAROT ALUZCA: MARCA / LOGO AO ORIGINAL ===== */
+.brand { display:flex; align-items:center; gap:16px; }
+.brandMark { width:62px; height:62px; flex:0 0 62px; display:flex; align-items:center; justify-content:center; border:1.5px solid #087f91; border-radius:50%; background:rgba(255,255,255,.22); box-shadow:0 0 0 4px rgba(8,127,145,.08); overflow:hidden; }
+.brandMark img { display:block; width:92%; height:92%; object-fit:contain; }
+.brandText { display:flex; flex-direction:column; gap:7px; }
+.brandName { font-family: Inter, Arial, sans-serif !important; font-size:clamp(25px,3vw,39px) !important; font-weight:700 !important; letter-spacing:.105em !important; line-height:1.02 !important; color:#152b43 !important; white-space:nowrap; }
+.brandName em { font-style:normal; font-weight:700; }
+.brandByline { font-family:Inter,Arial,sans-serif !important; font-size:9px !important; letter-spacing:.38em !important; color:#596b76 !important; }
+@media(max-width:560px) { .brand {gap:9px;} .brandMark {width:44px;height:44px;flex-basis:44px;} .brandName {font-size:clamp(17px,5vw,24px) !important;letter-spacing:.07em !important;} .brandByline {font-size:8px !important;letter-spacing:.22em !important;} }
+
+
+/* TAROT ALUZCA — corrección de visibilidad de la baraja */
+.deck .tarot.preStart {
+  cursor: default;
+  pointer-events: none;
+}
+.deck .tarot.preStart .tarotFlip {
+  transform: none !important;
+  transform-style: flat;
+}
+.deck .tarot.preStart .cardFaceFront {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  position: relative !important;
+  inset: auto !important;
+}
+.deck .tarot.preStart .cardFaceBack {
+  display: none !important;
+}
+.deck .tarot .cardFaceFront img,
+.deck .tarot.preStart img {
+  display: block !important;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+.deck .tarot:not(.preStart) .tarotFlip {
+  transform-style: preserve-3d;
+}
+.deck .tarot:not(.preStart) .cardFaceBack,
+.deck .tarot:not(.preStart) .cardFaceFront {
+  backface-visibility: hidden;
+}
+
+
+/* TAROT ALUZCA — cabecera y paleta cian contemporánea */
+
+:root{
+  --ink:#173344;
+  --soft:#526c78;
+  --muted:#7c9199;
+  --line:#c7e0e5;
+  --line2:#83c5d0;
+  --cyan-dark:#176b7b;
+  --cyan:#35aabd;
+  --cyan-light:#dff4f6;
+  --cyan-pale:#f0fbfc;
+  --sage:#6f9a9b;
+  --sage2:#236d78;
+  --sageSoft:#dff2f4;
+  --rose:#35aabd;
+  --rose2:#176b7b;
+  --roseSoft:#dff4f6;
+  --gold:#b99b62;
+  --paper:#f6f8f5;
+  --paper2:#ffffff;
+  --paper3:#e8f2f3;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:clamp(12px,2vw,28px);
+  flex-wrap:nowrap;
+  min-width:0;
+}
+.brandName{
+  font-family:"Amatic SC",sans-serif;
+  font-size:clamp(38px,5vw,64px);
+  line-height:.9;
+  letter-spacing:.075em;
+  font-weight:700;
+  white-space:nowrap;
+  color:var(--ink);
+}
+.brandSignature{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:0 0 auto;
+}
+.brandMark{
+  width:48px;height:48px;flex:0 0 48px;
+  overflow:hidden;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid var(--cyan);
+  background:#092333;
+  box-shadow:0 0 0 4px rgba(53,170,189,.12);
+}
+.brandMark img{width:100%;height:100%;object-fit:contain;display:block}
+.brandByline{
+  font-family:"Amatic SC",sans-serif;
+  font-size:clamp(20px,2.2vw,29px);
+  font-weight:400;
+  line-height:1;
+  letter-spacing:.08em;
+  white-space:nowrap;
+  color:var(--ink);
+}
+.headerMeta,.headerSubmeta{color:var(--cyan-dark)}
+.category:hover,.category.active,
+.primary,.tarot.picked .pickedMark{
+  background:var(--cyan-dark);
+  border-color:var(--cyan-dark);
+  color:#fff;
+}
+.category,.qoption,.spread,.mode,.threeVariant,.expertCard,.storyBlock,.deepQuestion,
+.questionPanel,.drawCard,.readingBadge,.recommend{
+  border-color:var(--line);
+}
+.qoption:hover,.qoption.active,.spread:hover,.spread.active,
+.threeVariant.active,.mode.active{
+  border-color:var(--cyan);
+  background:var(--cyan-light);
+  color:var(--ink);
+}
+.readingBadge,.recommend,.deepQuestion,.expertCard.mainSynthesis{
+  background:var(--cyan-light);
+  border-color:#b6e1e7;
+  color:var(--cyan-dark);
+}
+.primary:hover{background:#105665}
+.secondary:hover,.textButton:hover{border-color:var(--cyan);color:var(--cyan-dark)}
+.eyebrow,.counter b,.drawTop span,.positionNumber{color:var(--cyan-dark)}
+h1 span{color:var(--cyan-dark)}
+.drawSlot.filled .drawCard{border-color:var(--cyan);box-shadow:0 10px 25px rgba(23,107,123,.16)}
+.pickedMark{background:var(--cyan-dark)}
+.backFrame{border-color:var(--cyan-dark)}
+.backMedallion{border-color:var(--cyan)}
+.backMedallion::before{border-color:var(--cyan)}
+.backStar{color:var(--cyan-dark)}
+.cardFaceBack{
+  background:radial-gradient(circle at 50% 50%,rgba(53,170,189,.16),transparent 30%),
+    linear-gradient(145deg,#f3fcfd 0%,#cfe9ed 100%);
+}
+.preStartFace{position:absolute;inset:0;display:block;overflow:hidden}
+.preStartFace img{display:block;width:100%;height:100%;object-fit:cover}
+.tarot.preStart{cursor:default}
+.tarot.preStart:hover{transform:none;box-shadow:none;border-color:var(--line)}
+.readingShare{
+  margin-top:26px;
+  padding:22px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:linear-gradient(135deg,var(--cyan-pale),#fff);
+}
+.shareButtons{display:flex;flex-wrap:wrap;gap:12px}
+.shareButton{
+  appearance:none;
+  border:1px solid #acd8df;
+  border-radius:13px;
+  padding:13px 18px;
+  min-height:48px;
+  background:#fff;
+  color:var(--cyan-dark);
+  font:600 14px/1.25 Inter,system-ui,sans-serif;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(23,107,123,.07);
+  transition:transform .16s ease,background .16s ease,border-color .16s ease;
+}
+.shareButton:hover{transform:translateY(-2px);background:var(--cyan-light);border-color:var(--cyan)}
+.shareButton.whatsapp{background:var(--cyan-dark);color:#fff;border-color:var(--cyan-dark)}
+.shareButton.whatsapp:hover{background:#105665}
+.shareButton.email{background:var(--cyan-light)}
+@media(max-width:760px){
+  .topbar{align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .brand{gap:12px}
+  .brandName{font-size:clamp(34px,9vw,48px)}
+  .brandMark{width:39px;height:39px;flex-basis:39px}
+  .brandByline{font-size:22px}
+  .headerRight{margin-left:auto}
+  .shareButtons{display:grid;grid-template-columns:1fr}
+  .shareButton{width:100%}
+}
+@media(max-width:430px){
+  .brand{gap:8px}
+  .brandName{font-size:32px;letter-spacing:.035em}
+  .brandSignature{gap:6px}
+  .brandMark{width:32px;height:32px;flex-basis:32px}
+  .brandByline{font-size:18px;letter-spacing:.03em}
+}
+
+
+
+/* TAROT ALUZCA · PALETA CIAN UNIFICADA */
+
+:root {
+  --paper: #F5FAFA;
+  --paper2: #FFFFFF;
+  --paper3: #DCEFF0;
+
+  --ink: #183B45;
+  --soft: #55747B;
+  --muted: #78949A;
+
+  --line: #C6DFE2;
+  --line2: #8DBCC4;
+
+  --rose: #0F6878;
+  --rose2: #0B5665;
+  --roseSoft: #DCEFF0;
+
+  --sage: #8DBCC4;
+  --sage2: #0F6878;
+  --sageSoft: #DCEFF0;
+
+  --gold: #0F6878;
+  --white: #FFFFFF;
+
+  --shadow: 0 12px 32px rgba(15, 104, 120, .09);
+}
+
+/* Fondo y texto */
+
+body {
+  background: linear-gradient(
+    180deg,
+    #F5FAFA 0%,
+    #EDF6F7 55%,
+    #E4F0F2 100%
+  );
+  color: var(--ink);
+}
+
+/* Cajas, opciones y tiradas */
+
+.qoption,
+.spread,
+.threeVariant,
+.tarot,
+.drawSlot,
+.expertCard,
+.deepQuestion,
+.readingBadge {
+  border-color: var(--line);
+}
+
+.qoption:hover,
+.qoption.active,
+.spread:hover,
+.spread.active,
+.threeVariant.active {
+  background: var(--paper3);
+  border-color: var(--sage2);
+  color: var(--ink);
+}
+
+/* Todos los botones */
+
+button,
+.primary,
+.secondary {
+  border-color: var(--line2);
+}
+
+.primary,
+.category.active,
+.category:hover {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: #FFFFFF;
+}
+
+.primary:not(:disabled):hover {
+  background: var(--rose2);
+}
+
+.secondary {
+  background: var(--paper2);
+  color: var(--rose);
+}
+
+.secondary:hover {
+  background: var(--paper3);
+  border-color: var(--rose);
+  color: var(--rose2);
+}
+
+/* Selección de cartas */
+
+.tarot:hover,
+.tarot.picked,
+.drawSlot.filled .drawCard {
+  border-color: var(--rose);
+}
+
+.tarot.picked {
+  box-shadow: 0 8px 20px rgba(15, 104, 120, .14);
+}
+
+.pickedMark {
+  background: var(--rose);
+}
+
+/* Lectura y resaltados */
+
+.readingBadge,
+.deepQuestion {
+  background: var(--roseSoft);
+  color: var(--rose2);
+}
+
+.expertCard.mainSynthesis {
+  background: var(--paper3);
+  border-color: var(--line);
+}
+
+/* Foco accesible, también en cian */
+
+.qoption:focus-visible,
+.category:focus-visible,
+.spread:focus-visible,
+.threeVariant:focus-visible,
+.tarot:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
+/* Modo oscuro */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #102D34;
+    --paper2: #173A42;
+    --paper3: #214A54;
+
+    --ink: #E6F4F5;
+    --soft: #B5D2D6;
+    --muted: #91B5BB;
+
+    --line: #37636C;
+    --line2: #5B929C;
+
+    --rose: #69B9C5;
+    --rose2: #8ACDD5;
+    --roseSoft: #214A54;
+
+    --sage: #5B929C;
+    --sage2: #69B9C5;
+    --sageSoft: #214A54;
+
+    --gold: #69B9C5;
+    --white: #173A42;
+  }
+
+  body {
+    background: linear-gradient(
+      180deg,
+      #102D34 0%,
+      #153740 55%,
+      #1B424B 100%
+    );
+    color: var(--ink);
+  }
+
+  .qoption,
+  .spread,
+  .threeVariant,
+  .tarot,
+  .drawSlot,
+  .expertCard {
+    background: var(--paper2);
+    color: var(--ink);
+    border-color: var(--line);
+  }
+
+  .qoption:hover,
+  .qoption.active,
+  .spread:hover,
+  .spread.active,
+  .threeVariant.active {
+    background: var(--paper3);
+    color: var(--ink);
+  }
+
+  .secondary {
+    background: var(--paper2);
+    color: var(--rose);
+  }
+
+  .expertCard.mainSynthesis {
+    background: var(--paper3);
+    border-color: var(--line);
+  }
+}
+
+/* Mesa: reverso de las cartas vacías en cian oscuro */
+.emptyBack {
+  background: linear-gradient(145deg, #0F6878 0%, #0B5665 100%);
+  color: #FFFFFF;
+}
+
+.emptyBack i {
+  color: #FFFFFF;
 }
