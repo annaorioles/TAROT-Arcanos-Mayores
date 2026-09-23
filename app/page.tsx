@@ -642,8 +642,9 @@ export default function Home(){
         <div className="readingBadge">Lectura {current.name}</div>
       </div>
 
-      <div className="readingModes">
-        {modes.map((m,i)=><button className={mode===i ? "mode active" : "mode"} onClick={()=>setMode(i)} key={m[0]}><b>{m[0]}</b><span>{m[1]}</span></button>)}
+      <div className="expertCard centralIdea">
+        <div className="label">La idea central</div>
+        <p>{synthesis()}</p>
       </div>
 
       <div className="positionReadings">
@@ -659,12 +660,15 @@ export default function Home(){
         </article> : null)}
       </div>
 
+      <div className="readingModes">
+        {modes.map((m,i)=><button className={mode===i ? "mode active" : "mode"} onClick={()=>setMode(i)} key={m[0]}><b>{m[0]}</b><span>{m[1]}</span></button>)}
+      </div>
+
       <div className="expertCard mainSynthesis unifiedStory">
         <div className="label">La historia · {modes[mode][0]}</div>
-        <p className="storySummary">{synthesis()}</p>
         <p>{narrative()}</p>
         <p className="storyConclusion">{practicalKey()}</p>
-      </div><p>¿Qué hecho, conversación o pequeño paso te ayudaría a saber si esta interpretación encaja con lo que estás viviendo?</p></div>
+      </div>
 
       <div className="readingShare">
         <div className="label">Guardar o compartir esta lectura</div>
