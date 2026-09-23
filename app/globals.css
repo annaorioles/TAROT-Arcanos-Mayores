@@ -1092,3 +1092,74 @@ button:focus-visible {
 .emptyBack i {
   color: #FFFFFF;
 }
+
+/* =========================================================
+   CONTRASTE — MODO OSCURO · PREGUNTAS
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+
+  /* Segunda línea del titular */
+  h1 span {
+    color: #55C1D4;
+  }
+
+  /* Categorías superiores */
+  .category {
+    background: #24464D;
+    border-color: #47747C;
+    color: #D6E8EA;
+  }
+
+  .category:hover,
+  .category.active {
+    background: #0F6878;
+    border-color: #55C1D4;
+    color: #FFFFFF;
+  }
+
+  /* Panel de preguntas */
+  .questionPanel {
+    background: #193E45;
+    border-color: #47747C;
+  }
+
+  /* Títulos pequeños */
+  .questionPanel .label {
+    color: #8FC7CF;
+  }
+
+  /* Preguntas */
+  .qoption {
+    background: #123A42;
+    border-color: #47747C;
+    color: #D9EAEC;
+  }
+
+  .qoption:hover,
+  .qoption.active {
+    background: #1E6875;
+    border-color: #55C1D4;
+    color: #FFFFFF;
+  }
+
+  /* Campo de pregunta propia */
+  .customQuestion .label {
+    color: #8FC7CF;
+  }
+
+  .customQuestion textarea {
+    background: #123A42;
+    border-color: #47747C;
+    color: #FFFFFF;
+  }
+
+  .customQuestion textarea::placeholder {
+    color: #9BC3C8;
+    opacity: 1;
+  }
+
+  .customQuestion textarea:focus {
+    border-color: #55C1D4;
+  }
+}
