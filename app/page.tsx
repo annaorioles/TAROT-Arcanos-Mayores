@@ -377,21 +377,56 @@ export default function Home(){
 
   function contextualReading(c:Card, i:number){
     const position = current.positions[i];
-    const neighbours = [selected[i-1], selected[i+1]].filter((card): card is Card => Boolean(card));
-    const neighbourText = neighbours.length
-      ? ` Al dialogar con ${neighbours.map(n => n.name).join(" y ")}, esta cualidad adquiere un matiz que conviene observar dentro del conjunto.`
-      : " Aquí la carta funciona como núcleo de la lectura, por lo que su posición tiene un peso especial.";
+    const previous = selected[i - 1];
+    const next = selected[i + 1];
 
-    if(spread === 1) return `${c.name} ocupa la posición «${position}». El símbolo concentra la lectura en ${c.essence}. Su expresión luminosa es ${c.light}; cuando se bloquea puede aparecer como ${c.shadow}. La clave está en llevar esta imagen a tu situación concreta y observar qué encaja y qué necesita contraste.`;
-    if(spread === 2) return `En «${position}», ${c.name} responde desde ${c.essence}. No es una definición aislada: esta posición le da dirección a la carta. Su recurso es ${c.light}; su tensión, ${c.shadow}.${neighbourText}`;
-    if(spread === 3) {
-      if(threeCardVariant === 1 && i === 0) return `En «yo», ${c.name} devuelve la mirada a tu lugar dentro del vínculo: ${c.essence}. La carta señala qué puedes observar, expresar y elegir desde tu propia posición. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
-      if(threeCardVariant === 1 && i === 1) return `En «el otro», ${c.name} representa simbólicamente la dinámica que percibes en la otra parte del vínculo: ${c.essence}. Se lee como una hipótesis simbólica que conviene contrastar con hechos, gestos y conversaciones, no como acceso literal a su mundo interior. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
-      if(threeCardVariant === 1 && i === 2) return `En «el vínculo», ${c.name} muestra la cualidad que toma el espacio entre ambos: ${c.essence}. Aquí importa observar qué se activa cuando tu posición y la dinámica del otro entran en relación. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
-      if(threeCardVariant === 2) return `En «${position}», ${c.name} aporta ${c.essence}. Esta variante organiza la lectura en tres planos simbólicos —qué siente, qué piensa y qué intenciones muestra la dinámica—. La carta no afirma literalmente el mundo interior de otra persona: invita a contrastar la percepción con hechos y conversaciones. Su recurso es ${c.light}; su punto de atención, ${c.shadow}.${neighbourText}`;
-      return `En «${position}», ${c.name} aporta ${c.essence}. Como parte de una secuencia, interesa ver qué recibe de la carta anterior y qué prepara para la siguiente. La expresión disponible es ${c.light}; el punto de atención es ${c.shadow}.${neighbourText}`;
+    if (spread === 1) {
+      return `${c.name} pone el foco en ${c.essence}. Mira dónde aparece esto en tu situación y qué pequeño paso puedes dar a partir de ahí.`;
     }
-    return `En «${position}», ${c.name} introduce ${c.essence}. La carta funciona como una pieza dentro de una arquitectura mayor: ${c.light} muestra el recurso disponible y ${c.shadow} señala dónde puede perderse la claridad.${neighbourText}`;
+    if (spread === 2) {
+      return i === 0
+        ? `La situación parte de ${c.essence}. Identifica qué está pasando ahora, con hechos concretos.`
+        : `Como orientación, ${c.name} propone ${c.light}. Llévalo a la práctica mediante una acción clara y realista.`;
+    }
+    if (spread === 3 && threeCardVariant === 1) {
+      if (i === 0) return `Tu lugar en el vínculo: ${c.essence}. Observa qué necesitas, qué expresas y qué puedes elegir tú.`;
+      if (i === 1) return `La dinámica de la otra parte: ${c.essence}. Tómalo como una hipótesis para contrastar con sus palabras y actos, no como una certeza sobre su mundo interior.`;
+      return `Lo que ocurre entre ambos: ${c.essence}. Fíjate en qué os acerca, qué os distancia y qué conversación ayudaría.`;
+    }
+    if (spread === 3 && threeCardVariant === 2) {
+      if (i === 0) return `Sobre lo que siente: ${c.essence}. Es una lectura simbólica; contrástala con lo que expresa y hace esa persona.`;
+      if (i === 1) return `Sobre lo que piensa: ${c.essence}. Observa qué ideas aparecen en la conversación y qué hechos las sostienen.`;
+      return `Sobre sus intenciones: ${c.essence}. Mira qué acciones concretas acompañan sus palabras.`;
+    }
+    if (spread === 3) {
+      if (i === 0) return `El origen: ${c.essence}. ¿Qué experiencia o decisión anterior sigue influyendo hoy?`;
+      if (i === 1) return `El presente: ${c.essence}. Esto es lo que merece tu atención ahora.`;
+      return `La tendencia: ${c.essence}. Es una posibilidad, no un destino; puede cambiar según lo que hagas.`;
+    }
+    if (spread === 5) {
+      const prompts = [
+        `La dinámica actual: ${c.essence}.`,
+        `Lo que está en juego: ${c.essence}.`,
+        `Lo que quizá cuesta nombrar: ${c.essence}.`,
+        `Una dirección posible: ${c.light}.`,
+        `La clave para integrar la lectura: ${c.light}.`
+      ];
+      return `${prompts[i] || `${position}: ${c.essence}.`} ${i >= 3 ? "Elige un paso pequeño que puedas sostener." : "Busca un ejemplo concreto en tu día a día."}`;
+    }
+    const prompts = [
+      `El contexto: ${c.essence}. ¿Qué hechos describen la situación?`,
+      `La tensión: ${c.essence}. ¿Dónde se concentra la dificultad?`,
+      `El deseo: ${c.essence}. ¿Qué te gustaría que ocurriera?`,
+      `El miedo: ${c.essence}. ¿Qué preocupación necesita ser escuchada?`,
+      `El camino: ${c.light}. ¿Qué paso está a tu alcance?`,
+      `La clave: ${c.light}. ¿Qué puedes aplicar desde hoy?`,
+      `La síntesis: ${c.essence}. ¿Qué idea reúne mejor lo que has visto?`
+    ];
+    const link = previous && next
+      ? ` Conecta ${previous.name} con ${next.name}.`
+      : previous ? ` Se entiende en relación con ${previous.name}.`
+      : next ? ` Abre el tema que continúa con ${next.name}.` : "";
+    return `${prompts[i] || `${position}: ${c.essence}.`}${link}`;
   }
 
   function synthesis(){
@@ -399,20 +434,35 @@ export default function Home(){
     const areas = selectedFilled.map(cardArea);
     const repeated = areas.find(a => areas.filter(x => x === a).length > 1);
     const sequence = selectedFilled.map(c => c.name).join(" → ");
-    let focus = repeated
-      ? `Hay una concentración clara en ${repeated.toLowerCase()}, por lo que ese territorio merece una atención especial.`
-      : "La tirada reparte la energía entre varios territorios, lo que sugiere una lectura que necesita integrar perspectivas distintas.";
-    if(majorsCount >= 2) focus += " La presencia de varios Arcanos Mayores da peso a la dimensión de proceso y transformación de la pregunta.";
-    return `La secuencia ${sequence} no se lee como una suma de significados. Primero miro la pregunta y las posiciones; después observo qué cartas se refuerzan, cuáles introducen tensión y dónde cambia el movimiento de la historia. ${focus} El punto de trabajo está en reconocer qué parte de la lectura describe una experiencia que ya puedes observar y qué parte abre una pregunta para seguir explorando.`;
+    const focus = repeated
+      ? `Se repite el tema de ${repeated.toLowerCase()}. Mira qué está pasando ahí con más atención.`
+      : "Aparecen varios ámbitos; relaciónalos con una situación concreta.";
+    const majorNote = majorsCount >= 2
+      ? " Hay varios Arcanos Mayores: puede ser útil mirar qué cambio o aprendizaje atraviesa la pregunta."
+      : "";
+    return `Tu tirada reúne ${sequence}. ${focus}${majorNote} Quédate con lo que reconoces en tu vida y úsalo para formular una pregunta o un paso concreto.`;
   }
 
   function narrative(){
-    const names = selectedFilled.map(c => c.name).join(" → ");
-      if(spread === 1) return `${selectedFilled[0].name} concentra el mensaje de la tirada. La pregunta «${effectiveQuestion}» funciona como lente: el mismo arcano puede hablar de algo distinto según aquello que quieres comprender. La lectura invita a observar el símbolo en tu realidad y decidir qué significado tiene para ti.`;
-    if(spread === 2) return `${names} construyen un diálogo. La primera carta establece el terreno y la segunda responde, corrige o reorienta ese terreno. La lectura gana profundidad cuando buscas la relación entre ambas en lugar de interpretar cada una por separado.`;
-    if(spread === 3) return `${names} forman una trayectoria. El origen explica una raíz activa, el presente muestra dónde está concentrada la experiencia y la tendencia abre una posibilidad de desarrollo. La tendencia no se presenta como destino: cambia cuando cambia la manera de actuar, percibir o relacionarte con la situación.`;
-    if(spread === 5) return `${names} forman una arquitectura de cinco movimientos. La dinámica abre la escena, lo que está en juego concentra el conflicto o deseo, lo no dicho introduce la zona menos visible, la dirección muestra hacia dónde puede organizarse la energía y la clave integra el aprendizaje. Cada carta modifica el significado de las demás.`;
-    return `${names} forman un proceso completo. El contexto sitúa la experiencia; la tensión muestra dónde se concentra; deseo y miedo pueden empujar en sentidos distintos; el camino convierte esa tensión en posibilidad; la clave condensa el aprendizaje y la síntesis devuelve una mirada más amplia. La última carta no borra las anteriores: las reinterpreta.`;
+    if(spread === 1) {
+      return `La carta señala un tema central: ${selectedFilled[0]?.essence || "una cuestión que merece atención"}. Piensa en un ejemplo real y decide qué te gustaría aclarar.`;
+    }
+    if(spread === 2) {
+      return "La primera carta describe la situación; la segunda propone una forma de responder. Compara ambas con lo que ocurre y elige una acción posible.";
+    }
+    if(spread === 3 && threeCardVariant === 1) {
+      return "La tirada mira tu lugar, la dinámica de la otra parte y lo que ocurre entre ambos. Distingue lo que depende de ti, lo que necesitas conversar y lo que puedes observar.";
+    }
+    if(spread === 3 && threeCardVariant === 2) {
+      return "Las cartas abordan sentimientos, pensamientos e intenciones como planos simbólicos. Contrasta cada idea con conversaciones y conductas reales: la tirada no confirma el mundo interior de otra persona.";
+    }
+    if(spread === 3) {
+      return "La primera carta mira el origen, la segunda el presente y la tercera una tendencia posible. Esa tendencia puede cambiar con tus decisiones y con lo que ocurra.";
+    }
+    if(spread === 5) {
+      return "La tirada recorre la situación, lo que está en juego, lo que cuesta nombrar, una dirección posible y una clave práctica. Busca el hilo que une esos cinco puntos.";
+    }
+    return "La tirada recorre contexto, tensión, deseo, miedo, camino, clave y síntesis. Separa los hechos de tus temores y deseos; después identifica el paso que sí está en tus manos.";
   }
 
   return <main className="appShell">
@@ -613,12 +663,12 @@ export default function Home(){
       </div>
 
       <div className="expertGrid">
-        <div className="expertCard mainSynthesis"><div className="label">Lo que veo</div><p>{synthesis()}</p></div>
-        <div className="expertCard"><div className="label">La conversación entre las cartas</div><p>{narrative()}</p></div>
+        <div className="expertCard mainSynthesis"><div className="label">Resumen de la tirada</div><p>{synthesis()}</p></div>
+        <div className="expertCard"><div className="label">Cómo se relacionan</div><p>{narrative()}</p></div>
       </div>
 
       <div className="positionReadings">
-        <div className="readingLabel">Lectura carta a carta</div>
+        <div className="readingLabel">Cada carta en su posición</div>
         {selected.map((c,i)=> c ? <article className="positionReading" key={`${c.id}-${i}`}>
           <div className="positionNumber">{String(i+1).padStart(2,"0")}</div>
           <button className="readingCardThumb" type="button" onClick={() => setZoomCard(c)} aria-label={`Ampliar ${c.name}`}>
@@ -626,12 +676,12 @@ export default function Home(){
             <span className="zoomHint" aria-hidden="true">⌕</span>
           </button>
           <div className="positionInfo"><span>{current.positions[i]}</span><h3>{c.name}</h3><small>{cardArea(c)}</small></div>
-          <div className="positionText"><p>{contextualReading(c,i)}</p><div className="lightShadow"><span><b>Luz</b> {c.light}</span><span><b>Sombra</b> {c.shadow}</span></div></div>
+          <div className="positionText"><p>{contextualReading(c,i)}</p><div className="lightShadow"><span><b>Recurso</b> {c.light}</span><span><b>A vigilar</b> {c.shadow}</span></div></div>
         </article> : null)}
       </div>
 
       <div className="storyBlock"><div className="label">La historia · {modes[mode][0]}</div><p>{narrative()}</p></div>
-      <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte de esta lectura reconoces ya en tu realidad y qué conversación, hecho o decisión puede ayudarte a comprobarla?</p></div>
+      <div className="deepQuestion"><div className="label">Lo que te preguntaría</div><p>¿Qué parte reconoces en tu vida? ¿Qué hecho o conversación te ayudaría a aclararla?</p></div>
 
       <div className="readingShare">
         <div className="label">Guardar o compartir esta lectura</div>
