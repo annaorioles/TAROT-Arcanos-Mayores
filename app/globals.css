@@ -1163,3 +1163,14 @@ button:focus-visible {
     border-color: #55C1D4;
   }
 }
+/* Números de las variantes de tirada */
+.threeVariant > span.variantNumber {
+  background: #DCEFF0;
+  color: #0F6878;
+  font-weight: 700;
+}
+
+.threeVariant.active > span.variantNumber {
+  background: #0F6878;
+  color: #FFFFFF;
+}
