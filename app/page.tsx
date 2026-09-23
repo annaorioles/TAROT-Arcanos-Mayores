@@ -611,7 +611,7 @@ export default function Home(){
       </div>
  <div className="eyebrow">03 · La mesa</div>
       <div className="pickHeader">
-        <div><h2>{started ? "Elige tus cartas." : "Contempla la baraja."}</h2><p>{started ? "Toca una carta para incorporarla a la tirada. Puedes cambiar una elección antes de revelar la lectura." : "Las 78 cartas se muestran de cara. Cuando pulses Iniciar tirada, se mezclarán y podrás elegir."}</p></div>
+        <div><h2>{started ? "Elige tus cartas." : "Contempla la baraja."}</h2><p>{started ? "Toca una carta para incorporarla a la tirada y construir tu lectura." : "Las 78 cartas se muestran de cara. Cuando pulses Iniciar tirada, se mezclarán y podrás elegir."}</p></div>
         <div className="counter"><b>{picked.length}</b><span>/ {count}</span></div>
       </div>
         <div className="actions actionsCentered">
